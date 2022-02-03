@@ -1,6 +1,6 @@
 <h1 align="center">RockStream Streaming Relay</p>
 
-<h3 align="center">Alternative self hosted streaming relay to multi platform.</h3>
+<h3 align="center">Alternative self hosted live streaming relay to multi platform.</h3>
 
 ## Introduction
 This live streaming relay application serves to assist you in multi-streaming to several platform locations that you can access in one place to facilitate the live streaming process so you don't have to bother anymore
