@@ -66,17 +66,17 @@ DB_CONNECTION=sqlite
 
 # For Nginx process system configuration
 
-# NGINX url rtmp checker this seperate url from APP_URL because
-# sometime domain or url is not always same as APP_URL
-NGINX_URL_CHECKER_URL=http://127.0.0.1
+# NGINX url rtmp checker and this seperate url from APP_URL because
+# sometime domain or url is not always same as APP_URL to communicate with this web application.
+WEB_URL_CHECKER_NGINX_RTMP_URL=http://127.0.0.1
 
-# NGINX port rtmp checker this seperate port if this app need
-# to use different port from APP_URL. default (7733)
-NGINX_URL_CHECKER_PORT=7733
+# NGINX port rtmp checker and this seperate port if this app need
+# to use different port from APP_URL to communicate with this web application. default (7733)
+WEB_URL_CHECKER_NGINX_RTMP_PORT=7733
 
-# NGINX will Use APP_URL and ignore NGINX_URL_CHECKER_URL to set url
+# NGINX will Use APP_URL and ignore WEB_URL_CHECKER_NGINX_RTMP_URL to set url
 # check data publish url from client side to server side
-NGINX_URL_CHECKER_BYPASS=false
+WEB_URL_CHECKER_NGINX_RTMP_BYPASS=false
 
 # NGINX RTMP system port and path
 

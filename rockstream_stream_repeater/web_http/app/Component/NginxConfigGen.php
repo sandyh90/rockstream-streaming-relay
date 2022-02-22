@@ -61,8 +61,8 @@ class NginxConfigGen
         $base_nginx .=          T . T . 'listen 1935;' . N;
         $base_nginx .=          T . T . 'chunk_size 4096;' . N;
         $base_nginx .= N;
-        $base_nginx .=          T . T . 'on_publish ' . (config('component.nginx_url_checker_bypass') == TRUE ? config('app.url') : config('component.nginx_url_checker_url')) . ':' . config('component.nginx_url_checker_port')  . '/api/stream/on_publish;' . N;
-        $base_nginx .=          T . T . 'on_publish_done ' . (config('component.nginx_url_checker_bypass') == TRUE ? config('app.url') : config('component.nginx_url_checker_url')) . ':' . config('component.nginx_url_checker_port')  . '/api/stream/on_publish_done;' . N;
+        $base_nginx .=          T . T . 'on_publish ' . (config('component.web_url_checker_rtmp_bypass') == TRUE ? config('app.url') : config('component.web_url_checker_rtmp_url')) . ':' . config('component.web_url_checker_rtmp_port')  . '/api/stream/on_publish;' . N;
+        $base_nginx .=          T . T . 'on_publish_done ' . (config('component.web_url_checker_rtmp_bypass') == TRUE ? config('app.url') : config('component.web_url_checker_rtmp_url')) . ':' . config('component.web_url_checker_rtmp_port')  . '/api/stream/on_publish_done;' . N;
         $base_nginx .=          T . T . '# Turn on HLS' . N;
         $base_nginx .=          T . T . 'hls on;' . N;
         $base_nginx .=          T . T . 'hls_path hls/;' . N;
