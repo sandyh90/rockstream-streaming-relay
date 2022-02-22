@@ -17,8 +17,6 @@ class EventStreamController extends Controller
         } else {
             return response('No', 400)->header('Content-Type', 'text/plain');
         }
-        // file_put_contents(dirname(base_path()) . DIRECTORY_SEPARATOR . 'nginxgetrtmp.txt', json_encode($request->all()));
-        // return response('Good', 200)->header('Content-Type', 'text/plain');
     }
 
     public function on_publish_done(Request $request)

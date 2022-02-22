@@ -4,6 +4,10 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
+use App\Models\StreamInput;
+
+use App\Component\Utility;
+
 class NginxPowerCommand extends Command
 {
     /**
@@ -46,11 +50,18 @@ class NginxPowerCommand extends Command
             system('QPROCESS * | find /I /N "nginx.exe">NUL', $check_process);
 
             if ($check_process == 0) {
+                # Set is live in database to false / offline if nginx process is turn off
+                $stream_db = StreamInput::where(['is_live' => TRUE]);
+                if ($stream_db->exists()) {
+                    $stream_db->update(['is_live' => FALSE]);
+                }
+
                 # Reload nginx process to apply changes to config file and restart it
                 system('taskkill /f /IM nginx.exe >NUL 2>NUL');
                 return $this->info('Power Off Nginx successfully');
             } else {
-                system('cmd /c start "" /d"' . $nginx_folder . '" "nginx.exe"');
+                # Turn on nginx process if it is off
+                Utility::runInstancewithPid('cmd /c start "" /d"' . $nginx_folder . '" "nginx.exe"');
                 return $this->info('Power On Nginx successfully.');
             }
         }

@@ -6,19 +6,14 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <span class="material-icons me-1">warning</span>For now after you input the stream or add the
-                destination stream, you must regenerate the Nginx config manually on the dashboard page.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <div class="fs-4 fw-light my-2"><span class="material-icons me-1 fs-2">input</span>Input Stream
+            <div class="fs-4 fw-light my-2"><span class="bi bi-hdmi me-1"></span>Input Stream
             </div>
             <div class="d-flex justify-content-between flex-wrap my-2">
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target=".add-input-stream">
-                    <span class="material-icons me-1">input</span>Add Input Stream
+                    <span class="bi bi-hdmi me-1"></span>Add Input Stream
                 </button>
                 <button class="btn btn-primary input-stream-data-refresh">
-                    <span class="material-icons me-1">refresh</span>Refresh
+                    <span class="bi bi-arrow-clockwise me-1"></span>Refresh
                 </button>
             </div>
             <div class="table-responsive">
@@ -26,8 +21,8 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Name Destination</th>
-                            <th>Platform</th>
+                            <th>Name Input</th>
+                            <th>Destination List</th>
                             <th>Live</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -59,8 +54,8 @@
                 data: 'name_input',
                 name: 'name_input'
             }, {
-                data: 'platform_dest',
-                name: 'platform_dest'
+                data: 'name_dest',
+                name: 'name_dest'
             }, {
                 data: 'is_live',
                 name: 'is_live'
@@ -146,6 +141,34 @@
             event.preventDefault();
         });
 
+        $(".input-stream-data").on('click', '.view-input-stream', function(event) {
+            var input_stream_data = $(event.currentTarget).attr('data-input-stream-id');
+            if (input_stream_data === null) return;
+            $.ajax({
+                url: "{{ route('stream.view') }}",
+                type: 'POST',
+                data: {id_input_stream: input_stream_data},
+                async: true,
+                beforeSend: function() {
+                    $('.custom-modal-display').modal('show');
+                    $('.custom-modal-content').html("<span class='spinner-border my-2'></span>").addClass("text-center");
+                },
+                success: function(data) {
+                    $('meta[name="csrf-token"').val(data.csrftoken);
+                    $('input[name=_token]').val(data.csrftoken);
+                    if(data.success == true){
+                        $('.custom-modal-content').html(data.html).removeClass("text-center");
+                    }else{
+                        $('.custom-modal-content').html(data.messages);
+                    }
+                },
+                error: function(err) {
+                    $('.custom-modal-content').html("<span class='material-icons me-1'>warning</span>There have problem while processing data").addClass("text-center");
+                }
+            });
+            event.preventDefault();
+        });
+
         $(".input-stream-data").on('click', '.delete-input-stream', function(event) {
             var input_stream_data = $(event.currentTarget).attr('data-input-stream-id');
             if (input_stream_data === null) return;
@@ -225,7 +248,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel"><span class="material-icons me-1">input</span>Add Input
+                <h5 class="modal-title" id="staticBackdropLabel"><span class="bi bi-hdmi me-1"></span>Add Input
                     Stream
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

@@ -1,6 +1,6 @@
+!.gitignore
 !/nginx/logs/
 /nginx/hls
 !/nginx/temp/
-!/nginx/ajp_temp/
 /.idea
 /.vscode

@@ -25,6 +25,8 @@ Route::group(['prefix' => 'stream'], function () {
 
 Route::get('/panel/rtmp_stat', [App\Http\Controllers\PanelController::class, 'get_stat_rtmp'])->name('panel.data_rtmp_stat');
 
+Route::options('/premiere/launch_premiere_daemon', [App\Http\Controllers\PremiereVideoController::class, 'launch_queue_daemon'])->name('premiere.launch_daemon');
+
 Route::group(['prefix' => 'fetch'], function () {
     Route::post('/panel/stream_key_encoder', [App\Http\Controllers\PanelController::class, 'get_stream_key'])->name('panel.rtmp_stream_key');
     Route::post('/panel/get_stream_preview', [App\Http\Controllers\PanelController::class, 'check_stream_preview'])->name('panel.rtmp_preview');

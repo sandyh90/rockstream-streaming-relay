@@ -40,11 +40,21 @@ Route::group(['middleware' => 'setup.state'], function () {
             Route::post('/reset_factory', [App\Http\Controllers\AccountSettingsController::class, 'reset_factory'])->name('settings.reset_factory');
         });
 
+        Route::group(['prefix' => 'premiere'], function () {
+            Route::get('/', [App\Http\Controllers\PremiereVideoController::class, 'index'])->name('premiere.home');
+            Route::get('/getdata', [App\Http\Controllers\PremiereVideoController::class, 'get_premiere_video'])->name('premiere.getdata');
+            Route::post('/add', [App\Http\Controllers\PremiereVideoController::class, 'add_premiere_video'])->name('premiere.add');
+            Route::post('/view', [App\Http\Controllers\PremiereVideoController::class, 'view_premiere_video'])->name('premiere.view');
+            Route::post('/delete', [App\Http\Controllers\PremiereVideoController::class, 'delete_premiere_video'])->name('premiere.delete');
+            Route::post('/edit', [App\Http\Controllers\PremiereVideoController::class, 'edit_premiere_video'])->name('premiere.edit');
+            Route::post('/startpremiere', [App\Http\Controllers\PremiereVideoController::class, 'start_premiere_video'])->name('premiere.start_play');
+        });
         Route::group(['prefix' => 'stream'], function () {
             Route::get('/', [App\Http\Controllers\IngestStreamController::class, 'index'])->name('stream.home');
             Route::get('/manage/{id_stream?}', [App\Http\Controllers\IngestStreamController::class, 'manage_input_stream'])->name('stream.manage');
             Route::get('/getdata', [App\Http\Controllers\IngestStreamController::class, 'get_input_stream'])->name('stream.getdata');
             Route::post('/regenstreamkey', [App\Http\Controllers\IngestStreamController::class, 'regen_stream_key'])->name('stream.regenstreamkey');
+            Route::post('/view', [App\Http\Controllers\IngestStreamController::class, 'view_input_stream'])->name('stream.view');
             Route::post('/add', [App\Http\Controllers\IngestStreamController::class, 'add_input_stream'])->name('stream.add');
             Route::post('/edit', [App\Http\Controllers\IngestStreamController::class, 'edit_input_stream'])->name('stream.edit');
             Route::post('/delete', [App\Http\Controllers\IngestStreamController::class, 'delete_input_stream'])->name('stream.delete');

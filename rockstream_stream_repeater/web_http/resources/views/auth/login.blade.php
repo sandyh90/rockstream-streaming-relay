@@ -8,7 +8,7 @@
     <div class="form-group p-2">
         <label class="form-label">Username</label>
         <div class="input-group">
-            <div class="input-group-text"><span class="material-icons">account_circle</span></div>
+            <div class="input-group-text"><span class="bi bi-person-circle"></span></div>
             <input id="username" type="text" class="form-control @error('username') is-invalid @enderror"
                 name="username" autofocus>
             @error('username')
@@ -21,7 +21,7 @@
     <div class="form-group p-2">
         <label class="form-label">Password</label>
         <div class="input-group">
-            <div class="input-group-text"><span class="material-icons">lock</span></div>
+            <div class="input-group-text"><span class="bi bi-lock"></span></div>
             <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
                 name="password">
             @error('password')
@@ -40,7 +40,7 @@
     </div>
     <div class="form-group p-2">
         <button type="submit" class="btn btn-primary">
-            <span class="material-icons me-1">login</span>Login
+            <span class="bi bi-box-arrow-in-right me-1"></span>Login
         </button>
     </div>
 </form>

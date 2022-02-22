@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Artisan;
 
 use App\Models\IngestStreamDestination;
 use App\Models\StreamInput;
@@ -56,7 +57,7 @@ class IngestDestinationController extends Controller
                 'csrftoken' => csrf_token(),
                 'messages' => [],
                 'success' => FALSE,
-                'is_form' => TRUE
+                'isForm' => TRUE
             ];
             $validator = Validator::make(
                 $request->all(),
@@ -87,13 +88,15 @@ class IngestDestinationController extends Controller
                     'key_stream_dest' => $request->rtmp_stream_key,
                     'active_stream_dest' => $request->status_output_dest
                 ]);
+
+                Artisan::call('nginxrtmp:regenconfig');
             }
         } else {
             $responses = [
                 'csrftoken' => csrf_token(),
                 'messages' => '<div class="alert alert-danger"><span class="material-icons me-1">block</span>Stop Stream First Before Add Output Destination</div>',
                 'success' => FALSE,
-                'is_form' => FALSE
+                'isForm' => FALSE
             ];
         }
 
@@ -142,6 +145,8 @@ class IngestDestinationController extends Controller
 
                     IngestStreamDestination::where('id', $check_stream['id'])
                         ->delete();
+
+                    Artisan::call('nginxrtmp:regenconfig');
                 } else {
                     $responses = [
                         'csrftoken' => csrf_token(),
@@ -193,7 +198,7 @@ class IngestDestinationController extends Controller
                         'csrftoken' => csrf_token(),
                         'messages' => [],
                         'success' => FALSE,
-                        'is_form' => TRUE
+                        'isForm' => TRUE
                     ];
                     $validator = Validator::make(
                         $request->all(),
@@ -212,32 +217,35 @@ class IngestDestinationController extends Controller
                         $responses = [
                             'csrftoken' => csrf_token(),
                             'messages' => '<div class="alert alert-success">Edit output destination successfully</div>',
-                            'is_form' => FALSE,
+                            'isForm' => FALSE,
                             'success' => TRUE
                         ];
 
-                        $check_dest = IngestStreamDestination::where('id', $request->id_output_dest)->first();
-                        $check_dest->update([
+                        IngestStreamDestination::where('id', $request->id_output_dest)->update([
                             'name_stream_dest' => $request->name_output_dest,
                             'platform_dest' => $request->platform_output_dest,
                             'url_stream_dest' => $request->rtmp_output_server,
                             'key_stream_dest' => $request->rtmp_stream_key,
                             'active_stream_dest' => $request->status_output_dest
                         ]);
+
+                        if (($request->rtmp_output_server != $check_stream->url_stream_dest) || ($request->rtmp_stream_key != $check_stream->key_stream_dest) || ($request->status_output_dest != $check_stream->active_stream_dest)) {
+                            Artisan::call('nginxrtmp:regenconfig');
+                        }
                     }
                 } else {
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'messages' => '<div class="alert alert-danger"><span class="material-icons me-1">block</span>Stop Stream First Before Edit Output Destination</div>',
                         'success' => FALSE,
-                        'is_form' => FALSE
+                        'isForm' => FALSE
                     ];
                 }
             } else {
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'success' => FALSE,
-                    'is_form' => FALSE,
+                    'isForm' => FALSE,
                     'messages' => '<div class="alert alert-danger"><span class="material-icons me-1">cancel</span>You are not have access to edit this output destination</div>'
                 ];
             }

@@ -61,8 +61,8 @@ class NginxConfigGen
         $base_nginx .=          T . T . 'listen 1935;' . N;
         $base_nginx .=          T . T . 'chunk_size 4096;' . N;
         $base_nginx .= N;
-        $base_nginx .=          T . T . 'on_publish ' . config('app.url') . ':7733/api/stream/on_publish;' . N;
-        $base_nginx .=          T . T . 'on_publish_done ' . config('app.url') . ':7733/api/stream/on_publish_done;' . N;
+        $base_nginx .=          T . T . 'on_publish ' . (config('component.nginx_url_checker_bypass') == TRUE ? config('app.url') : config('component.nginx_url_checker_url')) . ':' . config('component.nginx_url_checker_port')  . '/api/stream/on_publish;' . N;
+        $base_nginx .=          T . T . 'on_publish_done ' . (config('component.nginx_url_checker_bypass') == TRUE ? config('app.url') : config('component.nginx_url_checker_url')) . ':' . config('component.nginx_url_checker_port')  . '/api/stream/on_publish_done;' . N;
         $base_nginx .=          T . T . '# Turn on HLS' . N;
         $base_nginx .=          T . T . 'hls on;' . N;
         $base_nginx .=          T . T . 'hls_path hls/;' . N;
@@ -82,7 +82,7 @@ class NginxConfigGen
         $base_nginx .=      T . 'default_type application/octet-stream;' . N;
         $base_nginx .=      T . 'index index.php index.html index.htm;' . N;
         $base_nginx .=      T . 'server {' . N;
-        $base_nginx .=          T . T . 'listen 7734;' . N;
+        $base_nginx .=          T . T . 'listen ' . config('component.nginx_stat_port_rtmp') . ';' . N;
         $base_nginx .=          T . T . 'location / {' . N;
         $base_nginx .=          T . T . T . 'rtmp_stat all;' . N;
         $base_nginx .=          T . T . T . 'rtmp_stat_stylesheet stat.xsl;' . N;
@@ -93,7 +93,7 @@ class NginxConfigGen
         $base_nginx .=      T . '}' . N;
         $base_nginx .=      N;
         $base_nginx .=      T . 'server {' . N;
-        $base_nginx .=          T . T . 'listen 7735;' . N;
+        $base_nginx .=          T . T . 'listen ' . config('component.nginx_hls_port_rtmp') . ';' . N;
         $base_nginx .=          T . T . 'location / {' . N;
         $base_nginx .=                  T . T . T . '# Disable cache' . N;
         $base_nginx .=                  T . T . T . "add_header 'Cache-Control' 'no-cache';" . N;

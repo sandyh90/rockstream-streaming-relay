@@ -1,3 +1,5 @@
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/sandyh90/rockstream-streaming-relay/latest/total?style=flat-square)
+
 <h1 align="center">RockStream Streaming Relay</p>
 
 <h3 align="center">Alternative self hosted live streaming relay to multi platform.</h3>
@@ -11,28 +13,28 @@ to create an account with a multi-live streaming service provider, but the this 
 - Multi Input Stream Location
 - Multi Destination Stream Ingest
 - Setup Page
-- Live Preview [Experimental]
+- Live Preview [Beta]
+- Premiere Video [Beta]
 
 ## Server Requirement
-- PHP 7.4.8 [Support PHP 8] (Included PHP 8)
-- Nginx 1.7.11.3 Gryphon (Included Nginx)
+- PHP 8.0.2 **Required** (Included PHP 8)
+- Nginx 1.21.7 (Included Nginx)
+- FFMpeg 5.0(Included FFMpeg)
 - SQLite (Embedded Database)
 - High Speed Internet Min. 10 Mbps with upload speed Min. 5 Mbps or High.
-- Processor Min. Dual Core with speed clock 2.40 GHz or High.
-
-## Login Account (Default)
-- Username: admin
-- Password: 12345678
+- Processor Min. Dual Core with speed clock 2.40 GHz or High (Except: Premiere Video Transcoding).
+- Storage free space capacity Min. 4 GB.
+- (Optional: For Premiere Video Transcoding) Use external / dedicated graphics card.
 
 ## Limitation
 - Due nginx service built for windows version and some feature may not work like in linux version.
-- For now regenerate nginx config file not process automatically, so you need click "Regen Config Stream [Manual]".
-- Status RTMP in navbar reseting to beginning if nginx reload because of nginx process use old process and not automatically use new process.
+- Status RTMP in navbar reseting to beginning if nginx reload because of nginx process use old process and not automatically use new process, this need **per_worker** listener for now only support in linux version. [Nginx Patches Source](https://github.com/arut/nginx-patches).
 - RTMPS protocol for now not supported on this application, and will supported soon on new version.
-- Bug on live video preview (VideoJS) if live streaming is ended sometime the video cannot stop and still running to get live segment.
+- There are still bug remaining on app, Please report any bugs you find.
 
 ## How to install
 - Extract the ZIP file into a safe folder so it doesn't get mixed up.
+- PHP, FFMPEG, NGINX Binaries already included if you downloaded from [Release Page](https://github.com/sandyh90/rockstream-streaming-relay/releases)
 - In folder "web_http" change the file ".env.example" to ".env" and change the settings to be as in the .env settings section (APP_KEY is done using artisan)
 - First please run the following command " composer install " to install the required dependency libraries.
 - Second, please run the command " php artisan key:generate " to generate APP_KEY automatically.
@@ -62,16 +64,33 @@ DB_CONNECTION=sqlite
 # DB_USERNAME=root
 # DB_PASSWORD=
 
-# For Nginx system port and path
+# For Nginx process system configuration
 
-NGINX_XML_RTMP_PORT=7734
+# NGINX url rtmp checker this seperate url from APP_URL because
+# sometime domain or url is not always same as APP_URL
+NGINX_URL_CHECKER_URL=http://127.0.0.1
+
+# NGINX port rtmp checker this seperate port if this app need
+# to use different port from APP_URL. default (7733)
+NGINX_URL_CHECKER_PORT=7733
+
+# NGINX will Use APP_URL and ignore NGINX_URL_CHECKER_URL to set url
+# check data publish url from client side to server side
+NGINX_URL_CHECKER_BYPASS=false
+
+# NGINX RTMP system port and path
+
+NGINX_STAT_RTMP_PORT=7734
 NGINX_HLS_RTMP_PORT=7735
 NGINX_PATH="bin/nginx"
+
+FFMPEG_PATH="bin/ffmpeg/bin"
+PHP_PATH="bin/php"
 
 BROADCAST_DRIVER=log
 CACHE_DRIVER=database
 FILESYSTEM_DRIVER=local
-QUEUE_CONNECTION=sync
+QUEUE_CONNECTION=database
 SESSION_DRIVER=database
 SESSION_LIFETIME=120
 
@@ -111,6 +130,3 @@ SESSION_LIFETIME=120
 ![Edit Input & Destination Platform Ingest](https://user-images.githubusercontent.com/30236529/152209320-0cb73d50-8606-4b09-afe4-5d2f4ae3b60c.jpeg)
 ![Input Stream Page](https://user-images.githubusercontent.com/30236529/152209328-45b99455-a310-4120-821a-f343dca31bb9.jpeg)
 
-
-## Change Log
-- No Log

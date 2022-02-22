@@ -52,7 +52,7 @@ class AccountManageCommand extends Command
             if (!$user) {
                 return $this->error('The username is not exist.');
             } else {
-                if (Str::length('Laravel') <= 8) {
+                if (Str::length($password) <= 8) {
                     return $this->error('The password is too short, min 8 character.');
                 } else {
                     $user->update(['password' => Hash::make($password)]);

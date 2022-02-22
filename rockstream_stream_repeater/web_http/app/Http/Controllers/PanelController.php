@@ -10,6 +10,8 @@ use App\Models\StreamInput;
 use SimpleXMLElement;
 use Carbon\CarbonInterval;
 
+use App\Component\Utility;
+
 class PanelController extends Controller
 {
     public function index()
@@ -19,25 +21,13 @@ class PanelController extends Controller
 
     public function get_stat_rtmp()
     {
-        function readableBytes($bytes)
-        {
-            if ($bytes < 1024) {
-                return $bytes . ' b/s';
-            } else {
-                $i = floor(log($bytes) / log(1024));
-                $sizes = array('b/s', 'Kb/s', 'Mb/s', 'Gb/s', 'Tb/s', 'Pb/s', 'Eb/s', 'Zb/s', 'Yb/s');
-
-                return sprintf('%.02F', $bytes / pow(1024, $i)) * 1 . ' ' . $sizes[$i];
-            }
-        }
-
         libxml_use_internal_errors(true);
         try {
             libxml_use_internal_errors(true);
             $xml_stat_rtmp_raw = new SimpleXMLElement(config('app.url') . ':' . config('component.nginx_stat_port_rtmp') . '/stat', 0, true);
             $xml_stat_rtmp = json_decode(json_encode($xml_stat_rtmp_raw), TRUE);
             $data = [
-                'bandwidth' => readableBytes($xml_stat_rtmp['bw_in']),
+                'bandwidth' => 'In: ' . Utility::getreadableBit($xml_stat_rtmp['bw_in']) . ' / Out: ' . Utility::getreadableBit($xml_stat_rtmp['bw_out']),
                 'status' => (!array_key_exists('application', $xml_stat_rtmp['server']) ? FALSE : (count(array_filter($xml_stat_rtmp['server']['application'], 'is_array')) > 1 ? (array_filter(array_column(array_column($xml_stat_rtmp['server']['application'], 'live'), 'nclients'), function ($value) {
                     # if value is not 0 set boolean to true
                     return ($value > 0);
@@ -45,6 +35,7 @@ class PanelController extends Controller
                     # if value is not 0 set boolean to true
                     return ($value != 0);
                 }) ? TRUE : FALSE))),
+                'bytes_in_out' => 'Bytes In: ' . Utility::getreadableBytes($xml_stat_rtmp['bytes_in']) . ' / Bytes Out:' . Utility::getreadableBytes($xml_stat_rtmp['bytes_out']),
                 'uptime' => CarbonInterval::seconds($xml_stat_rtmp['uptime'])->cascade()->forHumans(),
 
             ];
@@ -108,8 +99,8 @@ class PanelController extends Controller
 
             return response()->json(['csrftoken' => csrf_token(), 'success' => TRUE, 'msg' => '<div class="alert alert-success"><span class="material-icons me-1">check_circle</span>Switch power Nginx successfuly, ' . $console . '</div>']);
         } elseif ($action == 'disable') {
-            $stream_check = StreamInput::where(['active_input_stream' => TRUE]);
-            if ($stream_check) {
+            $stream_check = StreamInput::where(['active_input_stream' => TRUE, 'is_live' => FALSE]);
+            if ($stream_check->exists()) {
                 # disable stream input in database and restart stream input service to disable stream input on server side
                 $stream_check->update(['active_input_stream' => FALSE]);
 

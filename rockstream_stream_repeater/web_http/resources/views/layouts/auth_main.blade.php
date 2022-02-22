@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('title')</title>
+    <title>@yield('title') - {{ env('APP_NAME','RockStream') }}</title>
 
     @yield('head-content')
 
@@ -16,6 +16,9 @@
     <link href="{{ asset('assets/vendor/google-icon/google-icon.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
+
+    <!-- Addons Javascript Module [First Start] -->
+    <script defer src="{{ asset('assets/vendor/alpine.js/cdn.min.js') }}"></script>
 </head>
 
 <body class="d-flex flex-column min-vh-100 justify-content-center align-items-center">

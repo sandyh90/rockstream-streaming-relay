@@ -7,3 +7,25 @@
         opacity: 0;
     }
 }
+
+.overlay-baseplate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.911);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    opacity: 1;
+}
+
+.overlay-baseplate .overlay-title {
+    color: white;
+}
+
+.overlay-baseplate.video-overlay-base {
+    z-index: 1;
+}

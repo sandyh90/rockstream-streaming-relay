@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Setup App</title>
+    <title>Setup App - {{ env('APP_NAME','RockStream') }}</title>
 
     @yield('head-content')
 
@@ -16,6 +16,9 @@
     <link href="{{ asset('assets/vendor/google-icon/google-icon.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
+
+    <!-- Addons Javascript Module [First Start] -->
+    <script defer src="{{ asset('assets/vendor/alpine.js/cdn.min.js') }}"></script>
 </head>
 
 <body class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
@@ -42,7 +45,7 @@
                     <div class="form-group p-2">
                         <label class="form-label">Fullname Account</label>
                         <div class="input-group">
-                            <div class="input-group-text"><span class="material-icons">badge</span></div>
+                            <div class="input-group-text"><span class="bi bi-person-lines-fill"></span></div>
                             <input id="fullname" type="text"
                                 class="form-control @error('fullname') is-invalid @enderror" name="fullname"
                                 value="{{ old('fullname') }}" autofocus>
@@ -56,7 +59,7 @@
                     <div class="form-group p-2">
                         <label class="form-label">Username</label>
                         <div class="input-group">
-                            <div class="input-group-text"><span class="material-icons">account_circle</span></div>
+                            <div class="input-group-text"><span class="bi bi-person-circle"></span></div>
                             <input id="username" type="text"
                                 class="form-control @error('username') is-invalid @enderror" name="username"
                                 value="{{ old('username') }}" autofocus>
@@ -67,13 +70,14 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="form-group row g-3 p-2">
+                    <div class="form-group row g-3 p-2" x-data="{ input: 'password' }">
                         <div class="col-md-6 mb-2">
                             <label class="form-label">Password</label>
-                            <div class="input-group password-toggle">
-                                <div class="input-group-text"><span class="material-icons">lock</span></div>
+                            <div class="input-group">
+                                <div class="input-group-text"><span class="bi bi-lock"></span></div>
                                 <input id="password" type="password"
-                                    class="form-control @error('password') is-invalid @enderror" name="password">
+                                    class="form-control @error('password') is-invalid @enderror" name="password"
+                                    x-bind:type="input">
                                 @error('password')
                                 <span class="invalid-feedback">
                                     <strong>{{ $message }}</strong>
@@ -84,13 +88,14 @@
 
                         <div class="col-md-6 mb-2">
                             <label class="form-label">Password Confirm</label>
-                            <div class="input-group password-toggle">
+                            <div class="input-group">
                                 <input id="password-confirm" type="password"
                                     class="form-control @error('password_confirm') is-invalid @enderror"
-                                    name="password_confirm">
-                                <button type="button" class="input-group-text btn-toggle-password"
-                                    data-bs-toggle="tooltip" data-bs-original-title="Show Password"><span
-                                        class="material-icons">visibility_off</span></button>
+                                    name="password_confirm" x-bind:type="input">
+                                <button type="button" class="input-group-text" data-bs-toggle="tooltip"
+                                    data-bs-original-title="Show Stream Key"
+                                    x-on:click="input = (input === 'password') ? 'text' : 'password'"><span
+                                        :class="{'bi bi-eye-slash' : input != 'password','bi bi-eye': input != 'text'}"></span></button>
                                 @error('password_confirm')
                                 <span class="invalid-feedback">
                                     <strong>{{ $message }}</strong>
@@ -101,7 +106,7 @@
                     </div>
                     <div class="form-group p-2">
                         <button type="submit" class="btn btn-primary">
-                            <span class="material-icons me-1">build</span>Finish Setup
+                            <span class="bi bi-tools me-1"></span>Finish Setup
                         </button>
                     </div>
                 </form>
@@ -123,21 +128,6 @@
 
     <!-- Addons Javascript Module -->
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            $(".password-toggle button.btn-toggle-password").on("click", function(event) {
-                event.preventDefault();
-                if ($(".password-toggle input").attr("type") == "text") {
-                    $(".password-toggle input").attr("type", "password");
-                    $(".password-toggle button.btn-toggle-password span").html("visibility_off");
-                } else if ($(".password-toggle input").attr("type") == "password") {
-                    $(".password-toggle input").attr("type", "text");
-                    $(".password-toggle button.btn-toggle-password span").html("visibility");
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>

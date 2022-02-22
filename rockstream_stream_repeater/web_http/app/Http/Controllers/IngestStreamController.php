@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Artisan;
 
 use App\Models\StreamInput;
 
@@ -33,12 +34,12 @@ class IngestStreamController extends Controller
     {
         return DataTables::of(StreamInput::with('ingest_destination_data')->get())
             ->addIndexColumn()
-            ->addColumn('platform_dest', function ($data) {
+            ->addColumn('name_dest', function ($data) {
                 if ($data->ingest_destination_data->count() > 0) {
                     foreach ($data->ingest_destination_data->slice(0, 4) as $key) {
-                        $platform_key[] = ($key->platform_dest == 'youtube' ? '<span class="bi bi-youtube me-1"></span>Youtube' : ($key->platform_dest == 'twitch' ? '<span class="bi bi-twitch me-1"></span>Twitch' : ($key->platform_dest == 'custom' ? '<span class="bi bi-diagram-3-fill me-1"></span>Custom' : '<span class="bi bi-question-circle me-1"></span>Unknown')));
+                        $name_dest[] = ($key->active_stream_dest == TRUE ? '<span class="bi bi-toggle-on me-1 text-success"></span>' : '<span class="bi bi-toggle-off me-1 text-danger"></span>') . Str::limit($key->name_stream_dest, 12);
                     }
-                    return implode(', ', $platform_key) . ($data->ingest_destination_data->count() > 4 ? ', Other...' : '');
+                    return implode(', ', $name_dest) . ($data->ingest_destination_data->count() > 4 ? ', Other...' : '');
                 } else {
                     return '-';
                 }
@@ -47,7 +48,7 @@ class IngestStreamController extends Controller
                 if ($data->is_live == TRUE) {
                     return '<div class="text-success flash-text-item"><span class="material-icons me-1">sensors</span>Live</div>';
                 } else {
-                    return '<div class="text-danger"><span class="material-icons me-1">sensors_off</span>Not Live</div';
+                    return '<div class="text-danger"><span class="material-icons me-1">sensors_off</span>Offline</div>';
                 }
             })
             ->addColumn('is_active', function ($data) {
@@ -59,7 +60,9 @@ class IngestStreamController extends Controller
             })
             ->addColumn('actions', function ($data) {
                 return '<div class="btn-group">
-                    <div class="btn btn-primary regen-input-stream-key" data-input-stream-id="' . $data->identifier_stream . '" data-toggle="tooltip" title="Regenerate Input Stream Key"><span
+                    <div class="btn btn-primary view-input-stream" data-input-stream-id="' . $data->identifier_stream . '" data-toggle="tooltip" title="View Input Stream"><span
+                        class="material-icons">description</span></div>
+                    <div class="btn btn-secondary regen-input-stream-key" data-input-stream-id="' . $data->identifier_stream . '" data-toggle="tooltip" title="Regenerate Input Stream Key"><span
                         class="material-icons">key</span></div>
                     <a class="btn btn-success" href="' . route('stream.manage', ['id_stream' => $data->identifier_stream]) . '" data-toggle="tooltip" title="Manage Input Stream"><span
                         class="material-icons">edit</span></a>
@@ -68,7 +71,7 @@ class IngestStreamController extends Controller
                 </div>
             ';
             })
-            ->rawColumns(['actions', 'is_live', 'is_active', 'platform_dest'])
+            ->rawColumns(['actions', 'is_live', 'is_active', 'name_dest'])
             ->make(true);
     }
 
@@ -96,6 +99,7 @@ class IngestStreamController extends Controller
                 'messages' => '<div class="alert alert-success">Add input stream successfully</div>',
                 'success' => TRUE
             ];
+
             StreamInput::create([
                 'name_input' => $request->name_input,
                 'active_input_stream' => $request->status_input,
@@ -103,8 +107,10 @@ class IngestStreamController extends Controller
                 'is_live' => FALSE,
                 'identifier_stream' => Str::uuid(),
                 'name_input_stream' => 'live' . uniqid() . Str::random(10),
-                'key_input_stream' => 'key_' . uniqid("", true) . Str::random(15)
+                'key_input_stream' => 'key-' . Str::uuid() . Str::random(10)
             ]);
+
+            Artisan::call('nginxrtmp:regenconfig');
         }
 
 
@@ -121,7 +127,7 @@ class IngestStreamController extends Controller
                     'csrftoken' => csrf_token(),
                     'messages' => [],
                     'success' => FALSE,
-                    'is_form' => TRUE
+                    'isForm' => TRUE
                 ];
 
                 $validator = Validator::make(
@@ -138,21 +144,25 @@ class IngestStreamController extends Controller
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'messages' => '<div class="alert alert-success">Edit input stream successfully</div>',
-                        'is_form' => FALSE,
+                        'isForm' => FALSE,
                         'success' => TRUE
                     ];
 
-                    StreamInput::where('id', $check_stream['id'])
+                    StreamInput::where('id', $check_stream->id)
                         ->update([
                             'name_input' => $request->name_input,
                             'active_input_stream' => $request->status_input
                         ]);
+
+                    if ($check_stream->active_input_stream != $request->status_input) {
+                        Artisan::call('nginxrtmp:regenconfig');
+                    }
                 }
             } else {
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'messages' => '<div class="alert alert-danger"><span class="material-icons me-1">block</span>Cannot edit input stream because it is live</div>',
-                    'is_form' => FALSE,
+                    'isForm' => FALSE,
                     'success' => FALSE
                 ];
             }
@@ -160,9 +170,32 @@ class IngestStreamController extends Controller
             $responses = [
                 'csrftoken' => csrf_token(),
                 'success' => FALSE,
-                'is_form' => FALSE,
+                'isForm' => FALSE,
                 'messages' => '<div class="alert alert-danger"><span class="material-icons me-1">cancel</span>You are not have access to edit this input stream</div>'
             ];
+        }
+        return response()->json($responses);
+    }
+
+    public function view_input_stream(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $check_stream = StreamInput::where('identifier_stream', $request->id_input_stream)->first();
+            if ($check_stream->user_id == Auth::user()->id) {
+                $data['input_stream_data'] = $check_stream;
+
+                $responses = [
+                    'csrftoken' => csrf_token(),
+                    'success' => TRUE,
+                    'html' => view('layouts.modal_layouts.view_input_stream', $data)->render()
+                ];
+            } else {
+                $responses = [
+                    'csrftoken' => csrf_token(),
+                    'success' => FALSE,
+                    'messages' => '<div class="alert alert-danger"><span class="material-icons me-1">cancel</span>You are not have access to view this output destination</div>'
+                ];
+            }
         }
         return response()->json($responses);
     }
@@ -185,7 +218,9 @@ class IngestStreamController extends Controller
                         ];
 
                         StreamInput::where('id', $check_stream['id'])
-                            ->update(['key_input_stream' => 'key_' . uniqid("", true) . Str::random(15)]);
+                            ->update(['key_input_stream' => 'key-' . Str::uuid() . Str::random(10)]);
+
+                        Artisan::call('nginxrtmp:regenconfig');
                     } else {
                         $responses = [
                             'csrftoken' => csrf_token(),
@@ -238,6 +273,8 @@ class IngestStreamController extends Controller
 
                     StreamInput::where('id', $check_stream['id'])
                         ->delete();
+
+                    Artisan::call('nginxrtmp:regenconfig');
                 } else {
                     $responses = [
                         'csrftoken' => csrf_token(),

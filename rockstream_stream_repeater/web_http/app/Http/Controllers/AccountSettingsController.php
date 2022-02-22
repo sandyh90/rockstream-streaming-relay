@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 use App\Models\User;
 use App\Models\StreamInput;
@@ -112,7 +113,6 @@ class AccountSettingsController extends Controller
     {
         if ($request->isMethod('post')) {
             $check_stream = StreamInput::where('is_live', TRUE);
-
             if ($check_stream->count() > 0) {
                 $responses = [
                     'csrftoken' => csrf_token(),
@@ -123,10 +123,17 @@ class AccountSettingsController extends Controller
                     ]
                 ];
             } else {
+
+                // Erase all data in database and reset database
                 DB::table('input_stream')->truncate();
                 DB::table('stream_ingest_dest')->truncate();
                 DB::table('users')->truncate();
+                DB::table('premiere_video')->truncate();
                 DB::table('sessions')->truncate();
+
+                // Regenerate nginx config file and restart nginx service to apply new config
+                Artisan::call('nginxrtmp:regenconfig');
+
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'success' => FALSE,

@@ -3,8 +3,6 @@
 @section('title','Dashboard Panel')
 
 @section('head-content')
-<!-- Seperate Addons CSS -->
-<link href="{{ asset('assets/vendor/video-js/video-js.min.css') }}" rel="stylesheet" />
 
 <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2-bootstrap4.min.css') }}">
@@ -16,12 +14,15 @@
     <div class="row">
         <div class="col-xl-6 mb-4 mx-auto">
             <div class="card card-body text-center">
-                <div class="fs-4 fw-light my-2"><span class="material-icons me-1 fs-2">play_arrow</span>Preview</div>
-                <div class="ratio ratio-16x9">
-                    <video class="video-js vjs-default-skin vjs-fluid" id="preview-area-stream" controls>
-                        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a
-                            web browser supports HTML5 video</p>
-                    </video>
+                <div class="fs-4 fw-light my-2"><span class="bi bi-play-btn me-1 fs-2"></span>Preview</div>
+                <div class="ratio ratio-16x9 video-preview-source">
+                    <div class="offline-preview overlay-baseplate video-overlay-base">
+                        <div class="offline-preview-title overlay-title">
+                            <div class="bi bi-hdmi fs-2"></div>
+                            <div class="fw-light">Select Input Streaming First</div>
+                        </div>
+                    </div>
+                    <video class="video-stream-preview" controls autoplay muted></video>
                 </div>
                 <div class="card card-body stream-info-status my-2" style="display: none;">
                 </div>
@@ -29,33 +30,32 @@
         </div>
         <div class="col-xl-6 mb-4">
             <div class="card card-body text-center">
-                <div class="fs-4 fw-light my-2"><span class="material-icons me-1 fs-2">tune</span>Control Panel
+                <div class="fs-4 fw-light my-2"><span class="bi bi-sliders me-1 fs-2"></span>Control Panel
                 </div>
                 <div class="control-action-stream-btn">
                     @if (\App\Component\Utility::getInstanceRun('nginx.exe') == TRUE)
                     <div class="btn btn-danger control-stream-btn my-2" control-stream-action="power"><span
-                            class="material-icons me-1">power_settings_new</span>Stop Server
+                            class="bi bi-power me-1"></span>Stop Server
                     </div>
                     @else
                     <div class="btn btn-success control-stream-btn my-2" control-stream-action="power"><span
-                            class="material-icons me-1">power_settings_new</span>Start
+                            class="bi bi-power me-1"></span>Start
                         Server
                     </div>
                     @endif
                     <div class="btn btn-warning control-stream-btn my-2" control-stream-action="disable"><span
-                            class="material-icons me-1">cloud_off</span>Disable Stream
+                            class="bi bi-cloud-slash me-1"></span>Disable Stream
                     </div>
                     <div class="btn btn-primary control-stream-btn my-2" control-stream-action="restart"><span
-                            class="material-icons me-1">restart_alt</span>Restart Server
+                            class="bi bi-arrow-clockwise me-1"></span>Restart Server
                     </div>
                     <div class="btn btn-secondary control-stream-btn my-2" control-stream-action="regenerate"><span
-                            class="material-icons me-1">cloud_sync</span>Regen Config Stream [Manual]
+                            class="bi bi-arrow-repeat me-1"></span>Regen Config Stream [Manual]
                     </div>
                 </div>
                 <div class="control-info-status my-2"></div>
                 <div class="card card-body">
-                    <div class="fs-4 fw-light my-2"><span
-                            class="material-icons me-1 fs-2">miscellaneous_services</span>Setup Your
+                    <div class="fs-4 fw-light my-2"><span class="bi bi-pc-display me-1 fs-2"></span>Setup Your
                         Encoder
                     </div>
                     <div class="encoder-setting-data">
@@ -74,28 +74,30 @@
                                         data-bs-toggle="tooltip" data-bs-original-title="Copy Stream URL"
                                         data-clipboard-action="copy"
                                         data-clipboard-target=".encoder-setting-data input.stream-url-val"><span
-                                            class="material-icons">content_paste</span></button>
+                                            class="bi bi-clipboard"></span></button>
                                 </div>
                             </div>
                             <div class="form-group mb-2">
                                 <label for="form-label">Stream Key</label>
-                                <div class="input-group stream-key-toggle">
-                                    <input type="password" class="form-control stream-key-val" placeholder="Stream Key">
+                                <div class="input-group" x-data="{ input: 'password' }">
+                                    <input type="password" class="form-control stream-key-val" placeholder="Stream Key"
+                                        readonly x-bind:type="input">
                                     <button type="button" class="input-group-text btn-toggle-stream-key"
-                                        data-bs-toggle="tooltip" data-bs-original-title="Show Stream Key"><span
-                                            class="material-icons">visibility_off</span></button>
+                                        data-bs-toggle="tooltip" data-bs-original-title="Show Stream Key"
+                                        x-on:click="input = (input === 'password') ? 'text' : 'password'"><span
+                                            :class="{'bi bi-eye-slash' : input != 'password','bi bi-eye': input != 'text'}"></span></button>
                                     <button type="button" class="input-group-text btn-clipboard"
                                         data-bs-toggle="tooltip" data-bs-original-title="Copy Stream Key"
                                         data-clipboard-action="copy"
                                         data-clipboard-target=".encoder-setting-data input.stream-key-val"><span
-                                            class="material-icons">content_paste</span></button>
+                                            class="bi bi-clipboard"></span></button>
                                 </div>
                             </div>
                         </div>
                         <div class="text-end">
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="collapse"
                                 data-bs-target=".how-to-stream-encoder">
-                                <span class="material-icons me-1">menu_book</span>How to Setup Stream Encoder
+                                <span class="bi bi-journal-bookmark-fill me-1"></span>How to Setup Stream Encoder
                             </button>
                         </div>
                     </div>
@@ -105,7 +107,8 @@
     </div>
     <div class="collapse how-to-stream-encoder">
         <div class="card card-body">
-            <div class="card-title text-center"><span class="material-icons me-1">menu_book</span>How to Setup Stream
+            <div class="card-title text-center"><span class="bi bi-journal-bookmark-fill me-1"></span>How to Setup
+                Stream
                 Encoder</div>
             <div class="d-flex align-items-center">
                 <div class="flex-shrink-0">
@@ -231,31 +234,23 @@
 @endsection
 
 @section('js-content')
-<!-- Seperate Addons Javascript-->
-<script src="{{ asset('assets/vendor/video-js/videojs-ie8.min.js') }}"></script>
-<script src="{{ asset('assets/vendor/video-js/video.min.js') }}"></script>
-
+<script src="{{ asset('assets/vendor/hls.js/hls.min.js') }}"></script>
 <script src="{{ asset('assets/vendor/select2/js/select2.full.min.js') }}"></script>
 <script src="{{ asset('assets/vendor/zoomify/zoomify.min.js') }}"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        $(".stream-key-toggle button.btn-toggle-stream-key").on("click", function(event) {
-            event.preventDefault();
-            if ($(".stream-key-toggle input").attr("type") == "text") {
-                $(".stream-key-toggle input").attr("type", "password");
-                $(".stream-key-toggle button.btn-toggle-stream-key span").html("visibility_off");
-            } else if ($(".stream-key-toggle input").attr("type") == "password") {
-                $(".stream-key-toggle input").attr("type", "text");
-                $(".stream-key-toggle button.btn-toggle-stream-key span").html("visibility");
-            }
-        });
 
         $('img.how-to-img').zoomify();
 
         $('.stream-input-select').select2({
             placeholder: 'Select Stream Input First',
             theme: 'bootstrap4',
+            language: {
+                noResults: function (params) {
+                    return "There is no stream input available";
+                }
+            },
             ajax: {
                 url: "{{ route('panel.fetch_stream_input') }}",
                 type: 'POST',
@@ -323,28 +318,48 @@
     });
 </script>
 <script>
-    let player = videojs('preview-area-stream', {
-        fluid: true,
-        autoplay: true,
-        muted: true,
-    });
+    // Video component for stream preview.
+    if (typeof Hls != 'undefined') {
+        var video = document.querySelector('.video-stream-preview');
+        var hls = new Hls();
+        function video_preview_start(video_url) {
+            if (Hls.isSupported()) {
+                hls.loadSource(video_url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    video.play();
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = video_url;
+                video.addEventListener('loadedmetadata', function () {
+                    video.play();
+                });
+            }
+        }
 
-    player.ready(function() {
-        let retries = 0;
-        this.tech().on('retryplaylist', () => {
-            retries++;
-            console.log('Retry To Connect', retries);
-             if (retries>=5){
-                $("div.stream-info-status").html("<div class='fs-5 text-center text-danger'><span class='material-icons me-1'>warning</span>Failed To Connect Stream, Stream Offline Or Server Down</div>").show();
-                this.createModal('Failed To Connect Stream, Stream Offline Or Server Down');
-                this.hasStarted(false);
-                this.tech().reset();
-                this.reset();
-                retries = 0;
+        function reset_video_preview() {
+            hls.stopLoad();
+            hls.detachMedia();
+            video.pause();
+            video.removeAttribute('src');
+            video.load();
+        }
+
+        hls.on(Hls.Events.ERROR, function (event, data) {
+            if(data.details === Hls.ErrorDetails.LEVEL_LOAD_ERROR && data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                $("div.stream-info-status").html("<div class='fs-5 text-center text-danger'><span class='bi bi-exclamation-triangle fs-2 me-1'></span>Failed To Connect Stream, Stream Offline Or Server Down</div>").show();
+                if($(".video-preview-source div.offline-preview").hide()){
+                    $(".video-preview-source div.offline-preview").show();
+                }
+                $(".video-preview-source div.offline-preview-title").html("<div class='bi bi-exclamation-triangle fs-2'></div><div class='fw-light'>Failed To Connect Stream</div>");
+                reset_video_preview();
+                setTimeout('check_stream_preview();', 5000);
             }
         });
-    });
-    
+    }
+
+    // Check Stream Preview and Fetch Stream Key
+
     function fetch_stream_key() {
         $.ajax({
             type: "POST",
@@ -358,6 +373,7 @@
                     if($(".encoder-setting-data div.credentials-input-stream").hide()){
                         $(".encoder-setting-data div.credentials-input-stream").show();
                     }
+                    $(".video-preview-source div.offline-preview-title").html("<div class='spinner-border'></div><div class='fw-light'>Waiting Data From Encoder</div>");
                     $(".encoder-setting-data input.stream-url-val").val(data.input_stream.stream_url);
                     $(".encoder-setting-data input.stream-key-val").val(data.input_stream.stream_key);
                 } else {
@@ -378,19 +394,26 @@
             success: function(data) {
                 if (data.success == true) {
                     if (data.is_live == true) {
-                        $("div.stream-info-status").html("<div class='fs-5 text-center text-success'><span class='material-icons me-1'>check_circle</span>Successfuly Getting Data From Encoder.</div>").show();
-                        player.src({
-                            "type": "application/x-mpegURL",
-                            "src": data.stream_url
-                        });
-                        player.play();
+                        $("div.stream-info-status").html("<div class='fs-5 text-center text-success'><span class='bi bi-check2-circle fs-2 me-1'></span>Successfuly Getting Data From Encoder.</div>").show();
+                        if($(".video-preview-source div.offline-preview").show()){
+                            $(".video-preview-source div.offline-preview").hide();
+                        }
+                        $(".video-preview-source div.offline-preview div.offline-preview-title").empty();
+                        video_preview_start(data.stream_url);
                     }else{
-                        $("div.stream-info-status").html("<div class='fs-5 text-center text-danger'><span class='material-icons me-1'>warning</span>No Streaming Data Input.</div>").show();
-                        player.hasStarted(false);
-                        player.reset();
+                        $("div.stream-info-status").html("<div class='fs-5 text-center text-danger'><span class='bi bi-exclamation-triangle fs-2 me-1'></span>No Streaming Data Input.</div>").show();
+                        if($(".video-preview-source div.offline-preview").hide()){
+                            $(".video-preview-source div.offline-preview").show();
+                        }
+                        $(".video-preview-source div.offline-preview-title").html("<div class='spinner-border'></div><div class='fw-light'>Waiting Data From Encoder</div>");
+                        reset_video_preview();
                         setTimeout('check_stream_preview();', 5000);
                     }
                 } else {
+                    $("div.stream-info-status").html("<div class='fs-5 text-center text-danger'><span class='bi bi-exclamation-triangle fs-2 me-1'></span>Connection Failed, Retry Data.</div>").show();
+                    if($(".video-preview-source div.offline-preview").hide()){
+                        $(".video-preview-source div.offline-preview").show();
+                    }
                     setTimeout('check_stream_preview();', 5000);
                 }
             },

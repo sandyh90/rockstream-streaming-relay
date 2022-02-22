@@ -5,8 +5,7 @@
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between flex-wrap my-2">
-        <a class="btn btn-primary" href="{{ route('stream.home') }}"><span
-                class="material-icons me-1">arrow_back</span>Back</a>
+        <a class="btn btn-primary" href="{{ route('stream.home') }}"><span class="bi bi-arrow-left me-1"></span>Back</a>
         <h4 class="fw-light text-truncate">{{ \Str::words($stream_input->name_input, 8) }}</h4>
         {!! $stream_input->is_live == TRUE ? '<div class="text-success flash-text-item"><span
                 class="material-icons me-1">sensors</span>Live</div>' : '<div class="text-danger"><span
@@ -15,7 +14,7 @@
     <div class="row">
         <div class="col-xl-4">
             <div class="card card-body mb-2">
-                <div class="fs-4 fw-light my-2"><span class="material-icons me-1 fs-2">input</span>Edit Input
+                <div class="fs-4 fw-light my-2"><span class="bi bi-hdmi me-1"></span>Edit Input
                     Stream
                 </div>
                 <form class="form-edit-input-stream">
@@ -40,7 +39,7 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-edit-input-stream"><span
-                            class="material-icons me-1">save</span>Save</button>
+                            class="bi bi-save me-1"></span>Save</button>
                 </form>
                 <div class="my-2 edit-input-stream-info-data"></div>
             </div>
@@ -48,14 +47,14 @@
         <div class="col-xl-8">
             <div class="card">
                 <div class="card-body">
-                    <div class="fs-4 fw-light my-2"><span class="material-icons me-1 fs-2">cell_tower</span>Output
+                    <div class="fs-4 fw-light my-2"><span class="bi bi-broadcast me-1"></span>Output
                         Destination
                     </div>
                     <div class="d-flex justify-content-between flex-wrap my-2">
                         @if ($stream_input->is_live != TRUE)
                         <button type="button" class="btn btn-success" data-bs-toggle="modal"
                             data-bs-target=".add-output-dest">
-                            <span class="material-icons me-1">cell_tower</span>Add Output
+                            <span class="bi bi-broadcast me-1"></span>Add Output
                         </button>
                         @else
                         <button type="button" class="btn btn-danger" disabled>
@@ -63,7 +62,7 @@
                         </button>
                         @endif
                         <button class="btn btn-primary output-dest-data-refresh">
-                            <span class="material-icons me-1">refresh</span>Refresh
+                            <span class="bi bi-arrow-clockwise me-1"></span>Refresh
                         </button>
                     </div>
                     <div class="table-responsive">
@@ -138,7 +137,7 @@
                 },
                 success: function(data) {
                     if (data.success == false) {
-                        if(data.is_form == true){
+                        if(data.isForm == true){
                             msgalert(".edit-input-stream-info-data", data.messages);
                         }else{
                             $(".edit-input-stream-info-data").html(data.messages).show().delay(3000).fadeOut();
@@ -149,11 +148,11 @@
                         }
                         $(".edit-input-stream-info-data").html(data.messages).show().delay(3000).fadeOut();
                     }
-                    $(".btn-edit-input-stream").html("<span class='material-icons me-1'>save</span>Save").attr("disabled", false);
+                    $(".btn-edit-input-stream").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
                     $('meta[name="csrf-token"').val(data.csrftoken);
                 },
                 error: function() {
-                    $(".btn-edit-input-stream").html("<span class='material-icons me-1'>save</span>Save").attr("disabled", false);
+                    $(".btn-edit-input-stream").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
                     swal.fire("Edit Input Stream Error", "There have problem while editing input stream!", "error");
                 }
             });
@@ -163,17 +162,6 @@
 @if ($stream_input->is_live != TRUE)
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        $(".stream-key-toggle button.btn-toggle-stream-key").on("click", function (event) {
-            event.preventDefault();
-            if ($(".stream-key-toggle input").attr("type") == "text") {
-                $(".stream-key-toggle input").attr("type", "password");
-                $(".stream-key-toggle button.btn-toggle-stream-key span").html("visibility_off");
-            } else if ($(".stream-key-toggle input").attr("type") == "password") {
-                $(".stream-key-toggle input").attr("type", "text");
-                $(".stream-key-toggle button.btn-toggle-stream-key span").html("visibility");
-            }
-        });
-
         $('.form-add-output-dest').on('submit', function(event) {
             event.preventDefault();
             var form = this;
@@ -191,7 +179,7 @@
                 },
                 success: function(data) {
                     if (data.success == false) {
-                        if(data.is_form == true){
+                        if(data.isForm == true){
                             msgalert(".output-dest-info-data", data.messages);
                         }else{
                             $(".output-dest-info-data").html(data.messages).show().delay(3000).fadeOut();
@@ -205,11 +193,11 @@
                         $('.add-output-dest').modal('hide');
                         form.reset();
                     }
-                    $(".btn-add-output-dest").html("<span class='material-icons me-1'>save</span>Save").attr("disabled", false);
+                    $(".btn-add-output-dest").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
                     $('meta[name="csrf-token"').val(data.csrftoken);
                 },
                 error: function() {
-                    $(".btn-add-output-dest").html("<span class='material-icons me-1'>save</span>Save").attr("disabled", false);
+                    $(".btn-add-output-dest").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
                     swal.fire("Add Input Stream Error", "There have problem while adding input stream!", "error");
                 }
             });
@@ -279,7 +267,7 @@
                                     $('meta[name="csrf-token"').val(data.csrftoken);
                                     $('input[name=_token]').val(data.csrftoken);
                                     if (data.success == false) {
-                                        if(data.is_form == true){
+                                        if(data.isForm == true){
                                             msgalert(".edit-output-dest-info-data", data.messages);
                                         }else{
                                             $(".edit-output-dest-info-data").html(data.messages).show().delay(3000).fadeOut();
@@ -293,10 +281,10 @@
                                         $('.custom-modal-display').modal('hide');
                                         form.reset();
                                     }
-                                    $(".btn-edit-output-dest").on('.custom-modal-content').html("<span class='material-icons me-1'>save</span>Save").attr("disabled", false);
+                                    $(".btn-edit-output-dest").on('.custom-modal-content').html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
                                 },
                                 error: function() {
-                                    $(".btn-edit-output-dest").on('.custom-modal-content').html("<span class='material-icons me-1'>save</span>Save").attr("disabled", false);
+                                    $(".btn-edit-output-dest").on('.custom-modal-content').html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
                                 }
                             });
                         });
@@ -393,7 +381,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel"><span class="material-icons me-1">cell_tower</span>Add
+                <h5 class="modal-title" id="staticBackdropLabel"><span class="bi bi-broadcast me-1"></span>Add
                     Output
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -423,11 +411,12 @@
                     </div>
                     <div class="form-group mb-2">
                         <label class="form-label">RTMP Stream Key</label>
-                        <div class="input-group stream-key-toggle">
-                            <input type="password" class="form-control" name="rtmp_stream_key">
+                        <div class="input-group" x-data="{ input: 'password' }">
+                            <input type="password" class="form-control" name="rtmp_stream_key" x-bind:type="input">
                             <button type="button" class="input-group-text btn-toggle-stream-key"
-                                data-bs-toggle="tooltip" data-bs-original-title="Show Stream Key"><span
-                                    class="material-icons me-1">visibility_off</span></button>
+                                data-bs-toggle="tooltip" data-bs-original-title="Show Stream Key"
+                                x-on:click="input = (input === 'password') ? 'text' : 'password'"><span
+                                    :class="{'bi bi-eye-slash' : input != 'password','bi bi-eye': input != 'text'}"></span></button>
                         </div>
                     </div>
                     <div class="form-group mb-2">
@@ -444,7 +433,7 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-add-output-dest"><span
-                            class="material-icons me-1">save</span>Save</button>
+                            class="bi bi-save me-1"></span>Save</button>
                 </form>
                 <div class="my-2 output-dest-info-data"></div>
             </div>

@@ -20,7 +20,7 @@ IF "%ERRORLEVEL%"=="0" (
 	ECHO PHP already running
 )else (
     ECHO Starting PHP
-    cmd /c start "" RunHiddenConsole.exe "%cd%\bin\php\php.exe" -S 127.0.0.1:7733 -t "web_http/public"
+    cmd /c start "" "%cd%\bin\RunHiddenConsole.exe" "%cd%\bin\php\php.exe" -S 127.0.0.1:7733 -t "web_http/public"
 )
 
 QPROCESS * | find /I /N "nginx.exe">NUL

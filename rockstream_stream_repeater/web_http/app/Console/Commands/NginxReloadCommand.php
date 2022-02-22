@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
+use App\Component\Utility;
+
 class NginxReloadCommand extends Command
 {
     /**
@@ -47,7 +49,7 @@ class NginxReloadCommand extends Command
 
             if ($check_process == 0) {
                 # Reload nginx process to apply changes to config file and restart it
-                system('cmd /c start "" /d"' . $nginx_folder . '" "nginx.exe" -s reload');
+                Utility::runInstancewithPid('cmd /c start "" /d"' . $nginx_folder . '" "nginx.exe" -s reload');
                 return $this->info('Restart Nginx successfully');
             } else {
                 return $this->error('Nginx not running.');
