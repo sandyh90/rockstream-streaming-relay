@@ -5,7 +5,7 @@
 <h3 align="center">Alternative self hosted live streaming relay to multi platform.</h3>
 
 ## Introduction
-This live streaming relay application serves to assist you in multi-streaming to several platform locations that you can access in one place to facilitate the live streaming process so you don't have to bother anymore
+This live streaming relay or restream application serves to assist you in multi-streaming to several platform locations that you can access in one place to facilitate the live streaming process so you don't have to bother anymore
 to create an account with a multi-live streaming service provider, but the this application is only for alternative and not as a substitute for the multi live streaming service provider itself whose stability is guaranteed.
 
 ## Features
