@@ -27,10 +27,10 @@ to create an account with a multi-live streaming service provider, but the this 
 - (Optional: For Premiere Video Transcoding) Use external / dedicated graphics card.
 
 ## Limitation
-- Due nginx service built for windows version and some feature may not work like in linux version.
-- Status RTMP in navbar reseting to beginning if nginx reload because of nginx process use old process and not automatically use new process, this need **per_worker** listener for now only support in linux version. [Nginx Patches Source](https://github.com/arut/nginx-patches).
-- RTMPS protocol for now not supported on this application, and will supported soon on new version.
-- There are still bug remaining on app, Please report any bugs you find.
+- Due Nginx service built for the Windows version and some features may not work like in the Linux version.
+- Status RTMP in navbar resetting to the beginning if Nginx reloads because of Nginx process use the old process and not automatically use new process, this need per_worker listener for now only support in Linux version. [Nginx Patches Source](https://github.com/arut/nginx-patches).
+- RTMPS protocol, for now, is not supported on this application and will be supported soon on the new version.
+- There is still bugs remaining on the app, Please report any bugs you find.
 
 ## How to install
 - Extract the ZIP file into a safe folder so it doesn't get mixed up.
