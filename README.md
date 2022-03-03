@@ -21,7 +21,7 @@ to create an account with a multi-live streaming service provider, but the this 
 - Nginx 1.21.7 (Included Nginx)
 - FFMpeg 5.0(Included FFMpeg)
 - SQLite (Embedded Database)
-- High Speed Internet Min. 10 Mbps with upload speed Min. 5 Mbps or High.
+- High-Speed Internet Min. 10 Mbps with upload speed Min. 5 Mbps or High.
 - Processor Min. Dual Core with speed clock 2.40 GHz or High (Except: Premiere Video Transcoding).
 - Storage free space capacity Min. 4 GB.
 - (Optional: For Premiere Video Transcoding) Use external / dedicated graphics card.
