@@ -1,4 +1,5 @@
-![GitHub release (latest by date)](https://img.shields.io/github/downloads/sandyh90/rockstream-streaming-relay/latest/total?style=flat-square)
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/sandyh90/rockstream-streaming-relay/latest/total?style=for-the-badge)
+![GitHub license](https://img.shields.io/github/license/sandyh90/rockstream-streaming-relay?style=for-the-badge)
 
 <h1 align="center">RockStream Streaming Relay</p>
 
