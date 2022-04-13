@@ -14,6 +14,10 @@ to create an account with a multi-live streaming service provider, but the this 
 - Multi Input Stream Location
 - Multi Destination Stream Ingest
 - Setup Page
+- Livestream Analytics
+- Multiple User Auth
+- Livestreaming Testing Tool
+- Countdown Premiere Video
 - Live Preview [Beta]
 - Premiere Video [Beta]
 
