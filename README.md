@@ -79,7 +79,8 @@ SESSION_LIFETIME=120
 
 
 ![Login Page](https://user-images.githubusercontent.com/30236529/156620510-0f9a186f-4e6d-48a1-a532-e323bc471131.jpeg)
-![Dashboard Page](https://user-images.githubusercontent.com/30236529/156620562-83933922-0077-479f-bcf9-2360f7d3a413.jpeg)
-![Input Stream Page](https://user-images.githubusercontent.com/30236529/156620629-b4098974-72e3-4b05-8f0f-71a21491033e.jpeg)
-![Output Stream Page](https://user-images.githubusercontent.com/30236529/156620685-23cf7847-d9e7-4650-9f05-08e920ffb70e.jpeg)
-![Premiere Video Page](https://user-images.githubusercontent.com/30236529/156620738-bf534d30-28ec-4fdd-b3e0-70e44bb0d24a.jpeg)
+![Dashboard Page](https://user-images.githubusercontent.com/30236529/163223536-2a737e4e-ce1c-461f-9e47-e57230cd78e5.jpeg)
+![Input Stream Page](https://user-images.githubusercontent.com/30236529/163223823-bd44fff7-0530-4c9e-b4e9-aefe6d005f1f.jpeg)
+![Output Stream Page](https://user-images.githubusercontent.com/30236529/163223908-f4e6927e-ef0b-412f-90ef-106de165a08c.jpeg)
+![Premiere Video Page](https://user-images.githubusercontent.com/30236529/163223975-0a03bfb5-3b57-45b0-9416-4a24db6b2b57.jpeg)
+
