@@ -19,8 +19,6 @@
                             aria-controls="nav-update-password" aria-selected="false">Update Password</button>
                         <button class="nav-link" id="nav-session-tab" data-bs-toggle="tab" data-bs-target="#nav-session"
                             type="button" role="tab" aria-controls="nav-session" aria-selected="false">Session</button>
-                        <button class="nav-link" id="nav-misc-tab" data-bs-toggle="tab" data-bs-target="#nav-misc"
-                            type="button" role="tab" aria-controls="nav-misc" aria-selected="false">Misc</button>
                     </div>
                 </nav>
                 <div class="tab-content mt-2" id="nav-tabContent">
@@ -34,7 +32,7 @@
                             <div class="form-group mb-2">
                                 <label class="form-label">Fullname</label>
                                 <div class="input-group">
-                                    <div class="input-group-text"><span class="material-icons">text_format</span></div>
+                                    <div class="input-group-text"><span class="bi bi-type"></span></div>
                                     <input type="text" class="form-control @error('fullname') is-invalid @enderror"
                                         name="fullname"
                                         value="{{ (old('fullname')) ? old('fullname') : Auth::user()->name }}">
@@ -48,7 +46,7 @@
                             <div class="form-group mb-2">
                                 <label class="form-label">Username</label>
                                 <div class="input-group">
-                                    <div class="input-group-text"><span class="material-icons">account_circle</span>
+                                    <div class="input-group-text"><span class="bi bi-person-circle"></span>
                                     </div>
                                     <input type="text" class="form-control @error('username') is-invalid @enderror"
                                         name="username"
@@ -61,7 +59,7 @@
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary"><span
-                                    class="material-icons me-1">edit</span>Edit</button>
+                                    class="bi bi-pencil-square me-1"></span>Edit</button>
                         </form>
                     </div>
                     <div class="tab-pane fade" id="nav-update-password" role="tabpanel"
@@ -71,47 +69,49 @@
                         <form enctype="multipart/form-data" action="{{ route('settings.update_password') }}"
                             method="POST">
                             @csrf
-                            <div class="form-group mb-2">
-                                <label class="form-label">Old Password</label>
-                                <div class="input-group password-toggle">
-                                    <input class="form-control @error('old_password') is-invalid @enderror"
-                                        name="old_password" id="old-password" type="password">
-                                    <button type="button" class="input-group-text btn-toggle-pass"
-                                        data-bs-toggle="tooltip" data-bs-original-title="Show Password"><span
-                                            class="material-icons">visibility_off</span></button>
-                                    @error('old_password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
+                            <div x-data="{ input: 'password' }">
+                                <div class="form-group mb-2">
+                                    <label class="form-label">Old Password</label>
+                                    <div class="input-group password-toggle">
+                                        <input class="form-control @error('old_password') is-invalid @enderror"
+                                            name="old_password" id="old-password" type="password" x-bind:type="input">
+                                        <button type="button" class="input-group-text" data-bs-toggle="tooltip"
+                                            data-bs-original-title="Show Password"
+                                            x-on:click="input = (input === 'password') ? 'text' : 'password'"><span
+                                                :class="{'bi bi-eye-slash' : input != 'password','bi bi-eye': input != 'text'}"></span></button>
+                                        @error('old_password')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="form-group row g-3">
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label">New Password</label>
+                                        <input type="password"
+                                            class="form-control @error('new_password') is-invalid @enderror"
+                                            id="new-password" name="new_password" x-bind:type="input">
+                                        @error('new_password')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label">Confirm New Password</label>
+                                        <input type="password"
+                                            class="form-control @error('new_password_confirm') is-invalid @enderror"
+                                            id="new-password-confirm" name="new_password_confirm" x-bind:type="input">
+                                        @error('new_password_confirm')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group row g-3 password-toggle">
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label">New Password</label>
-                                    <input type="password"
-                                        class="form-control @error('new_password') is-invalid @enderror"
-                                        id="new-password" name="new_password">
-                                    @error('new_password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label">Confirm New Password</label>
-                                    <input type="password"
-                                        class="form-control @error('new_password_confirm') is-invalid @enderror"
-                                        id="new-password-confirm" name="new_password_confirm">
-                                    @error('new_password_confirm')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary"><span
-                                    class="material-icons me-1">key</span>Change
+                            <button type="submit" class="btn btn-primary"><span class="bi bi-key me-1"></span>Change
                                 Password</button>
                         </form>
                     </div>
@@ -122,10 +122,11 @@
                             @foreach ($session_list as $session)
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0">
-                                    <div class="material-icons fs-1">
-                                        {{ $session->agent['check_device'] == 'desktop' ? 'monitor' :
-                                        ($session->agent['check_device'] == 'phone' ? 'smartphone' :
-                                        ($session->agent['check_device'] == 'robot' ? 'smart_toy' : 'devices')) }}
+                                    <div class="fs-1">
+                                        <span
+                                            class="bi {{ $session->agent['check_device'] == 'desktop' ? 'bi-pc-display' :
+                                            ($session->agent['check_device'] == 'phone' ? 'bi-phone' :
+                                            ($session->agent['check_device'] == 'robot' ? 'bi-robot' : 'bi-display')) }}"></span>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
@@ -136,7 +137,8 @@
                                         {{ date('d F Y',$session->last_activity) }}
                                         &bull;
                                         {{ $session->ip_address }}
-                                        @if($session->user_agent == Request::header('User-Agent'))
+                                        @if(($session->user_agent == Request::header('User-Agent')) &&
+                                        ($session->ip_address == Request::ip()))
                                         <span class="text-success">This Device</span>
                                         @endif
                                     </div>
@@ -153,93 +155,19 @@
                                 <div class="form-group mb-2">
                                     <label class="form-label">Password</label>
                                     <div class="input-group">
-                                        <div class="input-group-text"><span class="material-icons">lock</span></div>
+                                        <div class="input-group-text"><span class="bi bi-lock"></span></div>
                                         <input type="password" class="form-control" name="logout_password"
                                             value="{{ old('logout_password') }}">
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary"><span
-                                        class="material-icons me-1">logout</span>Logout</button>
+                                        class="bi bi-box-arrow-right me-1"></span>Logout</button>
                             </form>
                         </div>
-                    </div>
-                    <div class="tab-pane fade" id="nav-misc" role="tabpanel" aria-labelledby="nav-misc-tab">
-                        <div class="fw-light fs-5">Miscellaneous</div>
-                        <hr>
-                        <dl class="misc-section-settings">
-                            <dt>Reset To Factory</dt>
-                            <dd>
-                                <div class="btn btn-danger reset-to-factory">
-                                    <span class="material-icons me-1">restart_alt</span>Reset
-                                </div>
-                            </dd>
-                        </dl>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
-
-@section('js-content')
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        $(".password-toggle button.btn-toggle-pass").on("click", function (event) {
-            event.preventDefault();
-            if ($(".password-toggle input").attr("type") == "text") {
-                $(".password-toggle input").attr("type", "password");
-                $(".password-toggle span").html("visibility_off");
-            } else if ($(".password-toggle input").attr("type") == "password") {
-                $(".password-toggle input").attr("type", "text");
-                $(".password-toggle span").html("visibility");
-            }
-        });
-
-        $(".misc-section-settings").on('click', '.reset-to-factory', function(event) {
-            Swal.fire({
-                title: 'Reset To Factory',
-                text: "Are you sure you want to reset to factory?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Reset'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ route('settings.reset_factory') }}",
-                        type: 'POST',
-                        async: true,
-                        beforeSend: function() {
-                            swal.fire({
-                                title: "Resetting...",
-                                text: "Please wait",
-                                showConfirmButton: false,
-                                allowOutsideClick: false
-                            });
-                            Swal.showLoading();
-                        },
-                        success: function(data) {
-                            swal.fire({
-                                icon: data.alert.icon,
-                                title: data.alert.title,
-                                showConfirmButton: false,
-                                timer: 1500,
-                                timerProgressBar: true
-                            });
-                            $('input[name="_token"').val(data.csrftoken);
-                            $('meta[name="csrf-token"').val(data.csrftoken);
-                            location.reload();
-                        },
-                        error: function(err) {
-                            swal.fire("Reset To Factory Failed", "There have problem while reset to factory!", "error");
-                        }
-                    });
-                }
-            });
-            event.preventDefault();
-        });
-    });
-</script>
 @endsection

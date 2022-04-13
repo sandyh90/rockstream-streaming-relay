@@ -6,14 +6,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('title') - {{ env('APP_NAME','RockStream') }}</title>
+    <title>@yield('title') - {{ config('app.name') }}</title>
 
     @yield('head-content')
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link href="{{ asset('assets/vendor/bootstrap-5.0.2/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/vendor/google-icon/google-icon.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
 
@@ -34,7 +33,7 @@
                     data-bs-target=".sidebar-toggle">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <a class="navbar-brand" href="{{ route('home') }}">{{ env('APP_NAME','RockStream') }}</a>
+                <a class="navbar-brand" href="{{ route('home') }}">{{ config('app.name') }}</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -62,7 +61,7 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-item-text indicator-rtmp"><span
-                                        class="bi bi-123 me-1"></span>Bytes:
+                                        class="bi bi-arrow-down-up me-1"></span>Bytes:
                                     <span class="bytes-in-out">
                                         <div class="spinner-border spinner-border-sm" role="status">
                                             <span class="visually-hidden">Loading...</span>
@@ -81,7 +80,8 @@
                         </div>
                         <div class="nav-item dropdown">
                             <div class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" type="button">
-                                Hello,<span class="ms-1">{{ \Str::of(Auth::user()->name)->limit(13); }}</span>
+                                <span class="bi bi-person-circle me-1"></span>Hello,<span class="ms-1">{{
+                                    \Str::of(Auth::user()->name)->limit(13); }}</span>
                             </div>
                             <div class="dropdown-menu dropdown-menu-end text-small">
                                 <div class="dropdown-item-text text-center small">Logged in
@@ -104,11 +104,14 @@
             </div>
         </nav>
 
-        <div class="offcanvas offcanvas-start sidebar-toggle" tabindex="-1" data-bs-backdrop="true">
+        <div class="offcanvas offcanvas-start sidebar-toggle sidebar" tabindex="-1" data-bs-backdrop="true">
             <div class="offcanvas-body">
-                <div class="h4 d-inline">{{ env('APP_NAME','RockStream') }}</div>
-                <button type="button" class="btn btn-outline" data-bs-dismiss="offcanvas"><span
-                        class="material-icons">menu</span></button>
+                <div class="h4 d-inline"><img src="{{ asset('assets/img/rockstream-logo.png') }}" height="50" width="50"
+                        class="p-1">{{
+                    config('app.name') }}</div>
+                <button type="button" class="btn btn-outline sidebar-btn" data-bs-dismiss="offcanvas">
+                    <span class="sidebar-toggler-icon"></span>
+                </button>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
@@ -122,17 +125,43 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('user.settings') }}" class="nav-link text-reset">
-                            <span class="bi bi-person-circle fs-4 me-1"></span>Account Settings
-                        </a>
-                    </li>
-                    <li>
                         <a href="{{ route('premiere.home') }}" class="nav-link text-reset">
                             <span class="bi bi-play-btn fs-4 me-1"></span>Premiere Video
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('user.settings') }}" class="nav-link text-reset">
+                            <span class="bi bi-person-circle fs-4 me-1"></span>Account Settings
+                        </a>
+                    </li>
+                    @if(Auth::user()->is_operator == TRUE)
+                    <hr>
+                    <div class="fs-5 fw-light"><span class="bi bi-wrench-adjustable-circle me-1"></span>Administrator
+                    </div>
+                    <li>
+                        <a href="{{ route('analytics.home') }}" class="nav-link text-reset">
+                            <span class="bi bi-activity fs-4 me-1"></span>Livestream Analytics
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('users.home') }}" class="nav-link text-reset">
+                            <span class="bi bi-people fs-4 me-1"></span>Management Users
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('interfaces.home') }}" class="nav-link text-reset">
+                            <span class="bi bi-tools fs-4 me-1"></span>Interfaces Settings
+                        </a>
+                    </li>
+                    @endif
                 </ul>
                 <hr>
+                <div class="small d-flex justify-content-around flex-wrap">
+                    <a class="nav-link text-reset" href="https://github.com/sandyh90/rockstream-streaming-relay"
+                        target="_blank"><span class="bi bi-github me-1"></span>Github Source</a>
+                    <a class="nav-link text-reset" href="https://trakteer.id/pickedianz/tip" target="_blank"><span
+                            class="bi bi-heart-fill text-danger me-1"></span>Support Me On Trakteer</a>
+                </div>
             </div>
         </div>
 
@@ -145,8 +174,7 @@
         <div class="container-fluid text-muted">
             <div class="d-flex justify-content-between flex-wrap">
                 <div class="small">
-                    Copyright &copy; {{ date('Y') }}<a href="{{ url('/') }}" class="ms-1">{{
-                        env('APP_NAME','RockStream') }}</a>
+                    Copyright &copy; {{ date('Y') }}<a href="{{ url('/') }}" class="ms-1">RockStream V1.0.2</a>
                     <div class="d-inline">Powered By<a href="https://github.com/sandyh90" target="_blank"
                             class="ms-1">Pickedianz</a>
                     </div>
@@ -236,78 +264,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content rounded-6 shadow">
             <div class="modal-body p-5">
-                <div class="text-center mb-0">
-                    <h2 class="fw-bold">About</h2>
-                    <h5 class="fw-light">{{ env('APP_NAME','RockStream') }}</h5>
-                </div>
-                <ul class="d-grid gap-4 my-5 list-unstyled">
-                    <li class="d-flex gap-4">
-                        <span class="bi bi-broadcast fs-1 text-primary flex-shrink-0"></span>
-                        <div>
-                            <h5 class="mb-0">Stream To Multi Endpoint</h5>
-                            Stream to multiple endpoints with one input stream relay.
-                        </div>
-                    </li>
-                    <li class="d-flex gap-4">
-                        <span class="bi bi-emoji-laughing fs-1 text-success flex-shrink-0"></span>
-                        <div>
-                            <h5 class="mb-0">Easy To Use</h5>
-                            We want create this application Easy to use and easy to understand with other.
-                        </div>
-                    </li>
-                    <li class="d-flex gap-4">
-                        <span class="bi bi-collection-play fs-1 text-danger flex-shrink-0"></span>
-                        <div>
-                            <h5 class="mb-0">Watch On Other Platform</h5>
-                            You can watch stream on other platform that come from this application.
-                        </div>
-                    </li>
-                    <li class="d-flex gap-4">
-                        <span class="bi bi-usb-drive fs-1 text-secondary flex-shrink-0"></span>
-                        <div>
-                            <h5 class="mb-0">Portable Application</h5>
-                            You can use this software on any device without installation.
-                        </div>
-                    </li>
-                    <li class="d-flex gap-4">
-                        <span class="bi bi-windows fs-1 text-info flex-shrink-0"></span>
-                        <div>
-                            <h5 class="mb-0">Design For Windows</h5>
-                            This app design only for windows and maybe not working properly if use outside windows
-                            platform.
-                        </div>
-                    </li>
-                </ul>
-                <hr>
-                <div class="fw-light fs-5">Recommended:</div>
-                <ul>
-                    <li><span class="bi bi-ethernet fs-4 me-1"></span>High Speed Internet Min. 10 Mbps and upload speed
-                        Min. 5 Mbps or High.</li>
-                    <li><span class="bi bi-cpu fs-4 me-1"></span>Processor Min. Dual Core with speed clock 2.40 GHz or
-                        High
-                        (Except: Premiere Video Transcoding).</li>
-                    <li><span class="bi bi-device-hdd fs-4 me-1"></span>Storage free space capacity Min. 4 GB.</li>
-                    <li><span class="bi bi-gpu-card fs-4 me-1"></span>(Optional: For Premiere Video Transcoding) Use
-                        external / dedicated graphics card.</li>
-                </ul>
-                <div class="fw-light fs-5">Limited Experience:</div>
-                <ul>
-                    <li><span class="bi bi-plus-slash-minus fs-4 me-1"></span>Due nginx service built for windows
-                        version and
-                        some feature may not work like in linux version.
-                    </li>
-                    <li><span class="bi bi-question-square fs-4 me-1"></span>Status RTMP in navbar reseting to
-                        beginning if nginx reload because of nginx process use old
-                        process and not automatically use new process, this need <strong>per_worker</strong> listener
-                        for now only support in linux version. <a href="https://github.com/arut/nginx-patches"
-                            target="_blank">[Nginx
-                            Patches Source]</a></li>
-                    <li><span class="bi bi-shield-slash fs-4 me-1"></span>RTMPS protocol for now not supported on
-                        this application, and will supported soon on new
-                        version.</li>
-                    <li><span class="bi bi-tools fs-4 me-1"></span>There are still bug remaining on app, Please report
-                        any bugs you find.</li>
-                </ul>
+                @include('layouts.info_layouts.about_modal')
                 <button type="button" class="btn btn-lg btn-primary btn-dismiss-about-modal mt-5 w-100"
                     data-bs-dismiss="modal">OK</button>
             </div>

@@ -96,11 +96,11 @@
                         $('.add-input-stream').modal('hide');
                         form.reset();
                     }
-                    $(".btn-add-input-stream").html("<span class='material-icons me-1'>save</span>Save").attr("disabled", false);
-                    $('meta[name="csrf-token"').val(data.csrftoken);
+                    $(".btn-add-input-stream").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
+                    $('meta[name="csrf-token"]').val(data.csrftoken);
                 },
                 error: function() {
-                    $(".btn-add-input-stream").html("<span class='material-icons me-1'>save</span>Save").attr("disabled", false);
+                    $(".btn-add-input-stream").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
                     swal.fire("Add Input Stream Error", "There have problem while adding input stream!", "error");
                 }
             });
@@ -109,33 +109,45 @@
         $(".input-stream-data").on('click', '.regen-input-stream-key', function(event) {
             var input_stream_data = $(event.currentTarget).attr('data-input-stream-id');
             if (input_stream_data === null) return;
-            $.ajax({
-                url: "{{ route('stream.regenstreamkey') }}",
-                type: 'POST',
-                data: {id_input_stream: input_stream_data},
-                async: true,
-                beforeSend: function() {
-                    swal.fire({
-                        title: "Regenerating Stream Key",
-                        text: "Please wait",
-                        showConfirmButton: false,
-                        allowOutsideClick: false
+            Swal.fire({
+                title: 'Regenerate Key Input Stream',
+                text: "This input stream key will be regenerate with new key!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Regenerate'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('stream.regenstreamkey') }}",
+                        type: 'POST',
+                        data: {id_input_stream: input_stream_data},
+                        async: true,
+                        beforeSend: function() {
+                            swal.fire({
+                                title: "Regenerating Stream Key",
+                                text: "Please wait",
+                                showConfirmButton: false,
+                                allowOutsideClick: false
+                            });
+                            Swal.showLoading();
+                        },
+                        success: function(data) {
+                            swal.fire({
+                                icon: data.alert.icon,
+                                title: data.alert.title,
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true
+                            });
+                            $('.input-stream-data').DataTable().ajax.reload();
+                            $('meta[name="csrf-token"]').val(data.csrftoken);
+                        },
+                        error: function(err) {
+                            swal.fire("Regenerate Stream Key Failed", "There have problem while regenerate stream key!", "error");
+                        }
                     });
-                    Swal.showLoading();
-                },
-                success: function(data) {
-                    swal.fire({
-                        icon: data.alert.icon,
-                        title: data.alert.title,
-                        showConfirmButton: false,
-                        timer: 1500,
-                        timerProgressBar: true
-                    });
-                    $('.input-stream-data').DataTable().ajax.reload();
-                    $('meta[name="csrf-token"').val(data.csrftoken);
-                },
-                error: function(err) {
-                    swal.fire("Regenerate Stream Key Failed", "There have problem while regenerate stream key!", "error");
                 }
             });
             event.preventDefault();
@@ -154,7 +166,7 @@
                     $('.custom-modal-content').html("<span class='spinner-border my-2'></span>").addClass("text-center");
                 },
                 success: function(data) {
-                    $('meta[name="csrf-token"').val(data.csrftoken);
+                    $('meta[name="csrf-token"]').val(data.csrftoken);
                     $('input[name=_token]').val(data.csrftoken);
                     if(data.success == true){
                         $('.custom-modal-content').html(data.html).removeClass("text-center");
@@ -163,7 +175,7 @@
                     }
                 },
                 error: function(err) {
-                    $('.custom-modal-content').html("<span class='material-icons me-1'>warning</span>There have problem while processing data").addClass("text-center");
+                    $('.custom-modal-content').html("<span class='bi bi-exclamation-triangle me-1'></span>There have problem while processing data").addClass("text-center");
                 }
             });
             event.preventDefault();
@@ -205,10 +217,57 @@
                                 timerProgressBar: true
                             });
                             $('.input-stream-data').DataTable().ajax.reload();
-                            $('meta[name="csrf-token"').val(data.csrftoken);
+                            $('meta[name="csrf-token"]').val(data.csrftoken);
                         },
                         error: function(err) {
                             swal.fire("Delete Input Stream Failed", "There have problem while deleting input stream!", "error");
+                        }
+                    });
+                }
+            });
+            event.preventDefault();
+        });
+
+        $(".input-stream-data").on('click', '.force-status-input-stream', function(event) {
+            var input_stream_data = $(event.currentTarget).attr('data-input-stream-id');
+            if (input_stream_data === null) return;
+            Swal.fire({
+                title: 'Force Status Input Stream',
+                text: "This input stream will be force to offline, It may help you if the status streaming are stuck in the live state!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Force'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('stream.force_status') }}",
+                        type: 'POST',
+                        data: {id_input_stream: input_stream_data},
+                        async: true,
+                        beforeSend: function() {
+                            swal.fire({
+                                title: "Forcing Status Input Stream",
+                                text: "Please wait",
+                                showConfirmButton: false,
+                                allowOutsideClick: false
+                            });
+                            Swal.showLoading();
+                        },
+                        success: function(data) {
+                            swal.fire({
+                                icon: data.alert.icon,
+                                title: data.alert.title,
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true
+                            });
+                            $('.premiere-video-data').DataTable().ajax.reload();
+                            $('meta[name="csrf-token"]').val(data.csrftoken);
+                        },
+                        error: function(err) {
+                            swal.fire("Force Status Input Stream Failed", "There have problem while forcing status input stream!", "error");
                         }
                     });
                 }
@@ -273,7 +332,7 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-add-input-stream"><span
-                            class="material-icons me-1">save</span>Save</button>
+                            class="bi bi-save me-1"></span>Save</button>
                 </form>
                 <div class="my-2 input-stream-info-data"></div>
             </div>

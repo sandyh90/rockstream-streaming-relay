@@ -18,7 +18,7 @@ class CreateStreamRepeaterDestTable extends Migration
             $table->foreignId('input_stream_id')->nullable()->constrained('input_stream')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name_stream_dest');
-            $table->enum('platform_dest', ['youtube', 'twitch', 'custom']);
+            $table->string('platform_dest');
             $table->string('url_stream_dest');
             $table->string('key_stream_dest');
             $table->boolean('active_stream_dest');

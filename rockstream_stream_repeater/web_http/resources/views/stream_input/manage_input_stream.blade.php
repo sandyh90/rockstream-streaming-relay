@@ -2,14 +2,19 @@
 
 @section('title','Edit Input Stream')
 
+@section('head-content')
+<link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2-bootstrap4.min.css') }}">
+@endsection
+
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between flex-wrap my-2">
         <a class="btn btn-primary" href="{{ route('stream.home') }}"><span class="bi bi-arrow-left me-1"></span>Back</a>
         <h4 class="fw-light text-truncate">{{ \Str::words($stream_input->name_input, 8) }}</h4>
         {!! $stream_input->is_live == TRUE ? '<div class="text-success flash-text-item"><span
-                class="material-icons me-1">sensors</span>Live</div>' : '<div class="text-danger"><span
-                class="material-icons me-1">sensors_off</span>Not Live</div>' !!}
+                class="bi bi-broadcast me-1"></span>Live</div>' : '<div class="text-danger"><span
+                class="bi bi-x-circle me-1"></span>Not Live</div>' !!}
     </div>
     <div class="row">
         <div class="col-xl-4">
@@ -58,7 +63,7 @@
                         </button>
                         @else
                         <button type="button" class="btn btn-danger" disabled>
-                            <span class="material-icons me-1">block</span>Add Output
+                            <span class="bi bi-x-circle me-1"></span>Add Output
                         </button>
                         @endif
                         <button class="btn btn-primary output-dest-data-refresh">
@@ -86,6 +91,8 @@
 @endsection
 
 @section('js-content')
+<script src="{{ asset('assets/vendor/select2/js/select2.full.min.js') }}"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         $('.output-dest-data').DataTable({
@@ -120,6 +127,42 @@
             }, ]
         });
 
+        $("select[name='platform_output_dest']").on('change',function(){
+            var id_platform = $("select[name='platform_output_dest'] option:selected").val();
+            if (id_platform === null) return;
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('outputdest.fetch_endpoint') }}",
+                dataType: 'json',
+                async: true,
+                data: { id_platform : id_platform },
+                beforeSend: function() {
+                    $(".form-add-output-dest .output-dest-selector").prepend("<div class='fetching-data-endpoint text-center'><span class='spinner-border spinner-border-sm me-1'></span>Fetching Endpoint</div>").removeClass("d-none");
+                    $(".form-add-output-dest select[name='select_endpoint_server']").empty().addClass("d-none");
+                    $(".btn-add-output-dest").html("<span class='spinner-border spinner-border-sm me-1'></span>Please Wait").attr("disabled", true);
+                },
+                error: function() {
+                    $(".btn-add-output-dest").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
+                },
+            }).done(function(data){
+                $(".btn-add-output-dest").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
+                $(".form-add-output-dest .output-dest-selector .fetching-data-endpoint").remove();
+                if(data.manual_input == true){
+                    $(".form-add-output-dest input[name='rtmp_output_server']").removeClass("d-none");
+                    $(".form-add-output-dest select[name='select_endpoint_server']").addClass("d-none");
+                }else{
+                    $(".form-add-output-dest input[name='rtmp_output_server']").addClass("d-none");
+                    $(".form-add-output-dest select[name='select_endpoint_server']").removeClass("d-none");
+                }
+                var list_server = '';
+                $.each(data.services, function(i, item) {
+                    list_server += `<option value='${data.services[i].rtmp_address}'>${data.services[i].name_endpoint}</option>`;
+                });
+                $(".form-add-output-dest select[name='select_endpoint_server']").html(list_server);
+            });
+        });
+
         $('.form-edit-input-stream').on('submit', function(event) {
             event.preventDefault();
             var form = this;
@@ -149,7 +192,7 @@
                         $(".edit-input-stream-info-data").html(data.messages).show().delay(3000).fadeOut();
                     }
                     $(".btn-edit-input-stream").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
-                    $('meta[name="csrf-token"').val(data.csrftoken);
+                    $('meta[name="csrf-token"]').val(data.csrftoken);
                 },
                 error: function() {
                     $(".btn-edit-input-stream").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
@@ -191,10 +234,12 @@
                         }
                         $(".output-dest-info-data").html(data.messages).show().delay(3000).fadeOut();
                         $('.add-output-dest').modal('hide');
+                        $(".form-add-output-dest select[name='select_endpoint_server']").empty();
+                        $(".form-add-output-dest .output-dest-selector").addClass("d-none");
                         form.reset();
                     }
                     $(".btn-add-output-dest").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
-                    $('meta[name="csrf-token"').val(data.csrftoken);
+                    $('meta[name="csrf-token"]').val(data.csrftoken);
                 },
                 error: function() {
                     $(".btn-add-output-dest").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
@@ -216,7 +261,7 @@
                     $('.custom-modal-content').html("<span class='spinner-border my-2'></span>").addClass("text-center");
                 },
                 success: function(data) {
-                    $('meta[name="csrf-token"').val(data.csrftoken);
+                    $('meta[name="csrf-token"]').val(data.csrftoken);
                     $('input[name=_token]').val(data.csrftoken);
                     if(data.success == true){
                         $('.custom-modal-content').html(data.html).removeClass("text-center");
@@ -225,7 +270,7 @@
                     }
                 },
                 error: function(err) {
-                    $('.custom-modal-content').html("<span class='material-icons me-1'>warning</span>There have problem while processing data").addClass("text-center");
+                    $('.custom-modal-content').html("<span class='bi bi-exclamation-triangle me-1'></span>There have problem while processing data").addClass("text-center");
                 }
             });
             event.preventDefault();
@@ -244,7 +289,7 @@
                     $('.custom-modal-content').html("<span class='spinner-border my-2'></span>").addClass("text-center");
                 },
                 success: function(data) {
-                    $('meta[name="csrf-token"').val(data.csrftoken);
+                    $('meta[name="csrf-token"]').val(data.csrftoken);
                     $('input[name=_token]').val(data.csrftoken);
                     if(data.success == true){
                         $('.custom-modal-content').html(data.html).removeClass("text-center");
@@ -264,7 +309,7 @@
                                     $(".btn-edit-output-dest").on('.custom-modal-content').html("<span class='spinner-border spinner-border-sm me-1'></span>Saving").attr("disabled", true);
                                 },
                                 success: function(data) {
-                                    $('meta[name="csrf-token"').val(data.csrftoken);
+                                    $('meta[name="csrf-token"]').val(data.csrftoken);
                                     $('input[name=_token]').val(data.csrftoken);
                                     if (data.success == false) {
                                         if(data.isForm == true){
@@ -279,6 +324,8 @@
                                         }
                                         $(".edit-output-dest-info-data").html(data.messages).show().delay(3000).fadeOut();
                                         $('.custom-modal-display').modal('hide');
+                                        $(".form-edit-output-dest select[name='select_endpoint_server']").empty();
+                                        $(".form-edit-output-dest .output-dest-selector").addClass("d-none");
                                         form.reset();
                                     }
                                     $(".btn-edit-output-dest").on('.custom-modal-content').html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
@@ -293,7 +340,7 @@
                     }
                 },
                 error: function(err) {
-                    $('.custom-modal-content').html("<span class='material-icons me-1'>warning</span>There have problem while processing data").addClass("text-center");
+                    $('.custom-modal-content').html("<span class='bi bi-exclamation-triangle me-1'></span>There have problem while processing data").addClass("text-center");
                 }
             });
             event.preventDefault();
@@ -335,7 +382,7 @@
                                 timerProgressBar: true
                             });
                             $('.output-dest-data').DataTable().ajax.reload();
-                            $('meta[name="csrf-token"').val(data.csrftoken);
+                            $('meta[name="csrf-token"]').val(data.csrftoken);
                         },
                         error: function(err) {
                             swal.fire("Delete Output Destination Failed", "There have problem while deleting output destination!", "error");
@@ -397,17 +444,21 @@
                         <label class="form-label">Platform Output</label>
                         <select class="form-select" name="platform_output_dest">
                             <option selected>- Select Platform -</option>
-                            <option value="youtube">Youtube</option>
-                            <option value="twitch">Twitch</option>
-                            <option value="custom">Custom</option>
+                            @foreach(\App\Component\ServicesCore::getServices() as $key => $value)
+                            <option value="{{ $value['id'] }}">{{ $value['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
-                    <div class="form-group mb-2">
-                        <label class="form-label">RTMP Output Server</label>
-                        <input type="text" class="form-control" name="rtmp_output_server"
-                            placeholder="rtmp://xxx.xxx.xxx.xxx/live">
-                        <small class="form-text text-muted">*For now we currently not support rtmps:// url
-                            server</small>
+                    <div class="output-dest-selector d-none">
+                        <div class="form-group mb-2">
+                            <label class="form-label">RTMP Output Server</label>
+                            <select class="form-select d-none" name="select_endpoint_server" data-width="100%">
+                            </select>
+                            <input type="text" class="form-control d-none" name="rtmp_output_server"
+                                placeholder="rtmp://xxx.xxx.xxx.xxx/live">
+                            <div class="form-text small text-muted">*For now we currently not support rtmps:// url
+                                server</div>
+                        </div>
                     </div>
                     <div class="form-group mb-2">
                         <label class="form-label">RTMP Stream Key</label>

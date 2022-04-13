@@ -1,6 +1,7 @@
 !.gitignore
-!/nginx/logs/
-/nginx/hls
-!/nginx/temp/
+!README.md
+/ffmpeg
+/php
+/nginx
 /.idea
 /.vscode

@@ -32,7 +32,7 @@ class IngestStreamController extends Controller
 
     public function get_input_stream()
     {
-        return DataTables::of(StreamInput::with('ingest_destination_data')->get())
+        return DataTables::of(StreamInput::with('ingest_destination_data')->where('user_id', Auth::id())->get())
             ->addIndexColumn()
             ->addColumn('name_dest', function ($data) {
                 if ($data->ingest_destination_data->count() > 0) {
@@ -46,28 +46,30 @@ class IngestStreamController extends Controller
             })
             ->addColumn('is_live', function ($data) {
                 if ($data->is_live == TRUE) {
-                    return '<div class="text-success flash-text-item"><span class="material-icons me-1">sensors</span>Live</div>';
+                    return '<div class="text-success flash-text-item"><span class="bi bi-broadcast me-1"></span>Live</div>';
                 } else {
-                    return '<div class="text-danger"><span class="material-icons me-1">sensors_off</span>Offline</div>';
+                    return '<div class="text-danger"><span class="bi bi-x-circle me-1"></span>Offline</div>';
                 }
             })
             ->addColumn('is_active', function ($data) {
                 if ($data->active_input_stream == TRUE) {
-                    return '<div class="text-success"><span class="material-icons me-1">check_circle</span>Active</div>';
+                    return '<div class="text-success"><span class="bi bi-check-circle me-1"></span>Active</div>';
                 } else {
-                    return '<div class="text-danger"><span class="material-icons me-1">cancel</span>Not Active</div>';
+                    return '<div class="text-danger"><span class="bi bi-x-circle me-1"></span>Not Active</div>';
                 }
             })
             ->addColumn('actions', function ($data) {
                 return '<div class="btn-group">
                     <div class="btn btn-primary view-input-stream" data-input-stream-id="' . $data->identifier_stream . '" data-toggle="tooltip" title="View Input Stream"><span
-                        class="material-icons">description</span></div>
+                        class="bi bi-file-earmark-text"></span></div>
                     <div class="btn btn-secondary regen-input-stream-key" data-input-stream-id="' . $data->identifier_stream . '" data-toggle="tooltip" title="Regenerate Input Stream Key"><span
-                        class="material-icons">key</span></div>
+                        class="bi bi-key"></span></div>
                     <a class="btn btn-success" href="' . route('stream.manage', ['id_stream' => $data->identifier_stream]) . '" data-toggle="tooltip" title="Manage Input Stream"><span
-                        class="material-icons">edit</span></a>
+                        class="bi bi-pencil-square"></span></a>
+                    <div class="btn btn-warning force-status-input-stream" data-input-stream-id="' . $data->identifier_stream . '" data-bs-toggle="tooltip" title="Force Status Input Stream"><span
+                        class="bi bi-toggle-off"></span></div>
                     <div class="btn btn-danger delete-input-stream" data-input-stream-id="' . $data->identifier_stream . '" data-toggle="tooltip" title="Delete Input Stream"><span
-                        class="material-icons">delete</span></div>
+                        class="bi bi-trash"></span></div>
                 </div>
             ';
             })
@@ -103,10 +105,10 @@ class IngestStreamController extends Controller
             StreamInput::create([
                 'name_input' => $request->name_input,
                 'active_input_stream' => $request->status_input,
-                'user_id' => (Auth::check() ? Auth::user()->id : NULL),
+                'user_id' => (Auth::check() ? Auth::id() : NULL),
                 'is_live' => FALSE,
                 'identifier_stream' => Str::uuid(),
-                'name_input_stream' => 'live' . uniqid() . Str::random(10),
+                'name_input_stream' => 'live_' . uniqid() . Str::random(10),
                 'key_input_stream' => 'key-' . Str::uuid() . Str::random(10)
             ]);
 
@@ -121,7 +123,7 @@ class IngestStreamController extends Controller
     {
         $check_stream = StreamInput::where('identifier_stream', $request->id_input_stream)->first();
 
-        if ($check_stream->user_id == Auth::user()->id) {
+        if ($check_stream->user_id == Auth::id()) {
             if ($check_stream->is_live != TRUE) {
                 $responses = [
                     'csrftoken' => csrf_token(),
@@ -161,7 +163,7 @@ class IngestStreamController extends Controller
             } else {
                 $responses = [
                     'csrftoken' => csrf_token(),
-                    'messages' => '<div class="alert alert-danger"><span class="material-icons me-1">block</span>Cannot edit input stream because it is live</div>',
+                    'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>Cannot edit input stream because it is live</div>',
                     'isForm' => FALSE,
                     'success' => FALSE
                 ];
@@ -171,7 +173,7 @@ class IngestStreamController extends Controller
                 'csrftoken' => csrf_token(),
                 'success' => FALSE,
                 'isForm' => FALSE,
-                'messages' => '<div class="alert alert-danger"><span class="material-icons me-1">cancel</span>You are not have access to edit this input stream</div>'
+                'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>You are not have access to edit this input stream</div>'
             ];
         }
         return response()->json($responses);
@@ -181,7 +183,7 @@ class IngestStreamController extends Controller
     {
         if ($request->isMethod('post')) {
             $check_stream = StreamInput::where('identifier_stream', $request->id_input_stream)->first();
-            if ($check_stream->user_id == Auth::user()->id) {
+            if ($check_stream->user_id == Auth::id()) {
                 $data['input_stream_data'] = $check_stream;
 
                 $responses = [
@@ -193,7 +195,7 @@ class IngestStreamController extends Controller
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'success' => FALSE,
-                    'messages' => '<div class="alert alert-danger"><span class="material-icons me-1">cancel</span>You are not have access to view this output destination</div>'
+                    'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>You are not have access to view this output destination</div>'
                 ];
             }
         }
@@ -206,7 +208,7 @@ class IngestStreamController extends Controller
             $check_stream = StreamInput::where('identifier_stream', $request->id_input_stream)->first();
 
             if ($check_stream) {
-                if ($check_stream->user_id == Auth::user()->id) {
+                if ($check_stream->user_id == Auth::id()) {
                     if ($check_stream->is_live != TRUE) {
                         $responses = [
                             'csrftoken' => csrf_token(),
@@ -260,7 +262,7 @@ class IngestStreamController extends Controller
         if ($request->isMethod('post')) {
             $check_stream = StreamInput::where('identifier_stream', $request->id_input_stream)->first();
 
-            if ($check_stream->user_id == Auth::user()->id) {
+            if ($check_stream->user_id == Auth::id()) {
                 if ($check_stream->is_live != TRUE) {
                     $responses = [
                         'csrftoken' => csrf_token(),
@@ -292,6 +294,46 @@ class IngestStreamController extends Controller
                     'alert' => [
                         'icon' => 'warning',
                         'title' => 'You are not have access to delete this input stream'
+                    ]
+                ];
+            }
+        }
+        return response()->json($responses);
+    }
+
+    public function force_status_input_stream(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $check_stream = StreamInput::where('identifier_stream', $request->id_input_stream)->first();
+
+            if ($check_stream->user_id == Auth::id()) {
+                if ($check_stream->is_live != FALSE) {
+                    StreamInput::where(['id' => $check_stream->id])->update(['is_live' => FALSE]);
+                    return  $responses = [
+                        'csrftoken' => csrf_token(),
+                        'success' => TRUE,
+                        'alert' => [
+                            'icon' => 'success',
+                            'title' => 'Force Status Input Stream Success'
+                        ]
+                    ];
+                } else {
+                    $responses = [
+                        'csrftoken' => csrf_token(),
+                        'success' => FALSE,
+                        'alert' => [
+                            'icon' => 'warning',
+                            'title' => 'This Input Are Not In Live State'
+                        ]
+                    ];
+                }
+            } else {
+                $responses = [
+                    'csrftoken' => csrf_token(),
+                    'success' => FALSE,
+                    'alert' => [
+                        'icon' => 'warning',
+                        'title' => 'You are not have access to force status this input stream'
                     ]
                 ];
             }

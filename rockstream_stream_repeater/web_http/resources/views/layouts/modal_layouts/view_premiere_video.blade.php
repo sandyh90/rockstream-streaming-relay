@@ -19,9 +19,9 @@
                 <tr>
                     <td>{{ $premiere_video_data->title_video }}</td>
                     <td>{!! ($premiere_video_data->is_premiere == TRUE ? '<div class="text-success flash-text-item">
-                            <span class="material-icons me-1">sensors</span>Premiere
+                            <span class="bi bi-play-circle me-1"></span>Premiere
                         </div>' :'<div class="text-danger">
-                            <span class="material-icons me-1">sensors_off</span>Offline</div') !!}</td>
+                            <span class="bi bi-x-circle me-1"></span>Offline</div') !!}</td>
                 </tr>
             </tbody>
         </table>

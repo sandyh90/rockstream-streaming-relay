@@ -23,16 +23,6 @@ Route::group(['prefix' => 'stream'], function () {
     Route::post('/on_publish_done', [App\Http\Controllers\EventStreamController::class, 'on_publish_done']);
 });
 
-Route::get('/panel/rtmp_stat', [App\Http\Controllers\PanelController::class, 'get_stat_rtmp'])->name('panel.data_rtmp_stat');
-
-Route::options('/premiere/launch_premiere_daemon', [App\Http\Controllers\PremiereVideoController::class, 'launch_queue_daemon'])->name('premiere.launch_daemon');
-
-Route::group(['prefix' => 'fetch'], function () {
-    Route::post('/panel/stream_key_encoder', [App\Http\Controllers\PanelController::class, 'get_stream_key'])->name('panel.rtmp_stream_key');
-    Route::post('/panel/get_stream_preview', [App\Http\Controllers\PanelController::class, 'check_stream_preview'])->name('panel.rtmp_preview');
-    Route::post('/panel/fetch_input_stream', [App\Http\Controllers\PanelController::class, 'fetch_stream_input'])->name('panel.fetch_stream_input');
-});
-
 Route::fallback(function () {
     return abort(404);
 });

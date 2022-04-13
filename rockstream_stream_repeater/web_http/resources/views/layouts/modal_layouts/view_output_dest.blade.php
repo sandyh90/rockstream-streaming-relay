@@ -17,9 +17,7 @@
             <tbody>
                 <tr>
                     <td>{{ $output_dest_data->name_stream_dest }}</td>
-                    <td>{{ ($output_dest_data->platform_dest == 'youtube' ? 'Youtube' :
-                        ($output_dest_data->platform_dest == 'twitch' ? 'Twitch' : ($output_dest_data->platform_dest ==
-                        'custom' ? 'Custom' : 'Unknown'))) }}</td>
+                    <td>{!! \App\Component\ServicesCore::getServiceIcons($output_dest_data->platform_dest) !!}</td>
                 </tr>
             </tbody>
         </table>

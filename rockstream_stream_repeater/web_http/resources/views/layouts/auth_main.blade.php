@@ -6,14 +6,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('title') - {{ env('APP_NAME','RockStream') }}</title>
+    <title>@yield('title') - {{ config('app.name') }}</title>
 
     @yield('head-content')
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link href="{{ asset('assets/vendor/bootstrap-5.0.2/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/vendor/google-icon/google-icon.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
 
@@ -22,7 +21,7 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-    <h1>{{ env('APP_NAME','RockStream') }}</h1>
+    <h1>{{ config('app.name') }}</h1>
     <div class="col-xl-4">
         <div class="card shadow-lg">
             <div class="card-body">
@@ -32,8 +31,7 @@
             </div>
             <div class="card-footer text-center small">
                 <div class="container">
-                    Copyright &copy; {{ date('Y') }}<a href="{{ url('/') }}" class="ms-1">{{
-                        env('APP_NAME','RockStream') }}</a>
+                    Copyright &copy; {{ date('Y') }}<a href="{{ url('/') }}" class="ms-1">RockStream V1.0.2</a>
                     <div class="d-inline">Powered By<a href="https://github.com/sandyh90" target="_blank"
                             class="ms-1">Pickedianz</a>
                     </div>

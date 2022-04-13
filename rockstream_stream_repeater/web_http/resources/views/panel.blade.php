@@ -22,7 +22,7 @@
                             <div class="fw-light">Select Input Streaming First</div>
                         </div>
                     </div>
-                    <video class="video-stream-preview" controls autoplay muted></video>
+                    <video class="video-stream-preview" autoplay muted></video>
                 </div>
                 <div class="card card-body stream-info-status my-2" style="display: none;">
                 </div>
@@ -30,10 +30,12 @@
         </div>
         <div class="col-xl-6 mb-4">
             <div class="card card-body text-center">
+                @if(Auth::user()->is_operator == TRUE)
                 <div class="fs-4 fw-light my-2"><span class="bi bi-sliders me-1 fs-2"></span>Control Panel
                 </div>
                 <div class="control-action-stream-btn">
-                    @if (\App\Component\Utility::getInstanceRun('nginx.exe') == TRUE)
+                    @if(\App\Component\Utility::getInstanceRunByPath((\App\Component\Utility::defaultBinDirFolder(config('component.nginx_path'))
+                    . DIRECTORY_SEPARATOR . 'nginx.exe'))['found_process'] == TRUE)
                     <div class="btn btn-danger control-stream-btn my-2" control-stream-action="power"><span
                             class="bi bi-power me-1"></span>Stop Server
                     </div>
@@ -54,6 +56,7 @@
                     </div>
                 </div>
                 <div class="control-info-status my-2"></div>
+                @endif
                 <div class="card card-body">
                     <div class="fs-4 fw-light my-2"><span class="bi bi-pc-display me-1 fs-2"></span>Setup Your
                         Encoder
@@ -64,41 +67,62 @@
                             <select class="form-select stream-input-select" data-width="100%">
                             </select>
                         </div>
-                        <div class="credentials-input-stream" style="display: none;">
-                            <div class="form-group mb-2">
-                                <label for="form-label">Stream URL</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control stream-url-val" placeholder="Stream URL"
-                                        readonly>
-                                    <button type="button" class="input-group-text btn-clipboard"
-                                        data-bs-toggle="tooltip" data-bs-original-title="Copy Stream URL"
-                                        data-clipboard-action="copy"
-                                        data-clipboard-target=".encoder-setting-data input.stream-url-val"><span
-                                            class="bi bi-clipboard"></span></button>
+                        <div>
+                            <div class="credentials-input-stream" style="display: none;">
+                                <div class="form-group mb-2">
+                                    <label for="form-label">Stream URL</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control stream-url-val" placeholder="Stream URL"
+                                            readonly>
+                                        <button type="button" class="input-group-text btn-clipboard"
+                                            data-bs-toggle="tooltip" data-bs-original-title="Copy Stream URL"
+                                            data-clipboard-action="copy"
+                                            data-clipboard-target=".encoder-setting-data input.stream-url-val"><span
+                                                class="bi bi-clipboard"></span></button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="form-label">Stream Key</label>
-                                <div class="input-group" x-data="{ input: 'password' }">
-                                    <input type="password" class="form-control stream-key-val" placeholder="Stream Key"
-                                        readonly x-bind:type="input">
-                                    <button type="button" class="input-group-text btn-toggle-stream-key"
-                                        data-bs-toggle="tooltip" data-bs-original-title="Show Stream Key"
-                                        x-on:click="input = (input === 'password') ? 'text' : 'password'"><span
-                                            :class="{'bi bi-eye-slash' : input != 'password','bi bi-eye': input != 'text'}"></span></button>
-                                    <button type="button" class="input-group-text btn-clipboard"
-                                        data-bs-toggle="tooltip" data-bs-original-title="Copy Stream Key"
-                                        data-clipboard-action="copy"
-                                        data-clipboard-target=".encoder-setting-data input.stream-key-val"><span
-                                            class="bi bi-clipboard"></span></button>
+                                <div class="form-group mb-2">
+                                    <label for="form-label">Stream Key</label>
+                                    <div class="input-group" x-data="{ input: 'password' }">
+                                        <input type="password" class="form-control stream-key-val"
+                                            placeholder="Stream Key" readonly x-bind:type="input">
+                                        <button type="button" class="input-group-text btn-toggle-stream-key"
+                                            data-bs-toggle="tooltip" data-bs-original-title="Show Stream Key"
+                                            x-on:click="input = (input === 'password') ? 'text' : 'password'"><span
+                                                :class="{'bi bi-eye-slash' : input != 'password','bi bi-eye': input != 'text'}"></span></button>
+                                        <button type="button" class="input-group-text btn-clipboard"
+                                            data-bs-toggle="tooltip" data-bs-original-title="Copy Stream Key"
+                                            data-clipboard-action="copy"
+                                            data-clipboard-target=".encoder-setting-data input.stream-key-val"><span
+                                                class="bi bi-clipboard"></span></button>
+                                    </div>
+                                </div>
+                                <div class="text-center mb-2">
+                                    <label>Stream QR Code</label>
+                                    <div class="qr-code-container">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="collapse"
-                                data-bs-target=".how-to-stream-encoder">
-                                <span class="bi bi-journal-bookmark-fill me-1"></span>How to Setup Stream Encoder
-                            </button>
+                        <div class="text-center">
+                            <div class="dropdown">
+                                <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="bi bi-journal-bookmark-fill me-1"></span>Manual Usage
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <div role="button" class="dropdown-item" data-bs-toggle="modal"
+                                            data-bs-target=".modal-connect-lan-network">How to connect stream from local
+                                            lan
+                                            network</div>
+                                    </li>
+                                    <li>
+                                        <div role="button" class="dropdown-item" data-bs-toggle="collapse"
+                                            data-bs-target=".how-to-stream-encoder">How to Setup Stream Encoder</div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -107,127 +131,7 @@
     </div>
     <div class="collapse how-to-stream-encoder">
         <div class="card card-body">
-            <div class="card-title text-center"><span class="bi bi-journal-bookmark-fill me-1"></span>How to Setup
-                Stream
-                Encoder</div>
-            <div class="d-flex align-items-center">
-                <div class="flex-shrink-0">
-                    <img src="{{ asset('assets/img/OBS-Logo.png') }}" width="45px" alt="OBS Logo">
-                </div>
-                <div class="flex-grow-1 ms-3 fw-bold">
-                    OBS (Open Broadcaster Software) Encoder
-                </div>
-            </div>
-            <hr>
-            <small class="text-muted">*This setup process maybe different if software get updated to latest
-                version</small>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                <div class="col">
-                    <div class="card">
-                        <img loading="lazy" class="card-img-top how-to-img"
-                            src="{{ asset('assets/img/how-to-setup/obs-1.png') }}" width="100%" alt="OBS Step 1">
-                        <div class="card-body">
-                            <h5 class="card-title">Step 1</h5>
-                            <p class="card-text">After you opened OBS (Open Broadcaster Software) goto
-                                <strong>"Settings"</strong>
-                                button.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <img loading="lazy" class="card-img-top how-to-img"
-                            src="{{ asset('assets/img/how-to-setup/obs-2.png') }}" width="100%" alt="OBS Step 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Step 2</h5>
-                            <p class="card-text">If window <strong>"Settings"</strong> opened, select
-                                <strong>"Stream"</strong> menu.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <img loading="lazy" class="card-img-top how-to-img"
-                            src="{{ asset('assets/img/how-to-setup/obs-3.png') }}" width="100%" alt="OBS Step 3">
-                        <div class="card-body">
-                            <h5 class="card-title">Step 3</h5>
-                            <p class="card-text">Next step in service section select <strong>"Custom..."</strong>, then
-                                fill server url
-                                and stream key that be given in web,
-                                after you filled server url and stream key then click <strong>"Apply"</strong> button
-                                and then click <strong>"OK"</strong>
-                                button.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex align-items-center">
-                <div class="flex-shrink-0">
-                    <img src="{{ asset('assets/img/StreamLabs-Logo.png') }}" width="45px" alt="StreamLabs Logo">
-                </div>
-                <div class="flex-grow-1 ms-3 fw-bold">
-                    StreamLabs Encoder
-                </div>
-            </div>
-            <hr>
-            <small class="text-muted">*This setup process maybe different if software get updated to latest
-                version</small>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                <div class="col">
-                    <div class="card">
-                        <img loading="lazy" class="card-img-top how-to-img"
-                            src="{{ asset('assets/img/how-to-setup/streamlabs-1.png') }}" width="100%"
-                            alt="StreamLabs Step 1">
-                        <div class="card-body">
-                            <h5 class="card-title">Step 1</h5>
-                            <p class="card-text">After you opened StreamLabs goto
-                                <strong>"Gear<span class="bi bi-gear-fill ms-1"></span>"</strong>
-                                icon.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <img loading="lazy" class="card-img-top how-to-img"
-                            src="{{ asset('assets/img/how-to-setup/streamlabs-2.png') }}" width="100%"
-                            alt="StreamLabs Step 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Step 2</h5>
-                            <p class="card-text">If window <strong>"Settings"</strong> opened, select
-                                <strong>"Stream"</strong> menu.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card">
-                        <img loading="lazy" class="card-img-top how-to-img"
-                            src="{{ asset('assets/img/how-to-setup/streamlabs-3.png') }}" width="100%"
-                            alt="StreamLabs Step 3">
-                        <div class="card-body">
-                            <h5 class="card-title">Step 3</h5>
-                            <p class="card-text">Next step in stream type section select <strong>"Custom Streaming
-                                    Server"</strong>, then fill server url and stream key that be given in web,
-                                after you filled server url and stream key then click <strong>"Done"</strong> button.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex align-items-center">
-                <div class="flex-shrink-0">
-                    <div class="bi bi-person-video fs-1"></div>
-                </div>
-                <div class="flex-grow-1 ms-3 fw-bold">
-                    Other Encoder
-                </div>
-            </div>
-            <hr>
-            <p>If your software encoder support custom RTMP, you just input server input stream point and input stream
-                key.</p>
+            @include('layouts.info_layouts.how_to_stream_encoder')
         </div>
     </div>
 </div>
@@ -248,7 +152,7 @@
             theme: 'bootstrap4',
             language: {
                 noResults: function (params) {
-                    return "There is no stream input available";
+                    return "There's is no stream input available";
                 }
             },
             ajax: {
@@ -279,6 +183,35 @@
             fetch_stream_key();
         });
 
+        // Fetch Stream Key
+
+        function fetch_stream_key() {
+            $.ajax({
+                type: "POST",
+                url: "{{ route('panel.rtmp_stream_key') }}",
+                data: {
+                    input_stream: window.stream_input_id
+                },
+                async: true,
+                success: function(data) {
+                    $('meta[name="csrf-token"]').val(data.csrftoken);
+                    if (data.success == true) {
+                        if($(".encoder-setting-data div.credentials-input-stream").hide()){
+                            $(".encoder-setting-data div.credentials-input-stream").show();
+                        }
+                        $(".video-preview-source div.offline-preview-title").html("<div class='spinner-border'></div><div class='fw-light'>Waiting Data From Encoder</div>");
+                        $(".encoder-setting-data input.stream-url-val").val(data.stream_data.stream_url);
+                        $(".encoder-setting-data input.stream-key-val").val(data.stream_data.stream_key);
+                        $(".encoder-setting-data div.qr-code-container").html(data.stream_data.stream_qrcode);
+                    }
+                },
+                error: function(data) {
+                }
+            });
+        }
+
+    @if(Auth::user()->is_operator == TRUE)
+
         $(".control-action-stream-btn").on('click', '.control-stream-btn', function(event) {
             var action_control = $(event.currentTarget).attr('control-stream-action');
             if (action_control === null) return;
@@ -307,7 +240,7 @@
                     }
                     $(event.currentTarget).attr("disabled", false);
                     $(".control-stream-btn span.spinner-border").remove();
-                    $('meta[name="csrf-token"').val(data.csrftoken);
+                    $('meta[name="csrf-token"]').val(data.csrftoken);
                 },
                 error: function(err) {
                     swal.fire("Send Control Signal Failed", "There have problem while send control signal!", "error");
@@ -315,6 +248,8 @@
             });
             event.preventDefault();
         });
+
+    @endif
     });
 </script>
 <script>
@@ -327,11 +262,13 @@
                 hls.loadSource(video_url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    video.setAttribute('controls', '');
                     video.play();
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = video_url;
                 video.addEventListener('loadedmetadata', function () {
+                    video.setAttribute('controls', '');
                     video.play();
                 });
             }
@@ -342,47 +279,25 @@
             hls.detachMedia();
             video.pause();
             video.removeAttribute('src');
+            video.removeAttribute('controls');
             video.load();
         }
 
         hls.on(Hls.Events.ERROR, function (event, data) {
             if(data.details === Hls.ErrorDetails.LEVEL_LOAD_ERROR && data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                reset_video_preview();
                 $("div.stream-info-status").html("<div class='fs-5 text-center text-danger'><span class='bi bi-exclamation-triangle fs-2 me-1'></span>Failed To Connect Stream, Stream Offline Or Server Down</div>").show();
                 if($(".video-preview-source div.offline-preview").hide()){
                     $(".video-preview-source div.offline-preview").show();
                 }
                 $(".video-preview-source div.offline-preview-title").html("<div class='bi bi-exclamation-triangle fs-2'></div><div class='fw-light'>Failed To Connect Stream</div>");
-                reset_video_preview();
                 setTimeout('check_stream_preview();', 5000);
             }
         });
     }
 
-    // Check Stream Preview and Fetch Stream Key
-
-    function fetch_stream_key() {
-        $.ajax({
-            type: "POST",
-            url: "{{ route('panel.rtmp_stream_key') }}",
-            data: {
-                input_stream: window.stream_input_id
-            },
-            async: true,
-            success: function(data) {
-                if (data.success == true) {
-                    if($(".encoder-setting-data div.credentials-input-stream").hide()){
-                        $(".encoder-setting-data div.credentials-input-stream").show();
-                    }
-                    $(".video-preview-source div.offline-preview-title").html("<div class='spinner-border'></div><div class='fw-light'>Waiting Data From Encoder</div>");
-                    $(".encoder-setting-data input.stream-url-val").val(data.input_stream.stream_url);
-                    $(".encoder-setting-data input.stream-key-val").val(data.input_stream.stream_key);
-                } else {
-                }
-            },
-            error: function(data) {
-            }
-        });
-    }
+    // Check Stream Preview
+    
     function check_stream_preview() {
         $.ajax({
             type: "POST",
@@ -392,6 +307,7 @@
             },
             async: true,
             success: function(data) {
+                $('meta[name="csrf-token"]').val(data.csrftoken);
                 if (data.success == true) {
                     if (data.is_live == true) {
                         $("div.stream-info-status").html("<div class='fs-5 text-center text-success'><span class='bi bi-check2-circle fs-2 me-1'></span>Successfuly Getting Data From Encoder.</div>").show();
@@ -410,7 +326,7 @@
                         setTimeout('check_stream_preview();', 5000);
                     }
                 } else {
-                    $("div.stream-info-status").html("<div class='fs-5 text-center text-danger'><span class='bi bi-exclamation-triangle fs-2 me-1'></span>Connection Failed, Retry Data.</div>").show();
+                    $("div.stream-info-status").html("<div class='fs-5 text-center text-danger'><span class='bi bi-exclamation-triangle fs-2 me-1'></span>Connection Failed, Retry Getting Data.</div>").show();
                     if($(".video-preview-source div.offline-preview").hide()){
                         $(".video-preview-source div.offline-preview").show();
                     }
@@ -423,4 +339,19 @@
         });
     }
 </script>
+@endsection
+
+@section('modal-content')
+<div class="modal fade modal-connect-lan-network" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content rounded-6 shadow">
+            <div class="modal-body">
+                @include('layouts.info_layouts.how_connect_lan_network')
+                <button type="button" class="btn btn-primary btn-dismiss-connect-lan-network-modal mt-2 w-100"
+                    data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

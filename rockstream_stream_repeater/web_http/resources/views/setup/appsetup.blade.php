@@ -17,6 +17,8 @@
     <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
 
+    <link href="{{ asset('assets/vendor/sweetalert2/dist/sweetalert2.min.css') }}" rel="stylesheet">
+
     <!-- Addons Javascript Module [First Start] -->
     <script defer src="{{ asset('assets/vendor/alpine.js/cdn.min.js') }}"></script>
 </head>
@@ -38,6 +40,17 @@
                 </div>
                 <form method="POST" action="{{ route('setup.process') }}">
                     @csrf
+                    <div class="fs-5 fw-light">
+                        Setup App Options
+                    </div>
+                    <hr>
+                    <div class="setup-app-options p-2">
+                        <button class="btn btn-primary setup-generate-appkey">
+                            <span class="bi bi-key me-1"></span>Generate App Key
+                        </button>
+                    </div>
+                    <div class="small text-muted">*After you click button "Generate App Key" the page will be
+                        reload automatically.</div>
                     <div class="fs-5 fw-light">
                         Account App
                     </div>
@@ -128,6 +141,48 @@
 
     <!-- Addons Javascript Module -->
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/sweetalert2/dist/sweetalert2.min.js') }}"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            $(".setup-app-options").on('click', '.setup-generate-appkey', function(event) {
+                $.ajax({
+                    url: "{{ route('setup.generate_appkey') }}",
+                    type: 'OPTIONS',
+                    async: true,
+                    beforeSend: function() {
+                        $(".setup-generate-appkey").on('.setup-app-options').html("<span class='spinner-border spinner-border-sm me-1'></span>Generating App Key").attr("disabled", true);
+                        swal.fire({
+                            title: "Generating App Key",
+                            text: "Please wait",
+                            showConfirmButton: false,
+                            allowOutsideClick: false
+                        });
+                        Swal.showLoading();
+                    },
+                    success: function(data) {
+                        $(".setup-generate-appkey").on('.setup-app-options').html("<span class='bi bi-key me-1'></span>Generate App Key").attr("disabled", false);
+                        swal.fire({
+                            icon: data.alert.icon,
+                            title: data.alert.title,
+                            text: data.alert.text,
+                            showConfirmButton: false,
+                            timer: 1500,
+                            timerProgressBar: true
+                        });
+                        $('input[name=_token]').val(data.csrftoken);
+                        $('meta[name="csrf-token"]').val(data.csrftoken);
+                        location.reload();
+                    },
+                    error: function(err) {
+                        $(".setup-generate-appkey").on('.setup-app-options').html("<span class='bi bi-key me-1'></span>Generate App Key").attr("disabled", false);
+                        swal.fire("Generating App Key Failed", "There have problem while generating app key!", "error");
+                    }
+                });
+                event.preventDefault();
+            });
+        });
+    </script>
 </body>
 
 </html>

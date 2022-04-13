@@ -42,19 +42,23 @@ class NginxConfigCommand extends Command
     public function handle()
     {
         # check nginx executable path if not found then exit or else continue
-        $nginx_folder = (dirname(base_path()) . DIRECTORY_SEPARATOR . config('component.nginx_path'));
+        $nginx_folder = Utility::defaultBinDirFolder(config('component.nginx_path'));
         if (!file_exists($nginx_folder . '\nginx.exe')) {
             return $this->error('Stream input Nginx config cannot be generated, Because nginx not found: ' . $nginx_folder);
         } else {
             # Regenerate Nginx config
-            NginxConfigGen::GenerateBaseConfig();
+            try {
+                NginxConfigGen::GenerateBaseConfig();
+            } catch (\Exception $e) {
+                return $this->error('Stream input Nginx config cannot be generated, Error: ' . $e->getMessage());
+            }
 
             # check nginx process if running then restart nginx service
-            system('QPROCESS * | find /I /N "nginx.exe">NUL', $check_process);
+            $check_process = Utility::getInstanceRunByPath((Utility::defaultBinDirFolder(config('component.nginx_path')) . DIRECTORY_SEPARATOR . 'nginx.exe'))['found_process'];
 
-            if ($check_process == 0) {
+            if ($check_process == true) {
                 # Reload nginx process to apply changes to config file and restart it
-                Utility::runInstancewithPid('cmd /c start "" /d"' . $nginx_folder . '" "nginx.exe" -s reload');
+                Utility::runInstancewithPid('cmd /c start /B "" /d"' . $nginx_folder . '" "nginx.exe" -s reload');
                 return $this->info('Stream input nginx config has been generate, Reload success');
             } else {
                 return $this->error('Stream input nginx config has been generate, But nginx not running.');

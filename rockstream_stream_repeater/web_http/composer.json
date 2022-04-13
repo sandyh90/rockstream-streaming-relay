@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "endroid/qr-code": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "jenssegers/agent": "^2.6",
@@ -14,6 +15,7 @@
         "laravel/tinker": "^2.5",
         "monolog/monolog": "^2.3",
         "php-ffmpeg/php-ffmpeg": "^1.0",
+        "softcreatr/php-mime-detector": "^3.2",
         "symfony/http-client": "^6.0",
         "symfony/mailgun-mailer": "^6.0",
         "symfony/postmark-mailer": "^6.0",

@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->dateTime('last_login')->nullable();
+            $table->boolean('is_operator')->default(FALSE);
             $table->boolean('is_active');
             $table->timestamps();
         });

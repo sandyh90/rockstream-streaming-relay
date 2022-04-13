@@ -2,6 +2,11 @@
 
 namespace App\Component;
 
+use Illuminate\Support\Str;
+
+use SoftCreatR\MimeDetector\MimeDetector;
+use SoftCreatR\MimeDetector\MimeDetectorException;
+
 class Utility
 {
 
@@ -19,6 +24,36 @@ class Utility
             }
         }
     }
+
+    public static function getInstanceRunByPath($ProgramPath = NULL)
+    {
+        if (is_null($ProgramPath)) {
+            return FALSE;
+        } else {
+            # Check if program is running or not
+            $ProcPath = strtolower($ProgramPath);
+            $ResultData = [];
+            $procData = NULL;
+            $get_data = explode("\r\n", trim(shell_exec('wmic process get ExecutablePath,ProcessId 2>NUL')));
+            if (!empty($get_data) && count($get_data) > 0) {
+                foreach (array_slice($get_data, 1) as $procData) {
+                    $procData = preg_split('/\s+\s+/', $procData, 0, PREG_SPLIT_NO_EMPTY);
+                    if (isset($procData[1])) {
+                        $pid  = $procData[1];
+                        $path = strtolower($procData[0]);
+
+                        $ResultData[$path] = ['pids' => [$pid], 'found_process' => ($path == $ProcPath ? TRUE : FALSE)];
+                    }
+                }
+            }
+            if (array_key_exists($ProcPath, $ResultData)) {
+                return $ResultData[$ProcPath];
+            } else {
+                return $ResultData[$ProcPath] = ['pids' => [], 'found_process' => FALSE];
+            }
+        }
+    }
+
 
     public static function runInstancewithPid($command = NULL)
     {
@@ -58,6 +93,30 @@ class Utility
             $sizes = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
 
             return sprintf('%.02F', $bytes / pow(1024, $i)) * 1 . ' ' . $sizes[$i];
+        }
+    }
+
+    public static function checkFileMime($FileInput = NULL, $FileMimeOrExt = NULL)
+    {
+        if ($FileMimeOrExt == NULL || $FileInput == NULL || !is_array($FileMimeOrExt)) {
+            return false;
+        } else {
+            $mimeDetector = new MimeDetector();
+            try {
+                $mimeDetector->setFile($FileInput);
+            } catch (MimeDetectorException $e) {
+                return false;
+            }
+            return in_array($mimeDetector->getMimeType(), $FileMimeOrExt);
+        }
+    }
+
+    public static function defaultBinDirFolder($foldername = NULL)
+    {
+        if (is_null($foldername)) {
+            return false;
+        } else {
+            return (dirname(base_path()) . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . $foldername);
         }
     }
 }

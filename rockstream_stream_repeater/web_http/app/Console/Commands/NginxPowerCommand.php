@@ -42,14 +42,14 @@ class NginxPowerCommand extends Command
     public function handle()
     {
         # check nginx executable path if not found then exit or else continue
-        $nginx_folder = (dirname(base_path()) . DIRECTORY_SEPARATOR . config('component.nginx_path'));
+        $nginx_folder = Utility::defaultBinDirFolder(config('component.nginx_path'));
         if (!file_exists($nginx_folder . '\nginx.exe')) {
             return $this->error('Nginx not found: ' . $nginx_folder);
         } else {
             # check nginx process if running then restart nginx service
-            system('QPROCESS * | find /I /N "nginx.exe">NUL', $check_process);
+            $check_process = Utility::getInstanceRunByPath((Utility::defaultBinDirFolder(config('component.nginx_path')) . DIRECTORY_SEPARATOR . 'nginx.exe'))['found_process'];
 
-            if ($check_process == 0) {
+            if ($check_process == true) {
                 # Set is live in database to false / offline if nginx process is turn off
                 $stream_db = StreamInput::where(['is_live' => TRUE]);
                 if ($stream_db->exists()) {
@@ -57,11 +57,11 @@ class NginxPowerCommand extends Command
                 }
 
                 # Reload nginx process to apply changes to config file and restart it
-                system('taskkill /f /IM nginx.exe >NUL 2>NUL');
+                Utility::runInstancewithPid('cmd /c start /B "" /d"' . $nginx_folder . '" "nginx.exe" -s stop');
                 return $this->info('Power Off Nginx successfully');
             } else {
                 # Turn on nginx process if it is off
-                Utility::runInstancewithPid('cmd /c start "" /d"' . $nginx_folder . '" "nginx.exe"');
+                Utility::runInstancewithPid('cmd /c start /B "" /d"' . $nginx_folder . '" "nginx.exe"');
                 return $this->info('Power On Nginx successfully.');
             }
         }

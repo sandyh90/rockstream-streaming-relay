@@ -13,7 +13,7 @@
                 value="{{ $premiere_video_data->title_video }}">
         </div>
         <div class="form-group mb-2">
-            <label class="form-label">Path Video</label>
+            <label class="form-label">Local Path Video</label>
             <input type="text" class="form-control" name="path_video" placeholder="Path Video"
                 value="{{ $premiere_video_data->video_path }}">
             <small class="form-text text-muted">*For path video please remove quote (").</small>
@@ -39,3 +39,11 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 </div>
+<script>
+    $('input[name="path_video"]').on('keyup keypress change', function(e) {
+        var value = $(this).val();
+        if (value.indexOf('"') != -1) {
+            $(this).val(value.replace(/\"/g, ""));
+        }
+    });
+</script>

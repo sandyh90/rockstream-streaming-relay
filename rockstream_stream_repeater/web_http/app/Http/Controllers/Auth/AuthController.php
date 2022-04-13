@@ -46,7 +46,7 @@ class AuthController extends Controller
                 User::where('id', Auth::user()->id)->update(['last_login' => Carbon::now()]);
                 return redirect()->to('/');
             } else {
-                return redirect()->route('login')->with('auth_msg', '<div class="alert alert-danger text-center alert-dismissible fade show" role="alert"><span class="material-icons me-1">warning</span>Username or password wrong.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                return redirect()->route('login')->with('auth_msg', '<div class="alert alert-danger text-center alert-dismissible fade show" role="alert"><span class="bi bi-exclamation-circle me-1"></span>Username or password wrong.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
             }
         }
     }

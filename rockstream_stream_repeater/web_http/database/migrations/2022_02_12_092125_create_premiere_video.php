@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('title_video');
-            $table->string('video_thumbnail')->default('default-video-thumb');
             $table->text('video_path');
             $table->boolean('is_premiere');
+            $table->uuid('assigned_queue_id')->nullable();
             $table->boolean('active_premiere_video');
             $table->timestamps();
         });

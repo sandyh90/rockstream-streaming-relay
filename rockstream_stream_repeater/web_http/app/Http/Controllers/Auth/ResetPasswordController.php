@@ -37,9 +37,9 @@ class ResetPasswordController extends Controller
             $user = User::where('username', $request->username);
             if ($user->exists()) {
                 $user->update(['password' => Hash::make($request->password)]);
-                return redirect()->route('login')->with('auth_msg', '<div class="alert alert-success text-center alert-dismissible fade show" role="alert"><span class="material-icons me-1">check_circle</span>Congratulations, Your reset password successfuly, Please login.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                return redirect()->route('login')->with('auth_msg', '<div class="alert alert-success text-center alert-dismissible fade show" role="alert"><span class="bi bi-check-circle me-1"></span>Congratulations, Your reset password successfuly, Please login.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
             } else {
-                return back()->withInput()->with('auth_msg', '<div class="alert alert-danger text-center alert-dismissible fade show" role="alert"><span class="material-icons me-1">warning</span>This account are not found.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                return back()->withInput()->with('auth_msg', '<div class="alert alert-danger text-center alert-dismissible fade show" role="alert"><span class="bi bi-exclamation-circle me-1"></span>This account are not found.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
             }
         }
     }

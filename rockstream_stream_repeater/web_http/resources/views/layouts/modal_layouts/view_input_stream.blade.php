@@ -18,8 +18,8 @@
                 <tr>
                     <td>{{ $input_stream_data->name_input }}</td>
                     <td>{!! ($input_stream_data->is_live == TRUE ? '<div class="text-success flash-text-item"><span
-                                class="material-icons me-1">sensors</span>Live</div>' :'<div class="text-danger"><span
-                                class="material-icons me-1">sensors_off</span>Offline</div') !!}</td>
+                                class="bi bi-broadcast me-1"></span>Live</div>' :'<div class="text-danger"><span
+                                class="bi bi-x-circle me-1"></span>Offline</div') !!}</td>
                 </tr>
             </tbody>
         </table>

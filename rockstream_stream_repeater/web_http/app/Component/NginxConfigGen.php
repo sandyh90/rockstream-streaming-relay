@@ -37,7 +37,7 @@ class NginxConfigGen
     public static function GenerateBaseConfig()
     {
         # nginx config folder
-        $nginx_file = dirname(base_path()) . DIRECTORY_SEPARATOR . config('component.nginx_path') . '\conf';
+        $nginx_file = (Utility::defaultBinDirFolder(config('component.nginx_path')) . '\conf');
 
         # if the file doesn't exist and can't be created, throw an error and exit the script.
         if (!file_exists($nginx_file)) {
@@ -66,7 +66,7 @@ class NginxConfigGen
         $base_nginx .=          T . T . '# Turn on HLS' . N;
         $base_nginx .=          T . T . 'hls on;' . N;
         $base_nginx .=          T . T . 'hls_path hls/;' . N;
-        $base_nginx .=          T . T . 'hls_fragment 5;' . N;
+        $base_nginx .=          T . T . 'hls_fragment 30;' . N;
         $base_nginx .=          T . T . 'hls_playlist_length 10;' . N;
         $base_nginx .=          T . T . 'hls_cleanup on;' . N;
         $base_nginx .=          T . T . 'hls_nested on;' . N;
@@ -125,7 +125,7 @@ class NginxConfigGen
     public static function URLBuilderRTMP($url, $stream_name)
     {
         # Build the URL for RTMP streaming to the client machine.
-        $rtmp_url = $url . '/' . $stream_name;
+        $rtmp_url = rtrim($url, '/') . '/' . $stream_name;
         return $rtmp_url;
     }
 }
