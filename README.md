@@ -17,14 +17,14 @@ to create an account with a multi-live streaming service provider, but the this 
 - Premiere Video [Beta]
 
 ## Server Requirement
-- PHP 8.0.2 **Required** (Included PHP 8)
+- PHP 8.1.4 **Required PHP 8** (Included PHP 8)
 - Nginx 1.21.7 (Included Nginx)
 - FFMpeg 5.0(Included FFMpeg)
 - SQLite (Embedded Database)
-- High-Speed Internet Min. 10 Mbps with upload speed Min. 5 Mbps or High.
-- Processor Min. Dual Core with speed clock 2.40 GHz or High (Except: Premiere Video Transcoding).
-- Storage free space capacity Min. 4 GB.
-- (Optional: For Premiere Video Transcoding) Use external / dedicated graphics card.
+- High-Speed Internet Min. 10 Mbps and upload speed Min. 5 Mbps or High.
+- Processor Min. Dual Core with speed clock 2.40 GHz or High (Except For Premiere Video Transcoding).
+- Storage free space capacity Min. 1-4 GB or more (Due to live session start the HLS footage will capture temporary for the preview player).
+- (Optional: For Premiere Video Transcoding) Use external / dedicated graphics card for best performance.
 
 ## Limitation
 - Due Nginx service built for the Windows version and some features may not work like in the Linux version.
@@ -32,37 +32,16 @@ to create an account with a multi-live streaming service provider, but the this 
 - RTMPS protocol, for now, is not supported on this application and will be supported soon on the new version.
 - There is still bugs remaining on the app, Please report any bugs you find.
 
-## How to install
-- Extract the ZIP file into a safe folder so it doesn't get mixed up.
-- PHP, FFMPEG, NGINX Binaries already included if you downloaded from [Release Page](https://github.com/sandyh90/rockstream-streaming-relay/releases)
-- In folder "web_http" change the file ".env.example" to ".env" and change the settings to be as in the .env settings section (APP_KEY is done using artisan)
-- First please run the following command " composer install " to install the required dependency libraries.
-- Second, please run the command " php artisan key:generate " to generate APP_KEY automatically.
-- Thirdly, please run the command " php artisan db:seed " to create a default application account or you can create account from setup page when application first run.
-- Fourth, run the web server application and nginx using "startserver.bat" contained in the folder.
-- Fifth, open the web page control panel to relay live streaming at " http://localhost:7733 ".
-
 ## .env Setting File
 ```
-APP_NAME="RockStream"
 APP_ENV=local
 APP_KEY=
-APP_DEBUG=false
+APP_DEBUG=true
 APP_URL=http://localhost
 
 LOG_CHANNEL=stack
 LOG_DEPRECATIONS_CHANNEL=null
 LOG_LEVEL=debug
-
-# This database are embedded using sqlite connection
-# so you don't need configure this section
-
-DB_CONNECTION=sqlite
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=
-# DB_USERNAME=root
-# DB_PASSWORD=
 
 # For Nginx process system configuration
 
@@ -82,10 +61,10 @@ WEB_URL_CHECKER_NGINX_RTMP_BYPASS=false
 
 NGINX_STAT_RTMP_PORT=7734
 NGINX_HLS_RTMP_PORT=7735
-NGINX_PATH="bin/nginx"
 
-FFMPEG_PATH="bin/ffmpeg/bin"
-PHP_PATH="bin/php"
+NGINX_PATH="nginx"
+FFMPEG_PATH="ffmpeg/bin"
+PHP_PATH="php"
 
 BROADCAST_DRIVER=log
 CACHE_DRIVER=database
@@ -93,35 +72,6 @@ FILESYSTEM_DRIVER=local
 QUEUE_CONNECTION=database
 SESSION_DRIVER=database
 SESSION_LIFETIME=120
-
-# MEMCACHED_HOST=127.0.0.1
-
-# REDIS_HOST=127.0.0.1
-# REDIS_PASSWORD=null
-# REDIS_PORT=6379
-
-# MAIL_MAILER=smtp
-# MAIL_HOST=mailhog
-# MAIL_PORT=1025
-# MAIL_USERNAME=null
-# MAIL_PASSWORD=null
-# MAIL_ENCRYPTION=null
-# MAIL_FROM_ADDRESS=null
-# MAIL_FROM_NAME="${APP_NAME}"
-
-# AWS_ACCESS_KEY_ID=
-# AWS_SECRET_ACCESS_KEY=
-# AWS_DEFAULT_REGION=us-east-1
-# AWS_BUCKET=
-# AWS_USE_PATH_STYLE_ENDPOINT=false
-
-# PUSHER_APP_ID=
-# PUSHER_APP_KEY=
-# PUSHER_APP_SECRET=
-# PUSHER_APP_CLUSTER=mt1
-
-# MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
-# MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
 ```
 
 ## Screenshot / Demo
