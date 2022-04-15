@@ -50,7 +50,7 @@ But if you want to run this app on another platform you need change some shell r
 ```
 APP_ENV=local
 APP_KEY=
-APP_DEBUG=true
+APP_DEBUG=false
 APP_URL=http://localhost
 
 LOG_CHANNEL=stack
