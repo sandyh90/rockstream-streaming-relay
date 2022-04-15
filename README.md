@@ -37,6 +37,15 @@ to create an account with a multi-live streaming service provider, but the this 
 - RTMPS protocol, for now, is not supported on this application and will be supported soon on the new version.
 - There is still bugs remaining on the app, Please report any bugs you find.
 
+## How to install (Manual)
+- Extract the ZIP file into a safe folder so it doesn't get mixed up.
+- (For Windows) PHP, FFMPEG, NGINX Binaries already included if you downloaded from [Release Page](https://github.com/sandyh90/rockstream-streaming-relay/releases),
+if you want to run this app on another platform you need change some run shell and checking file executable on code
+- In folder "web_http" change the file ".env.example" to ".env" and change the settings to be as in the .env settings section (APP_KEY is done using artisan)
+- First please run the following command " composer install " to install the required dependency libraries.
+- Second, please run the command " php artisan key:generate " to generate APP_KEY automatically.
+- Thirdly, open the web page control panel to relay live streaming at " http://localhost:7733 ".
+
 ## .env Setting File
 ```
 APP_ENV=local
