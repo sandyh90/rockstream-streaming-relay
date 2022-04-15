@@ -23,8 +23,8 @@ to create an account with a multi-live streaming service provider, but the this 
 
 ## Server Requirement
 - PHP 8.1.4 **Required PHP 8** (Included PHP 8)
-- Nginx 1.21.7 (Included Nginx)
-- FFMpeg 5.0(Included FFMpeg)
+- Nginx 1.21.7 (Included Nginx + RTMP Module)
+- FFMpeg 5.0 (Included FFMpeg)
 - SQLite (Embedded Database)
 - High-Speed Internet Min. 10 Mbps and upload speed Min. 5 Mbps or High.
 - Processor Min. Dual Core with speed clock 2.40 GHz or High (Except For Premiere Video Transcoding).
@@ -39,7 +39,7 @@ to create an account with a multi-live streaming service provider, but the this 
 
 ## How to install (Manual)
 - Extract the ZIP file into a safe folder so it doesn't get mixed up.
-- (For Windows) PHP, FFMPEG, NGINX Binaries already included if you downloaded from [Release Page](https://github.com/sandyh90/rockstream-streaming-relay/releases),
+- **(Only For Windows Platform)** PHP, FFMPEG, NGINX Binaries already included if you downloaded from [Release Page](https://github.com/sandyh90/rockstream-streaming-relay/releases),
 But if you want to run this app on another platform you need change some shell run command and checking file executable on code
 - In folder "web_http" change the file ".env.example" to ".env" and change the settings to be as in the .env settings section (APP_KEY is done using artisan)
 - First please run the following command " composer install " to install the required dependency libraries.
@@ -89,7 +89,6 @@ SESSION_LIFETIME=120
 ```
 
 ## Screenshot / Demo
-
 
 ![Login Page](https://user-images.githubusercontent.com/30236529/156620510-0f9a186f-4e6d-48a1-a532-e323bc471131.jpeg)
 ![Dashboard Page](https://user-images.githubusercontent.com/30236529/163223536-2a737e4e-ce1c-461f-9e47-e57230cd78e5.jpeg)
