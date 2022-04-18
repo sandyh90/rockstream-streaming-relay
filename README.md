@@ -46,7 +46,7 @@ But if you want to run this app on another platform you need change some shell r
 - Second, please run the command " php artisan key:generate " to generate APP_KEY automatically.
 - Thirdly, open the web page control panel to relay live streaming at " http://localhost:7733 ".
 
-## .env Setting File
+## .env Setting File (Manual)
 ```
 APP_ENV=local
 APP_KEY=
