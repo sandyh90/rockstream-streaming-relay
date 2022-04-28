@@ -27,15 +27,15 @@ to create an account with a multi-live streaming service provider, but the this 
 - FFMpeg 5.0 (Included FFMpeg)
 - SQLite (Embedded Database)
 - High-Speed Internet Min. 10 Mbps and upload speed Min. 5 Mbps or High.
-- Processor Min. Dual Core with speed clock 2.40 GHz or High (Except For Premiere Video Transcoding).
+- Processor Min. Dual Core with speed clock 2.40 GHz or High (Except Premiere Video Transcoding).
 - Storage free space capacity Min. 1-4 GB or more (Due to live session start the HLS footage will capture temporary for the preview player).
-- (Optional: For Premiere Video Transcoding) Use external / dedicated graphics card for best performance.
+- (Optional: For Premiere Video Transcoding) Use an external/dedicated graphics card.
 
 ## Limitation
-- Due Nginx service built for the Windows version and some features may not work like in the Linux version.
+- Due Nginx service being built for the Windows version and some features may not work like in the Linux version.
 - Status RTMP in navbar resetting to the beginning if Nginx reloads because of Nginx process use the old process and not automatically use new process, this need per_worker listener for now only support in Linux version. [Nginx Patches Source](https://github.com/arut/nginx-patches).
 - RTMPS protocol, for now, is not supported on this application and will be supported soon on the new version.
-- There is still bugs remaining on the app, Please report any bugs you find.
+- There are still bugs remaining on the app, Please report any bugs you find.
 
 ## How to install (Manual)
 - Extract the ZIP file into a safe folder so it doesn't get mixed up.
