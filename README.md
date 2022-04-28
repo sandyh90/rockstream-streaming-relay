@@ -11,8 +11,8 @@ to create an account with a multi-live streaming service provider, but the this 
 
 ## Features
 - Login System
-- Multi Input Stream Location
-- Multi Destination Stream Ingest
+- Multi-Input Stream Location
+- Multi-Destination Stream Ingest
 - Setup Page
 - Livestream Analytics
 - Multiple User Auth
