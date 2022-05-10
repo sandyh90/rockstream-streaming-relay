@@ -33,8 +33,8 @@ to create an account with a multi-live streaming service provider, but the this 
 
 ## Limitation
 - Due Nginx service being built for the Windows version and some features may not work like in the Linux version.
-- Status RTMP in navbar resetting to the beginning if Nginx reloads because of Nginx process use the old process and not automatically use new process, this need per_worker listener for now only support in Linux version. [Nginx Patches Source](https://github.com/arut/nginx-patches).
-- RTMPS protocol, for now, is not supported on this application and will be supported soon on the new version.
+- Status RTMP in navbar resetting to the beginning if Nginx reloads because of Nginx process use the old process and not automatically use new process, this need **per_worker** listener for now only support in Linux version. [Nginx Patches Source](https://github.com/arut/nginx-patches).
+- RTMPS protocol, for now, is not supported on this application and will be supported soon on the new version, For now you can try [stunnel](https://www.stunnel.org/) for using RTMPS protocol.
 - There are still bugs remaining on the app, Please report any bugs you find.
 
 ## How to install (Manual)
