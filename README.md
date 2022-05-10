@@ -37,7 +37,8 @@ to create an account with a multi-live streaming service provider, but the this 
 - RTMPS protocol, for now, is not supported on this application and will be supported soon on the new version, For now you can try [stunnel](https://www.stunnel.org/) for using RTMPS protocol and some configuration tutorial [How To Use STunnel](https://serverfault.com/questions/1019317/receiving-rtmps-stream-on-nginx-rtmp).
 - There are still bugs remaining on the app, Please report any bugs you find.
 
-## How to install (Manual)
+## Manual Configuration
+#### How to install (Manual)
 - Extract the ZIP file into a safe folder so it doesn't get mixed up.
 - **(Only For Windows Platform)** PHP, FFMPEG, NGINX Binaries already included if you downloaded from [Release Page](https://github.com/sandyh90/rockstream-streaming-relay/releases),
 But if you want to run this app on another platform you need change some shell run command and checking file executable on code
@@ -46,7 +47,7 @@ But if you want to run this app on another platform you need change some shell r
 - Second, please run the command " php artisan key:generate " to generate APP_KEY automatically.
 - Thirdly, open the web page control panel to relay live streaming at " http://localhost:7733 ".
 
-## .env Setting File (Manual)
+#### .env Setting File (Manual)
 ```
 APP_ENV=local
 APP_KEY=
