@@ -97,3 +97,6 @@ SESSION_LIFETIME=120
 ![Output Stream Page](https://user-images.githubusercontent.com/30236529/163223908-f4e6927e-ef0b-412f-90ef-106de165a08c.jpeg)
 ![Premiere Video Page](https://user-images.githubusercontent.com/30236529/163223975-0a03bfb5-3b57-45b0-9416-4a24db6b2b57.jpeg)
 
+## Future Plan
+- [ ] Support for linux platform
+- [ ] Nginx support RTMPS protocols
