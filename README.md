@@ -18,7 +18,7 @@ to create an account with a multi-live streaming service provider, but the this 
 - Multiple User Auth
 - Livestreaming Testing Tool
 - Countdown Premiere Video
-- Live Preview [Beta]
+- Live Preview
 - Premiere Video [Beta]
 
 ## Server Requirement
@@ -28,8 +28,8 @@ to create an account with a multi-live streaming service provider, but the this 
 - SQLite (Embedded Database)
 - High-Speed Internet Min. 10 Mbps and upload speed Min. 5 Mbps or High.
 - Processor Min. Dual Core with speed clock 2.40 GHz or High (Except Premiere Video Transcoding).
-- Storage free space capacity Min. 1-4 GB or more (Due to live session start the HLS footage will capture temporary for the preview player).
-- (Optional: For Premiere Video Transcoding) Use an external/dedicated graphics card.
+- Storage free space capacity Min. 1-4 GB or more (Due to live session start the HLS footage will capture temporary for the preview player or you can disable live preview in interfaces settings).
+- Use external / dedicated graphics card for best performance (Optional: For Premiere Video Transcoding).
 
 ## Limitation
 - Due Nginx service being built for the Windows version and some features may not work like in the Linux version.
@@ -49,10 +49,11 @@ But if you want to run this app on another platform you need change some shell r
 
 #### .env Setting File (Manual)
 ```
-APP_ENV=local
+APP_ENV=production
 APP_KEY=
 APP_DEBUG=false
 APP_URL=http://localhost
+APP_TIMEZONE="UTC"
 
 LOG_CHANNEL=stack
 LOG_DEPRECATIONS_CHANNEL=null
@@ -68,18 +69,8 @@ WEB_URL_CHECKER_NGINX_RTMP_URL=http://127.0.0.1
 # to use different port from APP_URL to communicate with this web application. default (7733)
 WEB_URL_CHECKER_NGINX_RTMP_PORT=7733
 
-# NGINX will Use APP_URL and ignore WEB_URL_CHECKER_NGINX_RTMP_URL to set url
-# check data publish url from client side to server side
-WEB_URL_CHECKER_NGINX_RTMP_BYPASS=false
-
 # NGINX RTMP system port and path
-
-NGINX_STAT_RTMP_PORT=7734
-NGINX_HLS_RTMP_PORT=7735
-
-NGINX_PATH="nginx"
-FFMPEG_PATH="ffmpeg/bin"
-PHP_PATH="php"
+NGINX_RTMP_PORT=7734
 
 BROADCAST_DRIVER=log
 CACHE_DRIVER=database
@@ -91,11 +82,11 @@ SESSION_LIFETIME=120
 
 ## Screenshot / Demo
 
-![Login Page](https://user-images.githubusercontent.com/30236529/156620510-0f9a186f-4e6d-48a1-a532-e323bc471131.jpeg)
-![Dashboard Page](https://user-images.githubusercontent.com/30236529/163223536-2a737e4e-ce1c-461f-9e47-e57230cd78e5.jpeg)
-![Input Stream Page](https://user-images.githubusercontent.com/30236529/163223823-bd44fff7-0530-4c9e-b4e9-aefe6d005f1f.jpeg)
-![Output Stream Page](https://user-images.githubusercontent.com/30236529/163223908-f4e6927e-ef0b-412f-90ef-106de165a08c.jpeg)
-![Premiere Video Page](https://user-images.githubusercontent.com/30236529/163223975-0a03bfb5-3b57-45b0-9416-4a24db6b2b57.jpeg)
+![Login Page](https://user-images.githubusercontent.com/30236529/177349049-2a94e4c5-2716-43a5-b790-8447b93ba54d.jpeg)
+![Dashboard Page](https://user-images.githubusercontent.com/30236529/177348420-f726ab42-8f10-4f7c-9c5d-8dcf28be5dae.jpeg)
+![Input Stream Page](https://user-images.githubusercontent.com/30236529/177348514-21f56b62-cdc3-4d1c-bc80-0e91e2fd7f70.jpeg)
+![Output Stream Page](https://user-images.githubusercontent.com/30236529/177348614-dee23fee-263e-46d5-8fc6-77314547b3e5.jpeg)
+![Premiere Video Page](https://user-images.githubusercontent.com/30236529/177348697-879174e0-2dae-4288-9d03-e771da5bc697.jpeg)
 
 ## Future Plan
 - [ ] Support for linux platform
