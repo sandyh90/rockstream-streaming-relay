@@ -204,32 +204,35 @@
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <div class="input-group p-2">
-                                            <div class="input-group-text">
-                                                <div class="form-check">
-                                                    <input
-                                                        class="form-check-input @error('enable_custom_php_path') is-invalid @enderror"
-                                                        type="checkbox" id="enable-custom-php-path"
-                                                        name="enable_custom_php_path" value="1" {{
-                                                        old('enable_custom_php_path')==TRUE ? 'checked' : NULL}}>
-                                                    <label class="form-check-label"
-                                                        for="enable-custom-php-path">Enable</label>
+                                        <div class="p-2">
+                                            <label class="form-label">PHP Custom Binary</label>
+                                            <div class="input-group">
+                                                <div class="input-group-text">
+                                                    <div class="form-check">
+                                                        <input
+                                                            class="form-check-input @error('enable_custom_php_path') is-invalid @enderror"
+                                                            type="checkbox" id="enable-custom-php-path"
+                                                            name="enable_custom_php_path" value="1" {{
+                                                            old('enable_custom_php_path')==TRUE ? 'checked' : NULL}}>
+                                                        <label class="form-check-label"
+                                                            for="enable-custom-php-path">Enable</label>
+                                                    </div>
                                                 </div>
+                                                <input type="text"
+                                                    class="form-control @error('php_custom_dir') is-invalid @enderror"
+                                                    name="php_custom_dir" placeholder="PHP Binary Custom Folder Path"
+                                                    value="{{ old('php_custom_dir') }}">
+                                                @error('enable_custom_php_path')
+                                                <span class="invalid-feedback">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
+                                                @error('php_custom_dir')
+                                                <span class="invalid-feedback">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
                                             </div>
-                                            <input type="text"
-                                                class="form-control @error('php_custom_dir') is-invalid @enderror"
-                                                name="php_custom_dir" placeholder="PHP Binary Custom Folder Path"
-                                                value="{{ old('php_custom_dir') }}">
-                                            @error('enable_custom_php_path')
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                            @error('php_custom_dir')
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -244,32 +247,36 @@
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <div class="input-group p-2">
-                                            <div class="input-group-text">
-                                                <div class="form-check">
-                                                    <input
-                                                        class="form-check-input @error('enable_custom_ffmpeg_path') is-invalid @enderror"
-                                                        type="checkbox" id="enable-custom-ffmpeg-path"
-                                                        name="enable_custom_ffmpeg_path" value="1" {{
-                                                        old('enable_custom_ffmpeg_path')==TRUE ? 'checked' : NULL}}>
-                                                    <label class="form-check-label"
-                                                        for="enable-custom-ffmpeg-path">Enable</label>
+                                        <div class="p-2">
+                                            <label class="form-label">FFmpeg Custom Binary</label>
+                                            <div class="input-group">
+                                                <div class="input-group-text">
+                                                    <div class="form-check">
+                                                        <input
+                                                            class="form-check-input @error('enable_custom_ffmpeg_path') is-invalid @enderror"
+                                                            type="checkbox" id="enable-custom-ffmpeg-path"
+                                                            name="enable_custom_ffmpeg_path" value="1" {{
+                                                            old('enable_custom_ffmpeg_path')==TRUE ? 'checked' : NULL}}>
+                                                        <label class="form-check-label"
+                                                            for="enable-custom-ffmpeg-path">Enable</label>
+                                                    </div>
                                                 </div>
+                                                <input type="text"
+                                                    class="form-control @error('ffmpeg_custom_dir') is-invalid @enderror"
+                                                    name="ffmpeg_custom_dir"
+                                                    placeholder="FFmpeg Binary Custom Folder Path"
+                                                    value="{{ old('ffmpeg_custom_dir') }}">
+                                                @error('enable_custom_ffmpeg_path')
+                                                <span class="invalid-feedback">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
+                                                @error('ffmpeg_custom_dir')
+                                                <span class="invalid-feedback">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
                                             </div>
-                                            <input type="text"
-                                                class="form-control @error('ffmpeg_custom_dir') is-invalid @enderror"
-                                                name="ffmpeg_custom_dir" placeholder="FFmpeg Binary Custom Folder Path"
-                                                value="{{ old('ffmpeg_custom_dir') }}">
-                                            @error('enable_custom_ffmpeg_path')
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                            @error('ffmpeg_custom_dir')
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -284,32 +291,36 @@
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <div class="input-group p-2">
-                                            <div class="input-group-text">
-                                                <div class="form-check">
-                                                    <input
-                                                        class="form-check-input @error('enable_custom_nginx_path') is-invalid @enderror"
-                                                        type="checkbox" id="enable-custom-nginx-path"
-                                                        name="enable_custom_nginx_path" value="1" {{
-                                                        old('enable_custom_nginx_path')==TRUE ? 'checked' : NULL}}>
-                                                    <label class="form-check-label"
-                                                        for="enable-custom-nginx-path">Enable</label>
+                                        <div class="p-2">
+                                            <label class="form-label">Nginx Custom Binary</label>
+                                            <div class="input-group">
+                                                <div class="input-group-text">
+                                                    <div class="form-check">
+                                                        <input
+                                                            class="form-check-input @error('enable_custom_nginx_path') is-invalid @enderror"
+                                                            type="checkbox" id="enable-custom-nginx-path"
+                                                            name="enable_custom_nginx_path" value="1" {{
+                                                            old('enable_custom_nginx_path')==TRUE ? 'checked' : NULL}}>
+                                                        <label class="form-check-label"
+                                                            for="enable-custom-nginx-path">Enable</label>
+                                                    </div>
                                                 </div>
+                                                <input type="text"
+                                                    class="form-control @error('nginx_custom_dir') is-invalid @enderror"
+                                                    name="nginx_custom_dir"
+                                                    placeholder="Nginx Binary Custom Folder Path"
+                                                    value="{{ old('nginx_custom_dir') }}">
+                                                @error('enable_custom_nginx_path')
+                                                <span class="invalid-feedback">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
+                                                @error('nginx_custom_dir')
+                                                <span class="invalid-feedback">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                                @enderror
                                             </div>
-                                            <input type="text"
-                                                class="form-control @error('nginx_custom_dir') is-invalid @enderror"
-                                                name="nginx_custom_dir" placeholder="Nginx Binary Custom Folder Path"
-                                                value="{{ old('nginx_custom_dir') }}">
-                                            @error('enable_custom_nginx_path')
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
-                                            @error('nginx_custom_dir')
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                            @enderror
                                         </div>
                                         <div class="small">
                                             <span class="text-danger me-1">Note:</span>Your nginx binary must be
