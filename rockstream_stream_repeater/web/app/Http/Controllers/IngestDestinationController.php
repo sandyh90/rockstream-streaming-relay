@@ -67,14 +67,14 @@ class IngestDestinationController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'name_output_dest' => 'required|string|max:100',
+                    'name_output_dest' => 'required|string|max:255',
                     'platform_output_dest' => [
                         'required',
                         Rule::in(array_column(ServicesCore::getServices(), 'id'))
                     ],
                     'select_endpoint_server' => $request->filled('rtmp_output_server') ? 'prohibited|nullable|string|max:255|starts_with:rtmp://,rtmps://' : 'required|string|max:255|starts_with:rtmp://,rtmps://',
                     'rtmp_output_server' => $request->filled('select_endpoint_server') ? 'prohibited|nullable|string|max:255|starts_with:rtmp://,rtmps://' : 'required|string|max:255|starts_with:rtmp://,rtmps://',
-                    'rtmp_stream_key' => empty($check_stream->ingest_destination_data()->first()->key_stream_dest) ? 'required|string|max:255' : ($check_stream->ingest_destination_data()->first()->key_stream_dest != $request->rtmp_stream_key ? 'required|string|max:255' : 'required|unique:stream_ingest_dest,key_stream_dest|string|max:255'),
+                    'rtmp_stream_key' => empty($check_stream->ingest_destination_data()->first()->key_stream_dest) ? 'required|string|max:355' : ($check_stream->ingest_destination_data()->first()->key_stream_dest != $request->rtmp_stream_key ? 'required|string|max:355' : 'required|unique:stream_ingest_dest,key_stream_dest|string|max:355'),
                     'status_output_dest' => 'required|boolean'
                 ]
             );
@@ -241,14 +241,14 @@ class IngestDestinationController extends Controller
                         $validator = Validator::make(
                             $request->all(),
                             [
-                                'name_output_dest' => 'required|string|max:100',
+                                'name_output_dest' => 'required|string|max:255',
                                 'platform_output_dest' => [
                                     'required',
                                     Rule::in(array_column(ServicesCore::getServices(), 'id'))
                                 ],
                                 'select_endpoint_server' => $request->filled('rtmp_output_server') ? 'prohibited|nullable|string|max:255|starts_with:rtmp://,rtmps://' : 'required|string|max:255|starts_with:rtmp://,rtmps://',
                                 'rtmp_output_server' => $request->filled('select_endpoint_server') ? 'prohibited|nullable|string|max:255|starts_with:rtmp://,rtmps://' : 'required|string|max:255|starts_with:rtmp://,rtmps://',
-                                'rtmp_stream_key' => $check_stream->key_stream_dest == $request->rtmp_stream_key ? 'required|string|max:255' : 'required|unique:stream_ingest_dest,key_stream_dest|string|max:255',
+                                'rtmp_stream_key' => $check_stream->key_stream_dest == $request->rtmp_stream_key ? 'required|string|max:355' : 'required|unique:stream_ingest_dest,key_stream_dest|string|max:355',
                                 'status_output_dest' => 'required|boolean'
                             ]
                         );

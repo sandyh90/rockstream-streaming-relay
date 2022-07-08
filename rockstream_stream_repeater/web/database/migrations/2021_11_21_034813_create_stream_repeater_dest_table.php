@@ -20,7 +20,7 @@ class CreateStreamRepeaterDestTable extends Migration
             $table->string('name_stream_dest');
             $table->string('platform_dest');
             $table->string('url_stream_dest');
-            $table->string('key_stream_dest');
+            $table->string('key_stream_dest', 355);
             $table->boolean('active_stream_dest');
             $table->timestamps();
         });
