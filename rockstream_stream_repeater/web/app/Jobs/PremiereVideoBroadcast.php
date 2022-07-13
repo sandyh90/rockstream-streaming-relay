@@ -90,7 +90,7 @@ class PremiereVideoBroadcast implements ShouldQueue
                                     $getfps = $ffprobe->streams($premiereVideo->video_path)->videos()->first()->get('r_frame_rate');
 
                                     // Check if use encoder is set or not and set other parameters
-                                    $format->setAdditionalParameters(!is_null($this->video['encoder_type']) ? ['-r', $getfps, '-c:v', $this->video['encoder_type'], '-f', 'flv', '-flvflags', 'no_duration_filesize'] : ['-r', $getfps, '-f', 'flv', '-flvflags', 'no_duration_filesize']);
+                                    $format->setAdditionalParameters(!is_null($this->video['encoder_type']) ? ['-refs', '0', '-r', $getfps, '-c:v', $this->video['encoder_type'], '-f', 'flv', '-flvflags', 'no_duration_filesize'] : ['-refs', '0', '-r', $getfps, '-f', 'flv', '-flvflags', 'no_duration_filesize']);
 
                                     /**
                                      * Encode video from source to destination via rtmp output.
@@ -137,7 +137,7 @@ class PremiereVideoBroadcast implements ShouldQueue
                                         $check_custom_countdown = ($this->video['custom_countdown']['use_custom'] == TRUE ? (!is_null($this->video['custom_countdown']['custom_countdown_video_path']) ? $this->video['custom_countdown']['custom_countdown_video_path'] : $default_video_countdown) : $default_video_countdown);
                                         $advancedMedia = $ffmpeg->openAdvanced([$check_custom_countdown, $premiereVideo->video_path]);
                                         $advancedMedia->filters()
-                                            // Force the video resolution to be 1920x1080.
+                                            // Force the video resolution to be custom resolution selector.
                                             ->custom('[0:v]settb=AVTB,fps=' . $getfps . ',scale=' . $customFormatResolutionAdvanced . ':force_original_aspect_ratio=decrease,pad=' . $customFormatResolutionAdvanced . ':(ow-iw)/2:(oh-ih)/2,setsar=1[v0];[1:v]settb=AVTB,fps=' . $getfps . ',scale=' . $customFormatResolutionAdvanced . ':force_original_aspect_ratio=decrease,pad=' . $customFormatResolutionAdvanced . ':(ow-iw)/2:(oh-ih)/2,setsar=1[v1];[v0] [0:a] [v1] [1:a]', 'concat=n=2:v=1:a=1', '[v] [a]');
                                         $advancedMedia
                                             ->map(['[v]', '[a]'], $format, $this->video['rtmp_output'])
@@ -165,8 +165,7 @@ class PremiereVideoBroadcast implements ShouldQueue
 
     public function failed(\Exception $e)
     {
-        $premiereVideo = PremiereVideo::where('id', $this->video['id'])->first();
-        $premiereVideo->update([
+        PremiereVideo::where('id', $this->video['id_video'])->update([
             'is_premiere' => FALSE
         ]);
         $this->fail('Premiere Video Broadcast failed');

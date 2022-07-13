@@ -20,9 +20,12 @@
                 <div class="tab-pane fade show active" id="nav-failed-queue" role="tabpanel"
                     aria-labelledby="nav-failed-queue-tab" tabindex="0">
                     <h4 class="fw-light my-2">List Failed Queue</h4>
-                    <div class="d-flex justify-content-between flex-wrap my-2">
+                    <div class="d-flex justify-content-between flex-wrap my-2 queue-failed-btn-list">
                         <button class="btn btn-primary failed-queue-data-refresh">
                             <span class="bi bi-arrow-clockwise me-1"></span>Refresh
+                        </button>
+                        <button class="btn btn-danger failed-queue-data-clear-all">
+                            <span class="bi bi-trash me-1"></span>Clear All
                         </button>
                     </div>
                     <div class="table-responsive">
@@ -146,6 +149,50 @@
                         },
                         error: function(err) {
                             swal.fire("Delete Failed Job Failed", "There have problem while deleting failed job!", "error");
+                        }
+                    });
+                }
+            });
+            event.preventDefault();
+        });
+
+        $(".queue-failed-btn-list").on('click', '.failed-queue-data-clear-all', function(event) {
+            Swal.fire({
+                title: 'Clear All Failed Job',
+                text: "This all failed queue will be erase!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Clear'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('diagnostic.clear.failed_queue') }}",
+                        type: 'POST',
+                        async: true,
+                        beforeSend: function() {
+                            swal.fire({
+                                title: "Deleting Failed Job",
+                                text: "Please wait",
+                                showConfirmButton: false,
+                                allowOutsideClick: false
+                            });
+                            Swal.showLoading();
+                        },
+                        success: function(data) {
+                            swal.fire({
+                                icon: data.alert.icon,
+                                title: data.alert.title,
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true
+                            });
+                            $('.failed-queue-data').DataTable().ajax.reload();
+                            $('meta[name="csrf-token"]').val(data.csrftoken);
+                        },
+                        error: function(err) {
+                            swal.fire("Clear All Failed Job Failed", "There have problem while clearing failed job!", "error");
                         }
                     });
                 }

@@ -26,7 +26,7 @@
                 <span class="bi bi-question-circle"></span>
             </div>
         </div>
-        <div class=" collapse collapse-horizontal info-reset-pass">
+        <div class=" collapse info-reset-pass">
             <div class="small text-muted text-center my-2">You can use reset password from console with using
                 artisan command <strong>"php artisan accountmanage:reset"</strong>
             </div>

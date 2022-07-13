@@ -83,4 +83,32 @@ class DiagnosticController extends Controller
         }
         return response()->json($responses);
     }
+
+    public function clear_failed_queue(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $clearFailedQueue = DB::table('failed_jobs');
+            if ($clearFailedQueue->exists()) {
+                $clearFailedQueue->truncate();
+                $responses = [
+                    'csrftoken' => csrf_token(),
+                    'success' => TRUE,
+                    'alert' => [
+                        'icon' => 'success',
+                        'title' => 'Clear Failed Job Success',
+                    ]
+                ];
+            } else {
+                $responses = [
+                    'csrftoken' => csrf_token(),
+                    'success' => FALSE,
+                    'alert' => [
+                        'icon' => 'warning',
+                        'title' => 'Clear Failed Job Failed, No Data Found',
+                    ]
+                ];
+            }
+        }
+        return response()->json($responses);
+    }
 }

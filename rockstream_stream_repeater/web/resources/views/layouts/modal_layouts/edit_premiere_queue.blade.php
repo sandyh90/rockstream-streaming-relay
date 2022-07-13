@@ -47,6 +47,30 @@
                 pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}"
                 value="{{ \Carbon\Carbon::createFromTimestamp($premiere_queue_data->available_at)->format('Y-m-d\TH:i') }}">
         </div>
+        <label class="form-label">Time Zone<span class="bi bi-info-circle ms-1" data-bs-toggle="tooltip"
+                data-bs-placement="top" title="Server Current: {{
+            '('.\Carbon\Carbon::now()->getOffsetString().') '.\Carbon\Carbon::now()->timezoneName
+            }}"></span></label>
+        <div class="input-group mb-2">
+            <div class="input-group-text">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="use-custom-timezone-schedule"
+                        name="use_custom_timezone_premiere_schedule" value="1">
+                    <label class="form-check-label" for="use-custom-timezone-schedule">Custom
+                        Time Zone</label>
+                </div>
+            </div>
+            <select class="form-select" name="custom_timezone_premiere_schedule">
+                <option value="">Select Time Zone</option>
+                @foreach (\App\Component\Utility::timezone_gmt_list() as $key => $timezone)
+                <option value="{{ $key }}">{{ $timezone }}</option>
+                @endforeach
+            </select>
+            <small class="form-text text-muted">*If you uncheck <strong>Custom Time Zone</strong>,
+                your premiere will be scheduled using the time based on the time zone in the
+                <strong>app</strong> or
+                <strong>environment app</strong>.</small>
+        </div>
         <button type="submit" class="btn btn-primary btn-edit-premiere-queue"><span
                 class="bi bi-save me-1"></span>Save</button>
     </form>

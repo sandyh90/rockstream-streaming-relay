@@ -59,7 +59,7 @@ class NginxPowerCommand extends Command
                     $stream_db->update(['is_live' => FALSE]);
                 }
 
-                # Reload nginx process to apply changes to config file and restart it
+                # stop nginx service
                 Utility::runInstancewithPid('cmd /c start /B "" /d"' . $nginx_folder . '" "nginx.exe" -s stop');
                 return $this->info('Power Off Nginx successfully');
             } else {

@@ -310,6 +310,7 @@
                                         }
                                     } else {
                                         $('.premiere-video-data').DataTable().ajax.reload();
+                                        $('.premiere-queue-data').DataTable().ajax.reload();
                                         if ($(".start-premiere-video-info-data").hasClass("alert alert-danger")) {
                                             $(".start-premiere-video-info-data").removeClass("alert alert-danger");
                                         }
@@ -591,7 +592,7 @@
                                     $('input[name=_token]').val(data.csrftoken);
                                     if (data.success == false) {
                                         if(data.isForm == true){
-                                            msgalert(".edit-premiere-video-info-data", data.messages);
+                                            msgalert(".edit-premiere-queue-info-data", data.messages);
                                         }else{
                                             if ($(".edit-premiere-queue-info-data").hasClass("alert alert-danger")) {
                                                 $(".edit-premiere-queue-info-data").removeClass("alert alert-danger");

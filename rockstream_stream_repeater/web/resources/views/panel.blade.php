@@ -351,9 +351,7 @@
                         if($(".video-preview-source div.offline-preview").hide()){
                             $(".video-preview-source div.offline-preview").show();
                         }
-                        if(!$(".video-preview-source div.offline-preview div.waiting-encoder-data-progress")){
-                            $(".video-preview-source div.offline-preview-title").html("<div class='waiting-encoder-data-progress'><div class='spinner-border'></div><div class='fw-light'>Waiting Data From Encoder</div></div>");
-                        }
+                        $(".video-preview-source div.offline-preview-title").html("<div class='spinner-border'></div><div class='fw-light'>Waiting Data From Encoder</div>");
                         if (typeof Hls != 'undefined') {
                             reset_video_preview();
                         }

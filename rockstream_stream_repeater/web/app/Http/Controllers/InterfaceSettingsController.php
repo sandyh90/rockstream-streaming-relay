@@ -51,6 +51,13 @@ class InterfaceSettingsController extends Controller
                     unlink(storage_path('app/settings-app.json'));
                 }
 
+                // Stop nginx service if it's running
+                $nginx_folder = ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx'));
+
+                if (file_exists($nginx_folder . '\nginx.exe') && Utility::getInstanceRunByPath(($nginx_folder . DIRECTORY_SEPARATOR . 'nginx.exe'), 'nginx.exe')['found_process'] == true) {
+                    Utility::runInstancewithPid('cmd /c start /B "" /d"' . $nginx_folder . '" "nginx.exe" -s stop');
+                }
+
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'success' => FALSE,

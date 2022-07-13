@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Validation\Rule;
 
 use App\Models\PremiereVideo;
 use App\Models\StreamInput;
@@ -291,6 +292,11 @@ class PremiereVideoController extends Controller
                                     'height_custom_resolution' => ($request->video_resolution_size == 'custom_resolution' ? 'required|numeric' : 'nullable'),
                                     'schedule_premiere_video' => 'boolean',
                                     'schedule_datetime_premiere_video' => ($request->schedule_premiere_video ? 'required|date_format:Y-m-d\TH:i' : 'nullable'),
+                                    'use_custom_timezone_premiere_schedule' => ($request->schedule_premiere_video ? 'boolean' : 'nullable'),
+                                    'custom_timezone_premiere_schedule' => ($request->schedule_premiere_video ? ($request->use_custom_timezone_premiere_schedule ? [
+                                        'required',
+                                        Rule::in(array_keys(Utility::timezone_gmt_list()))
+                                    ] : 'nullable') : 'nullable'),
                                     'countdown_premiere_video' => 'boolean',
                                     'use_local_video_countdown' => ($request->countdown_premiere_video ? 'boolean' : 'nullable'),
                                     'local_video_countdown_path' => ($request->use_local_video_countdown ? ['required', 'string', 'max:255', new CheckMimeFile(['video/webm', 'video/x-matroska', 'video/avi', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/mp4']), new CheckPathFile] : 'nullable'),
@@ -369,7 +375,12 @@ class PremiereVideoController extends Controller
                                             // Check if start premiere video with schedule [Beta]
 
                                             if ($request->schedule_premiere_video == TRUE) {
-                                                $dispatchPremiere->delay(Carbon::parse($request->schedule_datetime_premiere_video));
+                                                $parseSchedule = Carbon::parse($request->schedule_datetime_premiere_video);
+                                                // check if use custom timezone schedule shift
+                                                if ($request->use_custom_timezone_premiere_schedule == TRUE) {
+                                                    $parseSchedule->shiftTimezone($request->custom_timezone_premiere_schedule);
+                                                }
+                                                $dispatchPremiere->delay($parseSchedule);
                                             }
 
                                             $responses = [
@@ -668,6 +679,11 @@ class PremiereVideoController extends Controller
                         $request->all(),
                         [
                             'schedule_datetime_premiere_video' => 'required|date_format:Y-m-d\TH:i',
+                            'use_custom_timezone_premiere_schedule' => 'boolean',
+                            'custom_timezone_premiere_schedule' => ($request->use_custom_timezone_premiere_schedule ? [
+                                'required',
+                                Rule::in(array_keys(Utility::timezone_gmt_list()))
+                            ] : 'nullable'),
                         ]
                     );
 
@@ -681,8 +697,13 @@ class PremiereVideoController extends Controller
                             'isForm' => FALSE
                         ];
 
+                        $parseSchedule = Carbon::parse($request->schedule_datetime_premiere_video);
+                        // check if use custom timezone schedule shift
+                        if ($request->use_custom_timezone_premiere_schedule == TRUE) {
+                            $parseSchedule->shiftTimezone($request->custom_timezone_premiere_schedule);
+                        }
                         Queue::getDatabase()->table('jobs')->where(['queue' => ('PremiereVideoBroadcast_user_id=' . Auth::id()), 'id' => $premiereQueueData->id])->update([
-                            'available_at' => Carbon::parse($request->schedule_datetime_premiere_video)->timestamp
+                            'available_at' => $parseSchedule->timestamp
                         ]);
                     }
                 } else {
