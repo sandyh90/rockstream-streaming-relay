@@ -29,7 +29,7 @@ to create an account with a multi-live streaming service provider, but the this 
 - High-Speed Internet Min. 10 Mbps and upload speed Min. 5 Mbps or High.
 - Processor Min. Dual Core with speed clock 2.40 GHz or High (Except Premiere Video Transcoding).
 - Storage free space capacity Min. 1-4 GB or more (Due to live session start the HLS footage will capture temporary for the preview player or you can disable live preview in interfaces settings).
-- Use external / dedicated graphics card for best performance (Optional: For Premiere Video Transcoding).
+- (Optional) Use external / dedicated graphics card for best performance for Premiere Video Transcoding.
 
 ## Limitation
 - Due Nginx service being built for the Windows version and some features may not work like in the Linux version.
