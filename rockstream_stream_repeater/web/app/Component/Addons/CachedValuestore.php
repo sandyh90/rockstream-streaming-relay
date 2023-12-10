@@ -30,7 +30,7 @@ class CachedValuestore extends Valuestore
      * @param string $key
      * @param mixed $default
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         return $this->cache[$key] ?? $this->cache[$key] = parent::get($key, $default);
     }
@@ -41,9 +41,9 @@ class CachedValuestore extends Valuestore
      * @param  array $values
      * @return $this
      */
-    protected function setContent(array $values)
+    protected function setContent(array $values): static
     {
-        return parent::setContent($this->cache = $values);
+        return parent::setContent($values);
     }
 
     /**

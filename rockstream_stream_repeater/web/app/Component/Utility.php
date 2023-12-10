@@ -9,6 +9,21 @@ use SoftCreatR\MimeDetector\MimeDetectorException;
 
 class Utility
 {
+    public static function alertValidation($msg = NULL, $class = 'alert')
+    {
+        $msgList = NULL;
+        foreach ($msg as $message) {
+            $msgList .= "<li>{$message}</li>";
+        }
+
+        $msgParse = '<div class="' . $class . '" role="alert">';
+        $msgParse .= '<ul>';
+        $msgParse .= $msgList;
+        $msgParse .= '</ul>';
+        $msgParse .= '</div>';
+
+        return $msgParse;
+    }
 
     public static function getInstanceRun($ProgramOrPid = NULL)
     {
@@ -27,12 +42,12 @@ class Utility
 
     public static function getInstanceRunByPath($ProgramPath = NULL, $ProgramName = NULL)
     {
+        $ResultData = [];
         if (is_null($ProgramPath) && is_null($ProgramName)) {
-            return FALSE;
+            return $ResultData = ['pids' => [], 'found_process' => FALSE];
         } else {
             # Check if program is running or not
             $ProcPath = strtolower($ProgramPath);
-            $ResultData = [];
             $procData = NULL;
             $get_data = explode("\n", trim(shell_exec('powershell -command "Get-CimInstance Win32_Process -Filter \'name = \"' . $ProgramName . '\"\' | Format-Table -HideTableHeaders ExecutablePath, ProcessId" 2>NUL')));
             if (!empty($get_data) && count($get_data) > 0) {

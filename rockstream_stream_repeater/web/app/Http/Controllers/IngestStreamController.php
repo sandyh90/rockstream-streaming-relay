@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Component\Utility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -94,7 +95,7 @@ class IngestStreamController extends Controller
         );
 
         if ($validator->fails()) {
-            $responses['messages'] = $validator->errors()->all();
+            $responses['messages'] = Utility::alertValidation($validator->errors()->all(), 'alert alert-danger');
         } else {
             $responses = [
                 'csrftoken' => csrf_token(),
@@ -129,8 +130,7 @@ class IngestStreamController extends Controller
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'messages' => [],
-                        'success' => FALSE,
-                        'isForm' => TRUE
+                        'success' => FALSE
                     ];
 
                     $validator = Validator::make(
@@ -142,12 +142,11 @@ class IngestStreamController extends Controller
                     );
 
                     if ($validator->fails()) {
-                        $responses['messages'] = $validator->errors()->all();
+                        $responses['messages'] = Utility::alertValidation($validator->errors()->all(), 'alert alert-danger');
                     } else {
                         $responses = [
                             'csrftoken' => csrf_token(),
                             'messages' => '<div class="alert alert-success">Edit input stream successfully</div>',
-                            'isForm' => FALSE,
                             'success' => TRUE
                         ];
 
@@ -165,7 +164,6 @@ class IngestStreamController extends Controller
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>Cannot edit input stream because it is live</div>',
-                        'isForm' => FALSE,
                         'success' => FALSE
                     ];
                 }
@@ -173,7 +171,6 @@ class IngestStreamController extends Controller
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'success' => FALSE,
-                    'isForm' => FALSE,
                     'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>You are not have access to edit this input stream</div>'
                 ];
             }
@@ -181,7 +178,6 @@ class IngestStreamController extends Controller
             $responses = [
                 'csrftoken' => csrf_token(),
                 'success' => FALSE,
-                'isForm' => FALSE,
                 'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>Input stream not found</div>'
             ];
         }
@@ -232,7 +228,7 @@ class IngestStreamController extends Controller
                             'success' => TRUE,
                             'alert' => [
                                 'icon' => 'success',
-                                'title' => 'Regenerate Stream Key Success'
+                                'text' => 'Regenerate Stream Key Success'
                             ]
                         ];
 
@@ -246,7 +242,7 @@ class IngestStreamController extends Controller
                             'success' => FALSE,
                             'alert' => [
                                 'icon' => 'warning',
-                                'title' => 'This Input Stream Are In Live'
+                                'text' => 'This Input Stream Are In Live'
                             ]
                         ];
                     }
@@ -256,7 +252,7 @@ class IngestStreamController extends Controller
                         'success' => FALSE,
                         'alert' => [
                             'icon' => 'warning',
-                            'title' => 'You are not have access to regenerate key this input stream'
+                            'text' => 'You are not have access to regenerate key this input stream'
                         ]
                     ];
                 }
@@ -266,7 +262,7 @@ class IngestStreamController extends Controller
                     'success' => TRUE,
                     'alert' => [
                         'icon' => 'warning',
-                        'title' => 'Regenerate Stream Key Failed, This Input Stream Not Found.'
+                        'text' => 'Regenerate Stream Key Failed, This Input Stream Not Found.'
                     ]
                 ];
             }
@@ -287,7 +283,7 @@ class IngestStreamController extends Controller
                             'success' => TRUE,
                             'alert' => [
                                 'icon' => 'success',
-                                'title' => 'Delete Input Stream Success'
+                                'text' => 'Delete Input Stream Success'
                             ]
                         ];
 
@@ -301,7 +297,7 @@ class IngestStreamController extends Controller
                             'success' => FALSE,
                             'alert' => [
                                 'icon' => 'warning',
-                                'title' => 'This Input Stream Are In Live'
+                                'text' => 'This Input Stream Are In Live'
                             ]
                         ];
                     }
@@ -311,7 +307,7 @@ class IngestStreamController extends Controller
                         'success' => FALSE,
                         'alert' => [
                             'icon' => 'warning',
-                            'title' => 'You are not have access to delete this input stream'
+                            'text' => 'You are not have access to delete this input stream'
                         ]
                     ];
                 }
@@ -321,7 +317,7 @@ class IngestStreamController extends Controller
                     'success' => TRUE,
                     'alert' => [
                         'icon' => 'warning',
-                        'title' => 'Delete Input Stream Failed, This Input Stream Not Found.'
+                        'text' => 'Delete Input Stream Failed, This Input Stream Not Found.'
                     ]
                 ];
             }
@@ -343,7 +339,7 @@ class IngestStreamController extends Controller
                             'success' => TRUE,
                             'alert' => [
                                 'icon' => 'success',
-                                'title' => 'Force Status Input Stream Success'
+                                'text' => 'Force Status Input Stream Success'
                             ]
                         ];
                     } else {
@@ -352,7 +348,7 @@ class IngestStreamController extends Controller
                             'success' => FALSE,
                             'alert' => [
                                 'icon' => 'warning',
-                                'title' => 'This Input Are Not In Live State'
+                                'text' => 'This Input Are Not In Live State'
                             ]
                         ];
                     }
@@ -362,7 +358,7 @@ class IngestStreamController extends Controller
                         'success' => FALSE,
                         'alert' => [
                             'icon' => 'warning',
-                            'title' => 'You are not have access to force status this input stream'
+                            'text' => 'You are not have access to force status this input stream'
                         ]
                     ];
                 }
@@ -372,7 +368,7 @@ class IngestStreamController extends Controller
                     'success' => TRUE,
                     'alert' => [
                         'icon' => 'warning',
-                        'title' => 'Force Status Input Stream Failed, This Input Stream Not Found.'
+                        'text' => 'Force Status Input Stream Failed, This Input Stream Not Found.'
                     ]
                 ];
             }

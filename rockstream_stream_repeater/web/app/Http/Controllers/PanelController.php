@@ -18,12 +18,21 @@ use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
 
 use App\Component\Utility;
+use App\Component\Facades\Facade\AppInterfacesFacade as AppInterfaces;
 
 class PanelController extends Controller
 {
     public function index()
     {
-        return view('panel');
+        $binaryProc = [
+            'nginxBinName' => 'nginx.exe',
+            'nginxPath' => ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx'))
+        ];
+
+        $data = [
+            'nginxCheckProc' => Utility::getInstanceRunByPath($binaryProc['nginxPath'] . DIRECTORY_SEPARATOR . $binaryProc['nginxBinName'], 'nginx.exe')['found_process']
+        ];
+        return view('panel', $data);
     }
 
     public function get_stat_rtmp()
@@ -41,7 +50,7 @@ class PanelController extends Controller
                     # if value is not 0 set boolean to true
                     return ($value != 0);
                 }) ? TRUE : FALSE))),
-                'bytes_in_out' => 'Bytes In: ' . Utility::getreadableBytes($xml_stat_rtmp['bytes_in']) . ' / Bytes Out: ' . Utility::getreadableBytes($xml_stat_rtmp['bytes_out']),
+                'bytes_in_out' => 'In: ' . Utility::getreadableBytes($xml_stat_rtmp['bytes_in']) . ' / Out: ' . Utility::getreadableBytes($xml_stat_rtmp['bytes_out']),
                 'uptime' => CarbonInterval::seconds($xml_stat_rtmp['uptime'])->cascade()->forHumans(),
 
             ];

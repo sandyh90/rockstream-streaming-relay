@@ -10,7 +10,7 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link href="{{ asset('assets/vendor/bootstrap-5.2.0/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
 
@@ -21,6 +21,7 @@
     <link href="{{ asset('assets/vendor/sweetalert2/dist/sweetalert2.min.css') }}" rel="stylesheet">
 
     <!-- Addons Javascript Module [First Start] -->
+    <script src="{{ asset('assets/js/toggle-color-mode.js')}}"></script>
     <script defer src="{{ asset('assets/vendor/alpine.js/cdn.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
 
@@ -28,11 +29,11 @@
 
 <body class="d-flex flex-column min-vh-100">
     <div class="wrapper flex-grow-1">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg">
             <div class="container">
                 <button class="btn btn-outline" type="button" data-bs-toggle="offcanvas"
                     data-bs-target=".sidebar-toggle">
-                    <span class="navbar-toggler-icon"></span>
+                    <span class="bi bi-list fs-3"></span>
                 </button>
                 <a class="navbar-brand" href="{{ route('home') }}"><img
                         src="{{ asset('assets/img/rockstream-brand.png') }}" height="35" width="205"
@@ -44,16 +45,16 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav ms-auto">
-                        <div class="nav-item dropdown mx-md-2">
-                            <div class="dropdown-toggle indicator-rtmp" data-bs-toggle="dropdown" aria-expanded="false"
-                                type="button">
+                        <div class="nav-item dropdown mx-1">
+                            <button class="btn text-reset dropdown-toggle indicator-rtmp" data-bs-toggle="dropdown"
+                                aria-expanded="false" type="button">
                                 Status Streaming: <span class="status-stream badge bg-secondary"><span
                                         class="bi bi-arrow-down-up me-1"></span>
                                     <div class="spinner-border spinner-border-sm" role="status">
                                         <span class="visually-hidden">Loading...</span>
                                     </div>
                                 </span>
-                            </div>
+                            </button>
                             <div class="dropdown-menu dropdown-menu-end text-small">
                                 <div class="dropdown-item-text indicator-rtmp"><span
                                         class="bi bi-speedometer2 me-1"></span>Bandwidth:
@@ -81,11 +82,26 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="nav-item dropdown">
-                            <div class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" type="button">
-                                <span class="bi bi-person-circle me-1"></span>Hello,<span class="ms-1">{{
+                        <div class="nav-item dropdown mx-1">
+                            <button class="btn text-reset dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false" role="button">
+                                <span class="bi bi-sun theme-icon-active" data-theme-icon-active="bi-sun"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li class="dropdown-item" role="button" data-bs-theme-value="light"><span
+                                        class="bi bi-sun me-1" data-theme-icon="bi-sun"></span>Light</li>
+                                <li class="dropdown-item" role="button" data-bs-theme-value="dark"><span
+                                        class="bi bi-moon me-1" data-theme-icon="bi-moon"></span>Dark</li>
+                                <li class="dropdown-item" role="button" data-bs-theme-value="auto">
+                                    <span class="bi bi-circle-half me-1" data-theme-icon="bi-circle-half"></span>Auto
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="nav-item dropdown mx-1">
+                            <button class="btn text-reset dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false" type="button">Hello,<span class="ms-1">{{
                                     \Str::of(Auth::user()->name)->limit(13); }}</span>
-                            </div>
+                            </button>
                             <div class="dropdown-menu dropdown-menu-end text-small">
                                 <div class="dropdown-item-text text-center small">Logged in
                                     {{\Carbon\Carbon::createFromTimeStamp(strtotime(Auth::user()->last_login))->diffForHumans()}}
@@ -114,7 +130,7 @@
                         alt="RockStream Brand Logo">
                 </div>
                 <button type="button" class="btn btn-outline sidebar-btn" data-bs-dismiss="offcanvas">
-                    <span class="sidebar-toggler-icon"></span>
+                    <span class="bi bi-x fs-3"></span>
                 </button>
             </div>
             <div class="offcanvas-body">
@@ -136,7 +152,7 @@
                     </li>
                     <li>
                         <a href="{{ route('user.settings') }}" class="nav-link text-reset">
-                            <span class="bi bi-person-circle fs-4 me-1"></span>Account Settings
+                            <span class="bi bi-person-gear fs-4 me-1"></span>Account Settings
                         </a>
                     </li>
                     @if(Auth::user()->is_operator == TRUE)
@@ -245,7 +261,7 @@
         </div>
     </div>
 
-    <footer class="bg-light p-4 border-top">
+    <footer class="p-4 border-top">
         <div class="container-fluid text-muted">
             <div class="d-flex justify-content-between flex-wrap">
                 <div class="small">
@@ -261,7 +277,7 @@
     </footer>
 
     <!-- Bootstrap Bundle with Popper Important -->
-    <script src="{{ asset('assets/vendor/bootstrap-5.2.0/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     <!-- Addons Javascript Module -->
     <script src="{{ asset('assets/vendor/clipboard.js-2.0.8/clipboard.min.js') }}"></script>
@@ -282,15 +298,6 @@
             });
 
             get_rtmp_stat()
-
-            @if(AppInterfaces::getsetting('DISABLE_AUTO_SHOW_ABOUT') != TRUE)
-            if (!window.localStorage.about_modal_once) {
-                $('.modal-about-display').modal('show');
-                $('.btn-dismiss-about-modal').click(function () {
-                    window.localStorage.about_modal_once = true;
-                });
-            }
-            @endif
 
         });
     </script>

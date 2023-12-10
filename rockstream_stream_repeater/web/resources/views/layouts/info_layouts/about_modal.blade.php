@@ -1,6 +1,6 @@
 <div class="text-center mb-0">
     <h2 class="fw-bold">About</h2>
-    <h5 class="fw-light">RockStream V1.0.4</h5>
+    <h5 class="fw-light">RockStream V1.0.5</h5>
 </div>
 <ul class="d-grid gap-4 my-5 list-unstyled">
     <li class="d-flex gap-4">

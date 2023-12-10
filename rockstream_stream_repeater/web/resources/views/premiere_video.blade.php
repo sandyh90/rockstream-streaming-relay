@@ -15,9 +15,6 @@
             <div class="d-flex justify-content-between flex-wrap my-2">
                 <div class="fs-4 fw-light"><span class="bi bi-play-btn me-1"></span>Premiere Video
                 </div>
-                <div role="button" data-bs-toggle="modal" data-bs-target=".modal-countdown-video-credit">
-                    <span class="bi bi-info-circle me-1"></span>Additional Credit
-                </div>
             </div>
             <div class="alert alert-warning d-flex align-items-center" role="alert">
                 <span class="bi bi-exclamation-triangle-fill flex-shrink-0 fs-2 me-2"></span>
@@ -55,6 +52,11 @@
                         <button class="btn btn-primary premiere-video-data-refresh">
                             <span class="bi bi-arrow-clockwise me-1"></span>Refresh
                         </button>
+                    </div>
+                    <div class="my-1">
+                        <div class="small text-muted">
+                            *Daemon will automatically stop if there no queue premiere stream.
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped premiere-video-data" style="width:100%">
@@ -164,19 +166,9 @@
                 },
                 success: function(data) {
                     if (data.success == false) {
-                        if(data.isForm == true){
-                            msgalert(".premiere-video-info-data", data.messages);
-                        }else{
-                            if ($(".premiere-video-info-data").hasClass("alert alert-danger")) {
-                                $(".premiere-video-info-data").removeClass("alert alert-danger");
-                            }
-                            $(".premiere-video-info-data").html(data.messages).show();
-                        }
+                        $(".premiere-video-info-data").html(data.messages).show();
                     } else {
                         $('.premiere-video-data').DataTable().ajax.reload();
-                        if ($(".premiere-video-info-data").hasClass("alert alert-danger")) {
-                            $(".premiere-video-info-data").removeClass("alert alert-danger");
-                        }
                         $(".premiere-video-info-data").html(data.messages).show().delay(3000).fadeOut();
                         $('.add-premiere-video').modal('hide');
                         form.reset();
@@ -228,19 +220,9 @@
                                     $('meta[name="csrf-token"]').val(data.csrftoken);
                                     $('input[name=_token]').val(data.csrftoken);
                                     if (data.success == false) {
-                                        if(data.isForm == true){
-                                            msgalert(".edit-premiere-video-info-data", data.messages);
-                                        }else{
-                                            if ($(".edit-premiere-video-info-data").hasClass("alert alert-danger")) {
-                                                $(".edit-premiere-video-info-data").removeClass("alert alert-danger");
-                                            }
-                                            $(".edit-premiere-video-info-data").html(data.messages).show();
-                                        }
+                                        $(".edit-premiere-video-info-data").html(data.messages).show();
                                     } else {
                                         $('.premiere-video-data').DataTable().ajax.reload();
-                                        if ($(".edit-premiere-video-info-data").hasClass("alert alert-danger")) {
-                                            $(".edit-premiere-video-info-data").removeClass("alert alert-danger");
-                                        }
                                         $(".edit-premiere-video-info-data").html(data.messages).show().delay(3000).fadeOut();
                                         $('.custom-modal-display').modal('hide');
                                         form.reset();
@@ -300,20 +282,10 @@
                                     $('meta[name="csrf-token"]').val(data.csrftoken);
                                     $('input[name=_token]').val(data.csrftoken);
                                     if (data.success == false) {
-                                        if(data.isForm == true){
-                                            msgalert(".start-premiere-video-info-data", data.messages);
-                                        }else{
-                                            if ($(".start-premiere-video-info-data").hasClass("alert alert-danger")) {
-                                                $(".start-premiere-video-info-data").removeClass("alert alert-danger");
-                                            }
-                                            $(".start-premiere-video-info-data").html(data.messages).show();
-                                        }
+                                        $(".start-premiere-video-info-data").html(data.messages).show();
                                     } else {
                                         $('.premiere-video-data').DataTable().ajax.reload();
                                         $('.premiere-queue-data').DataTable().ajax.reload();
-                                        if ($(".start-premiere-video-info-data").hasClass("alert alert-danger")) {
-                                            $(".start-premiere-video-info-data").removeClass("alert alert-danger");
-                                        }
                                         $(".start-premiere-video-info-data").html(data.messages).show().delay(3000).fadeOut();
                                         $('.custom-modal-display').modal('hide');
                                         form.reset();
@@ -430,7 +402,7 @@
                         success: function(data) {
                             swal.fire({
                                 icon: data.alert.icon,
-                                title: data.alert.title,
+                                text: data.alert.text,
                                 showConfirmButton: false,
                                 timer: 1500,
                                 timerProgressBar: true
@@ -477,9 +449,9 @@
                         success: function(data) {
                             swal.fire({
                                 icon: data.alert.icon,
-                                title: data.alert.title,
+                                text: data.alert.text,
                                 showConfirmButton: false,
-                                timer: 1500,
+                                timer: 2500,
                                 timerProgressBar: true
                             });
                             $('.premiere-video-data').DataTable().ajax.reload();
@@ -591,19 +563,9 @@
                                     $('meta[name="csrf-token"]').val(data.csrftoken);
                                     $('input[name=_token]').val(data.csrftoken);
                                     if (data.success == false) {
-                                        if(data.isForm == true){
-                                            msgalert(".edit-premiere-queue-info-data", data.messages);
-                                        }else{
-                                            if ($(".edit-premiere-queue-info-data").hasClass("alert alert-danger")) {
-                                                $(".edit-premiere-queue-info-data").removeClass("alert alert-danger");
-                                            }
-                                            $(".edit-premiere-queue-info-data").html(data.messages).show();
-                                        }
+                                        $(".edit-premiere-queue-info-data").html(data.messages).show();
                                     } else {
                                         $('.premiere-queue-data').DataTable().ajax.reload();
-                                        if ($(".edit-premiere-queue-info-data").hasClass("alert alert-danger")) {
-                                            $(".edit-premiere-queue-info-data").removeClass("alert alert-danger");
-                                        }
                                         $(".edit-premiere-queue-info-data").html(data.messages).show().delay(3000).fadeOut();
                                         $('.custom-modal-display').modal('hide');
                                         form.reset();
@@ -656,9 +618,9 @@
                         success: function(data) {
                             swal.fire({
                                 icon: data.alert.icon,
-                                title: data.alert.title,
+                                text: data.alert.text,
                                 showConfirmButton: false,
-                                timer: 1500,
+                                timer: 2500,
                                 timerProgressBar: true
                             });
                             $('.premiere-queue-data').DataTable().ajax.reload();
@@ -701,15 +663,6 @@
         Swal.showLoading();
         $('.premiere-queue-data').DataTable().ajax.reload();
     });
-
-    function msgalert(sector, msg) {
-        $(sector).show();
-        $(sector).find('ul').children().remove();
-        $(sector).html('<ul></ul>').addClass("alert alert-danger");
-        $.each(msg, function(key, value) {
-            $(sector).find("ul").append('<li>' + value + '</li>');
-        });
-    }
 </script>
 @endsection
 
@@ -757,19 +710,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade modal-countdown-video-credit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    role="dialog">
-    <div class="modal-dialog modal-dialog-scrollable" role="document">
-        <div class="modal-content rounded-6 shadow">
-            <div class="modal-body">
-                @include('layouts.info_layouts.credit_countdown_video_assets')
-                <button type="button" class="btn btn-primary btn-dismiss-countdown-video-credit-modal mt-2 w-100"
-                    data-bs-dismiss="modal">OK</button>
             </div>
         </div>
     </div>

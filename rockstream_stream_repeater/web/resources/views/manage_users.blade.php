@@ -96,19 +96,9 @@
                 },
                 success: function(data) {
                     if (data.success == false) {
-                        if(data.isForm == true){
-                            msgalert(".users-info-data", data.messages);
-                        }else{
-                            if ($(".users-info-data").hasClass("alert alert-danger")) {
-                                $(".users-info-data").removeClass("alert alert-danger");
-                            }
-                            $(".users-info-data").html(data.messages).show();
-                        }
+                        $(".users-info-data").html(data.messages).show();
                     } else {
                         $('.users-data').DataTable().ajax.reload();
-                        if ($(".users-info-data").hasClass("alert alert-danger")) {
-                            $(".users-info-data").removeClass("alert alert-danger");
-                        }
                         $(".users-info-data").html(data.messages).show().delay(3000).fadeOut();
                         $('.add-users-data').modal('hide');
                         form.reset();
@@ -160,19 +150,9 @@
                                     $('meta[name="csrf-token"]').val(data.csrftoken);
                                     $('input[name=_token]').val(data.csrftoken);
                                     if (data.success == false) {
-                                        if(data.isForm == true){
-                                            msgalert(".edit-users-info-data", data.messages);
-                                        }else{
-                                            if ($(".edit-users-info-data").hasClass("alert alert-danger")) {
-                                                $(".edit-users-info-data").removeClass("alert alert-danger");
-                                            }
-                                            $(".edit-users-info-data").html(data.messages).show();
-                                        }
+                                        $(".edit-users-info-data").html(data.messages).show();
                                     } else {
                                         $('.users-data').DataTable().ajax.reload();
-                                        if ($(".edit-users-info-data").hasClass("alert alert-danger")) {
-                                            $(".edit-users-info-data").removeClass("alert alert-danger");
-                                        }
                                         $(".edit-users-info-data").html(data.messages).show().delay(3000).fadeOut();
                                         $('.custom-modal-display').modal('hide');
                                         form.reset();
@@ -253,9 +233,9 @@
                         success: function(data) {
                             swal.fire({
                                 icon: data.alert.icon,
-                                title: data.alert.title,
+                                text: data.alert.text,
                                 showConfirmButton: false,
-                                timer: 1500,
+                                timer: 2500,
                                 timerProgressBar: true
                             });
                             $('.users-data').DataTable().ajax.reload();
@@ -284,15 +264,6 @@
         Swal.showLoading();
         $('.users-data').DataTable().ajax.reload();
     });
-
-    function msgalert(sector, msg) {
-        $(sector).show();
-        $(sector).find('ul').children().remove();
-        $(sector).html('<ul></ul>').addClass("alert alert-danger");
-        $.each(msg, function(key, value) {
-            $(sector).find("ul").append('<li>' + value + '</li>');
-        });
-    }
 </script>
 @endsection
 

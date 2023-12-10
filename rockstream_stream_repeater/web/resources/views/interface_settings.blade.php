@@ -53,27 +53,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <span class="bi bi-info-circle fs-3"></span>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="form-group p-2">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch"
-                                                id="disable-auto-show-about" name="disable_auto_show_about" value="1" {{
-                                                (!array_key_exists('DISABLE_AUTO_SHOW_ABOUT',$getSettingConfig)? ''
-                                                :($getSettingConfig['DISABLE_AUTO_SHOW_ABOUT']==TRUE ?'checked':'')) }}>
-                                            <label class="form-check-label" for="disable-auto-show-about">
-                                                Disable Auto Show About</label>
-                                        </div>
-                                        <div class="small">
-                                            <span class="text-danger me-1">Note:</span>This will disable the auto show
-                                            about modal when using fresh web browser.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="card card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0">
@@ -94,7 +73,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="p-2">
-                                            <label class="form-label">PHP Custom Binary</label>
+                                            <label class="form-label">PHP Custom Path Binary</label>
                                             <div class="input-group">
                                                 <div class="input-group-text">
                                                     <div class="form-check">
@@ -129,7 +108,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="p-2">
-                                            <label class="form-label">FFmpeg Custom Binary</label>
+                                            <label class="form-label">FFmpeg Custom Path Binary</label>
                                             <div class="input-group">
                                                 <div class="input-group-text">
                                                     <div class="form-check">
@@ -150,6 +129,28 @@
                                                 }}">
                                             </div>
                                         </div>
+                                        <div class="p-2">
+                                            <label class="form-label">FFprobe Custom Path Binary</label>
+                                            <div class="input-group">
+                                                <div class="input-group-text">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="enable-custom-ffprobe-path"
+                                                            name="enable_custom_ffprobe_path" value="1" {{
+                                                            (!array_key_exists('IS_CUSTOM_FFPROBE_BINARY',$getSettingConfig)? ''
+                                                            :($getSettingConfig['IS_CUSTOM_FFPROBE_BINARY']==TRUE
+                                                            ?'checked':'')) }}>
+                                                        <label class="form-check-label"
+                                                            for="enable-custom-ffprobe-path">Enable</label>
+                                                    </div>
+                                                </div>
+                                                <input type="text" class="form-control" name="ffprobe_custom_dir"
+                                                    placeholder="FFprobe Binary Custom Folder Path" value="{{
+                                                (!array_key_exists('FFPROBE_BINARY_DIRECTORY' , $getSettingConfig) ? ''
+                                                : (!empty($getSettingConfig['FFPROBE_BINARY_DIRECTORY']) ? $getSettingConfig['FFPROBE_BINARY_DIRECTORY'] : ''))
+                                                }}">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center">
@@ -164,7 +165,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="p-2">
-                                            <label class="form-label">Nginx Custom Binary</label>
+                                            <label class="form-label">Nginx Custom Path Binary</label>
                                             <div class="input-group">
                                                 <div class="input-group-text">
                                                     <div class="form-check">
@@ -231,8 +232,7 @@
                                             </div>
                                         </div>
                                         <div class="small text-muted">*Daemon will automatically stop if there no queue
-                                            test
-                                            stream.</div>
+                                            test stream.</div>
                                     </div>
                                 </div>
                             </div>

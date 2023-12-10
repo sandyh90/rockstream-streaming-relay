@@ -86,12 +86,9 @@
                 },
                 success: function(data) {
                     if (data.success == false) {
-                        msgalert(".input-stream-info-data", data.messages);
+                        $(".input-stream-info-data").html(data.messages).show()
                     } else {
                         $('.input-stream-data').DataTable().ajax.reload();
-                        if ($(".input-stream-info-data").hasClass("alert alert-danger")) {
-                            $(".input-stream-info-data").removeClass("alert alert-danger");
-                        }
                         $(".input-stream-info-data").html(data.messages).show().delay(3000).fadeOut();
                         $('.add-input-stream').modal('hide');
                         form.reset();
@@ -136,9 +133,9 @@
                         success: function(data) {
                             swal.fire({
                                 icon: data.alert.icon,
-                                title: data.alert.title,
+                                text: data.alert.text,
                                 showConfirmButton: false,
-                                timer: 1500,
+                                timer: 2500,
                                 timerProgressBar: true
                             });
                             $('.input-stream-data').DataTable().ajax.reload();
@@ -211,9 +208,9 @@
                         success: function(data) {
                             swal.fire({
                                 icon: data.alert.icon,
-                                title: data.alert.title,
+                                text: data.alert.text,
                                 showConfirmButton: false,
-                                timer: 1500,
+                                timer: 2500,
                                 timerProgressBar: true
                             });
                             $('.input-stream-data').DataTable().ajax.reload();
@@ -258,9 +255,9 @@
                         success: function(data) {
                             swal.fire({
                                 icon: data.alert.icon,
-                                title: data.alert.title,
+                                text: data.alert.text,
                                 showConfirmButton: false,
-                                timer: 1500,
+                                timer: 2500,
                                 timerProgressBar: true
                             });
                             $('.premiere-video-data').DataTable().ajax.reload();
@@ -289,15 +286,6 @@
         Swal.showLoading();
         $('.input-stream-data').DataTable().ajax.reload();
     });
-
-    function msgalert(sector, msg) {
-        $(sector).show();
-        $(sector).find('ul').children().remove();
-        $(sector).html('<ul></ul>').addClass("alert alert-danger");
-        $.each(msg, function(key, value) {
-            $(sector).find("ul").append('<li>' + value + '</li>');
-        });
-    }
 </script>
 @endsection
 
@@ -335,6 +323,7 @@
                             class="bi bi-save me-1"></span>Save</button>
                 </form>
                 <div class="my-2 input-stream-info-data"></div>
+                <div class="small p-1">*Nginx config will reload automatically</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

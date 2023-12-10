@@ -12,11 +12,12 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link href="{{ asset('assets/vendor/bootstrap-5.2.0/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
 
     <!-- Addons Javascript Module [First Start] -->
+    <script src="{{ asset('assets/js/toggle-color-mode.js')}}"></script>
     <script defer src="{{ asset('assets/vendor/alpine.js/cdn.min.js') }}"></script>
 </head>
 
@@ -44,7 +45,7 @@
     </div>
 
     <!-- Bootstrap Bundle with Popper Important -->
-    <script src="{{ asset('assets/vendor/bootstrap-5.2.0/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 </body>
 
 </html>

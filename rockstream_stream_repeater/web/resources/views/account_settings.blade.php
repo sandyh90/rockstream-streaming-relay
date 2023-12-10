@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="px-4 py-5 my-5">
-    <h1 class="display-5 fw-bold text-center"><span class="bi bi-person-circle me-3"></span>Account Settings</h1>
+    <h1 class="display-5 fw-bold text-center"><span class="bi bi-person-gear me-3"></span>Account Settings</h1>
     <div class="col-xl-5 col-lg-6 mx-auto">
         <div class="card">
             <div class="card-body">
@@ -13,14 +13,12 @@
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <button class="nav-link active" id="nav-profile-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile"
-                            aria-selected="true"><span class="bi bi-person-lines-fill me-1"></span>Profile</button>
+                            aria-selected="true">Profile</button>
                         <button class="nav-link" id="nav-update-password-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-update-password" type="button" role="tab"
-                            aria-controls="nav-update-password" aria-selected="false"><span
-                                class="bi bi-key me-1"></span>Update Password</button>
+                            aria-controls="nav-update-password" aria-selected="false">Update Password</button>
                         <button class="nav-link" id="nav-session-tab" data-bs-toggle="tab" data-bs-target="#nav-session"
-                            type="button" role="tab" aria-controls="nav-session" aria-selected="false"><span
-                                class="bi bi-globe me-1"></span>Session</button>
+                            type="button" role="tab" aria-controls="nav-session" aria-selected="false">Session</button>
                     </div>
                 </nav>
                 <div class="tab-content mt-2" id="nav-tabContent">
@@ -33,32 +31,25 @@
                             @csrf
                             <div class="form-group mb-2">
                                 <label class="form-label">Fullname</label>
-                                <div class="input-group">
-                                    <div class="input-group-text"><span class="bi bi-type"></span></div>
-                                    <input type="text" class="form-control @error('fullname') is-invalid @enderror"
-                                        name="fullname"
-                                        value="{{ (old('fullname')) ? old('fullname') : Auth::user()->name }}">
-                                    @error('fullname')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
+                                <input type="text" class="form-control @error('fullname') is-invalid @enderror"
+                                    name="fullname"
+                                    value="{{ (old('fullname')) ? old('fullname') : Auth::user()->name }}">
+                                @error('fullname')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
                             </div>
                             <div class="form-group mb-2">
                                 <label class="form-label">Username</label>
-                                <div class="input-group">
-                                    <div class="input-group-text"><span class="bi bi-person-circle"></span>
-                                    </div>
-                                    <input type="text" class="form-control @error('username') is-invalid @enderror"
-                                        name="username"
-                                        value="{{ (old('username')) ? old('username') : Auth::user()->username }}">
-                                    @error('username')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
+                                <input type="text" class="form-control @error('username') is-invalid @enderror"
+                                    name="username"
+                                    value="{{ (old('username')) ? old('username') : Auth::user()->username }}">
+                                @error('username')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
                             </div>
                             <button type="submit" class="btn btn-primary"><span
                                     class="bi bi-pencil-square me-1"></span>Edit</button>

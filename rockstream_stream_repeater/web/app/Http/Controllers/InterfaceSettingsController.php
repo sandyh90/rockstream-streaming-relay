@@ -51,11 +51,17 @@ class InterfaceSettingsController extends Controller
                     unlink(storage_path('app/settings-app.json'));
                 }
 
-                // Stop nginx service if it's running
-                $nginx_folder = ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx'));
+                $binaryProc = [
+                    'nginxBinName' => 'nginx.exe',
+                    'nginxPath' => ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx'))
+                ];
 
-                if (file_exists($nginx_folder . '\nginx.exe') && Utility::getInstanceRunByPath(($nginx_folder . DIRECTORY_SEPARATOR . 'nginx.exe'), 'nginx.exe')['found_process'] == true) {
-                    Utility::runInstancewithPid('cmd /c start /B "" /d"' . $nginx_folder . '" "nginx.exe" -s stop');
+                // Stop nginx service if it's running
+                if (file_exists($binaryProc['nginxPath'] . DIRECTORY_SEPARATOR . $binaryProc['nginxBinName']) && (Utility::getInstanceRunByPath($binaryProc['nginxPath'] . DIRECTORY_SEPARATOR . $binaryProc['nginxBinName'], $binaryProc['nginxBinName'])['found_process'] == true)) {
+                    try {
+                        Utility::runInstancewithPid('cmd /c start /B "" /d"' . $binaryProc['nginxPath'] . '" "' . $binaryProc['nginxBinName'] . '" -s stop');
+                    } catch (\Throwable $e) {
+                    }
                 }
 
                 $responses = [
@@ -86,12 +92,13 @@ class InterfaceSettingsController extends Controller
                     $request->all(),
                     [
                         'use_live_preview' => 'boolean',
-                        'disable_auto_show_about' => 'boolean',
                         'enable_custom_php_path' => 'boolean',
                         'enable_custom_ffmpeg_path' => 'boolean',
+                        'enable_custom_ffprobe_path' => 'boolean',
                         'enable_custom_nginx_path' => 'boolean',
                         'php_custom_dir' => ($request->php_custom_dir ? ['required', 'string', 'max:255', new CheckPathFile] : 'nullable'),
                         'ffmpeg_custom_dir' => ($request->ffmpeg_custom_dir ? ['required', 'string', 'max:255', new CheckPathFile] : 'nullable'),
+                        'ffprobe_custom_dir' => ($request->ffprobe_custom_dir ? ['required', 'string', 'max:255', new CheckPathFile] : 'nullable'),
                         'nginx_custom_dir' => ($request->nginx_custom_dir ? ['required', 'string', 'max:255', new CheckPathFile] : 'nullable'),
                         'reload_system_switch' => 'boolean',
                     ]
@@ -102,17 +109,18 @@ class InterfaceSettingsController extends Controller
                     $responses['messages'] = $validator->errors()->all();
                 } else {
                     CachedValuestore::make(storage_path('app/settings-app.json'))->put([
-                        'USE_LIVE_PREVIEW' => $request->use_live_preview ? TRUE : FALSE,
-                        'DISABLE_AUTO_SHOW_ABOUT' => $request->disable_auto_show_about ? TRUE : FALSE,
-                        'IS_CUSTOM_PHP_BINARY' => $request->enable_custom_php_path ? TRUE : FALSE,
-                        'IS_CUSTOM_FFMPEG_BINARY' => $request->enable_custom_ffmpeg_path ? TRUE : FALSE,
-                        'IS_CUSTOM_NGINX_BINARY' => $request->enable_custom_nginx_path ? TRUE : FALSE,
+                        'USE_LIVE_PREVIEW' => $request->boolean('use_live_preview'),
+                        'IS_CUSTOM_PHP_BINARY' => $request->boolean('enable_custom_php_path'),
+                        'IS_CUSTOM_FFMPEG_BINARY' => $request->boolean('enable_custom_ffmpeg_path'),
+                        'IS_CUSTOM_FFPROBE_BINARY' => $request->boolean('enable_custom_ffprobe_path'),
+                        'IS_CUSTOM_NGINX_BINARY' => $request->boolean('enable_custom_nginx_path'),
                         'PHP_BINARY_DIRECTORY' => $request->php_custom_dir,
                         'FFMPEG_BINARY_DIRECTORY' => $request->ffmpeg_custom_dir,
-                        'NGINX_BINARY_DIRECTORY' => $request->nginx_custom_dir,
+                        'FFPROBE_BINARY_DIRECTORY' => $request->ffprobe_custom_dir,
+                        'NGINX_BINARY_DIRECTORY' => $request->nginx_custom_dir
                     ]);
 
-                    if ((($request->reload_system_switch ? TRUE : FALSE) == TRUE) || (AppInterfaces::getsetting('RELOAD_SYSTEM_SWITCH') == TRUE)) {
+                    if (($request->boolean('reload_system_switch') == TRUE) || (AppInterfaces::getsetting('RELOAD_SYSTEM_SWITCH') == TRUE)) {
                         // Regenerate nginx config file and restart nginx service to apply new config
                         Artisan::call('nginxrtmp:regenconfig');
                     }
@@ -219,11 +227,16 @@ class InterfaceSettingsController extends Controller
 
     public function launch_test_streaming_daemon(Request $request)
     {
-        $php_folder = ((AppInterfaces::getsetting('IS_CUSTOM_PHP_BINARY') == TRUE && !empty(AppInterfaces::getsetting('PHP_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('PHP_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('php'));
+        $binaryProc = [
+            'nginxBinName' => 'nginx.exe',
+            'phpBinName' => 'php.exe',
+            'phpPath' => ((AppInterfaces::getsetting('IS_CUSTOM_PHP_BINARY') == TRUE && !empty(AppInterfaces::getsetting('PHP_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('PHP_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('php')),
+            'nginxPath' => ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx'))
+        ];
 
         if ($request->isMethod('options')) {
             if (Auth::user()->is_operator == TRUE) {
-                if (!file_exists($php_folder . DIRECTORY_SEPARATOR . 'php.rockstream.exe')) {
+                if (!file_exists($binaryProc['phpPath'] . DIRECTORY_SEPARATOR . $binaryProc['phpBinName'])) {
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'success' => FALSE,
@@ -234,19 +247,31 @@ class InterfaceSettingsController extends Controller
                         ]
                     ];
                 } else {
-                    if (Utility::getInstanceRunByPath((((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx')) . DIRECTORY_SEPARATOR . 'nginx.exe'), 'nginx.exe')['found_process']) {
-                        # Check if queue daemon is running
-                        Utility::runInstancewithPid('start "Test Streaming Daemon" /d"' . $php_folder . '" "php.rockstream.exe" -f "' . (base_path() . DIRECTORY_SEPARATOR . 'artisan') . '" queue:work --queue TestStreamingBroadcast --stop-when-empty');
+                    # Check if nginx is running
+                    if (Utility::getInstanceRunByPath($binaryProc['nginxPath'] . DIRECTORY_SEPARATOR . $binaryProc['nginxBinName'], $binaryProc['nginxBinName'])['found_process']) {
 
-                        $responses = [
-                            'csrftoken' => csrf_token(),
-                            'success' => TRUE,
-                            'alert' => [
-                                'icon' => 'success',
-                                'title' => 'Launch Daemon Successfully',
-                                'text' => 'Launch daemon test streaming successfully',
-                            ]
-                        ];
+                        try {
+                            Utility::runInstancewithPid('start "Test Streaming Daemon" /d"' . $binaryProc['phpPath'] . '" "' . $binaryProc['phpBinName'] . '" -f "' . (base_path() . DIRECTORY_SEPARATOR . 'artisan') . '" queue:work --queue TestStreamingBroadcast --stop-when-empty');
+                            $responses = [
+                                'csrftoken' => csrf_token(),
+                                'success' => TRUE,
+                                'alert' => [
+                                    'icon' => 'success',
+                                    'title' => 'Launch Daemon Successfully',
+                                    'text' => 'Launch daemon test streaming successfully',
+                                ]
+                            ];
+                        } catch (\Throwable $e) {
+                            $responses = [
+                                'csrftoken' => csrf_token(),
+                                'success' => FALSE,
+                                'alert' => [
+                                    'icon' => 'warning',
+                                    'title' => 'Launch Daemon Unsuccessfully',
+                                    'text' => 'Launch daemon test streaming unsuccessfully, Error: ' . $e->getMessage(),
+                                ]
+                            ];
+                        }
                     } else {
                         $responses = [
                             'csrftoken' => csrf_token(),

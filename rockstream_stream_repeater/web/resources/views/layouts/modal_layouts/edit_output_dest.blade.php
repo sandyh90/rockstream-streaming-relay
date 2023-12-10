@@ -57,6 +57,7 @@
                 class="bi bi-save me-1"></span>Save</button>
     </form>
     <div class="my-2 edit-output-dest-info-data"></div>
+    <div class="small p-1">*Nginx config will reload automatically</div>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

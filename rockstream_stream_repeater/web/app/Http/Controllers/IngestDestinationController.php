@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 use App\Component\ServicesCore;
-
+use App\Component\Utility;
 use App\Models\IngestStreamDestination;
 use App\Models\StreamInput;
 
@@ -61,8 +61,7 @@ class IngestDestinationController extends Controller
             $responses = [
                 'csrftoken' => csrf_token(),
                 'messages' => [],
-                'success' => FALSE,
-                'isForm' => TRUE
+                'success' => FALSE
             ];
             $validator = Validator::make(
                 $request->all(),
@@ -74,13 +73,13 @@ class IngestDestinationController extends Controller
                     ],
                     'select_endpoint_server' => $request->filled('rtmp_output_server') ? 'prohibited|nullable|string|max:255|starts_with:rtmp://,rtmps://' : 'required|string|max:255|starts_with:rtmp://,rtmps://',
                     'rtmp_output_server' => $request->filled('select_endpoint_server') ? 'prohibited|nullable|string|max:255|starts_with:rtmp://,rtmps://' : 'required|string|max:255|starts_with:rtmp://,rtmps://',
-                    'rtmp_stream_key' => empty($check_stream->ingest_destination_data()->first()->key_stream_dest) ? 'required|string|max:355' : ($check_stream->ingest_destination_data()->first()->key_stream_dest != $request->rtmp_stream_key ? 'required|string|max:355' : 'required|unique:stream_ingest_dest,key_stream_dest|string|max:355'),
+                    'rtmp_stream_key' => empty($check_stream->ingest_destination_data()->first()->key_stream_dest) ? 'required|string|max:500' : ($check_stream->ingest_destination_data()->first()->key_stream_dest != $request->rtmp_stream_key ? 'required|string|max:355' : 'required|unique:stream_ingest_dest,key_stream_dest|string|max:500'),
                     'status_output_dest' => 'required|boolean'
                 ]
             );
 
             if ($validator->fails()) {
-                $responses['messages'] = $validator->errors()->all();
+                $responses['messages'] = Utility::alertValidation($validator->errors()->all(), 'alert alert-danger');
             } else {
                 $responses = [
                     'csrftoken' => csrf_token(),
@@ -104,8 +103,7 @@ class IngestDestinationController extends Controller
             $responses = [
                 'csrftoken' => csrf_token(),
                 'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>Stop Stream First Before Add Output Destination</div>',
-                'success' => FALSE,
-                'isForm' => FALSE
+                'success' => FALSE
             ];
         }
 
@@ -157,7 +155,7 @@ class IngestDestinationController extends Controller
                             'success' => TRUE,
                             'alert' => [
                                 'icon' => 'success',
-                                'title' => 'Delete Output Destination Success'
+                                'text' => 'Delete Output Destination Success'
                             ]
                         ];
 
@@ -171,7 +169,7 @@ class IngestDestinationController extends Controller
                             'success' => FALSE,
                             'alert' => [
                                 'icon' => 'warning',
-                                'title' => 'This Input Stream Are In Live'
+                                'text' => 'This Input Stream Are In Live'
                             ]
                         ];
                     }
@@ -181,7 +179,7 @@ class IngestDestinationController extends Controller
                         'success' => FALSE,
                         'alert' => [
                             'icon' => 'warning',
-                            'title' => 'You are not have access to delete this output destination'
+                            'text' => 'You are not have access to delete this output destination'
                         ]
                     ];
                 }
@@ -191,7 +189,7 @@ class IngestDestinationController extends Controller
                     'success' => FALSE,
                     'alert' => [
                         'icon' => 'warning',
-                        'title' => 'Output destination not found'
+                        'text' => 'Output destination not found'
                     ]
                 ];
             }
@@ -235,8 +233,7 @@ class IngestDestinationController extends Controller
                         $responses = [
                             'csrftoken' => csrf_token(),
                             'messages' => [],
-                            'success' => FALSE,
-                            'isForm' => TRUE
+                            'success' => FALSE
                         ];
                         $validator = Validator::make(
                             $request->all(),
@@ -248,18 +245,17 @@ class IngestDestinationController extends Controller
                                 ],
                                 'select_endpoint_server' => $request->filled('rtmp_output_server') ? 'prohibited|nullable|string|max:255|starts_with:rtmp://,rtmps://' : 'required|string|max:255|starts_with:rtmp://,rtmps://',
                                 'rtmp_output_server' => $request->filled('select_endpoint_server') ? 'prohibited|nullable|string|max:255|starts_with:rtmp://,rtmps://' : 'required|string|max:255|starts_with:rtmp://,rtmps://',
-                                'rtmp_stream_key' => $check_stream->key_stream_dest == $request->rtmp_stream_key ? 'required|string|max:355' : 'required|unique:stream_ingest_dest,key_stream_dest|string|max:355',
+                                'rtmp_stream_key' => $check_stream->key_stream_dest == $request->rtmp_stream_key ? 'required|string|max:500' : 'required|unique:stream_ingest_dest,key_stream_dest|string|max:500',
                                 'status_output_dest' => 'required|boolean'
                             ]
                         );
 
                         if ($validator->fails()) {
-                            $responses['messages'] = $validator->errors()->all();
+                            $responses['messages'] = Utility::alertValidation($validator->errors()->all(), 'alert alert-danger');
                         } else {
                             $responses = [
                                 'csrftoken' => csrf_token(),
                                 'messages' => '<div class="alert alert-success">Edit output destination successfully</div>',
-                                'isForm' => FALSE,
                                 'success' => TRUE
                             ];
 
@@ -279,15 +275,13 @@ class IngestDestinationController extends Controller
                         $responses = [
                             'csrftoken' => csrf_token(),
                             'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>Stop Stream First Before Edit Output Destination</div>',
-                            'success' => FALSE,
-                            'isForm' => FALSE
+                            'success' => FALSE
                         ];
                     }
                 } else {
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'success' => FALSE,
-                        'isForm' => FALSE,
                         'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>You are not have access to edit this output destination</div>'
                     ];
                 }
@@ -295,7 +289,6 @@ class IngestDestinationController extends Controller
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'success' => FALSE,
-                    'isForm' => FALSE,
                     'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>Output destination not found</div>'
                 ];
             }

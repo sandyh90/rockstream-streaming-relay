@@ -39,20 +39,10 @@
                 <div class="fs-4 fw-light my-2"><span class="bi bi-sliders me-1 fs-2"></span>Control Panel
                 </div>
                 <div class="control-action-stream-btn">
-                    @if(\App\Component\Utility::getInstanceRunByPath((((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY')
-                    == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ?
-                    AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') :
-                    \App\Component\Utility::defaultBinDirFolder('nginx'))
-                    . DIRECTORY_SEPARATOR . 'nginx.exe'),'nginx.exe')['found_process'] == TRUE)
-                    <button class="btn btn-danger control-stream-btn my-2" control-stream-action="power"><span
-                            class="bi bi-power me-1"></span>Stop Server
+                    <button class="btn {{ $nginxCheckProc ? 'btn-danger' : 'btn-success' }} control-stream-btn my-2"
+                        control-stream-action="power"><span class="bi bi-power me-1"></span>{{ $nginxCheckProc ?
+                        'Stop Server' : 'Start Server' }}
                     </button>
-                    @else
-                    <button class="btn btn-success control-stream-btn my-2" control-stream-action="power"><span
-                            class="bi bi-power me-1"></span>Start
-                        Server
-                    </button>
-                    @endif
                     <button class="btn btn-warning control-stream-btn my-2" control-stream-action="disable"><span
                             class="bi bi-cloud-slash me-1"></span>Disable Stream
                     </button>

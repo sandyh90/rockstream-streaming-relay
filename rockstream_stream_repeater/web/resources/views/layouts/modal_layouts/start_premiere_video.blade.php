@@ -73,18 +73,8 @@
                         </div>
                         <div class="form-group mb-2" x-show="open">
                             <label class="form-label">Custom Countdown Video</label>
-                            <div class="input-group">
-                                <div class="input-group-text">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="use-local-video-countdown"
-                                            name="use_local_video_countdown" value="1">
-                                        <label class="form-check-label" for="use-local-video-countdown">Use Local
-                                            Video</label>
-                                    </div>
-                                </div>
-                                <input type="text" class="form-control" name="local_video_countdown_path"
-                                    placeholder="Local Video Path">
-                            </div>
+                            <input type="text" class="form-control" name="local_video_countdown_path"
+                                placeholder="Local Video Path">
                             <small class="form-text text-muted">*For path video please remove quote (") if
                                 present.</small>
                         </div>

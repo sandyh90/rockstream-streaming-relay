@@ -42,10 +42,14 @@ class NginxConfigCommand extends Command
      */
     public function handle()
     {
+        $binaryProc = [
+            'nginxBinName' => 'nginx.exe',
+            'nginxPath' => ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx'))
+        ];
+
         # check nginx executable path if not found then exit or else continue
-        $nginx_folder = ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx'));
-        if (!file_exists($nginx_folder . '\nginx.exe')) {
-            return $this->error('Stream input Nginx config cannot be generated, Because nginx not found: ' . $nginx_folder);
+        if (!file_exists($binaryProc['nginxPath'] . DIRECTORY_SEPARATOR . $binaryProc['nginxBinName'])) {
+            return $this->error('Stream input Nginx config cannot be generated, Because nginx not found: ' . $binaryProc['nginxPath']);
         } else {
             # Regenerate Nginx config
             try {
@@ -55,12 +59,14 @@ class NginxConfigCommand extends Command
             }
 
             # check nginx process if running then restart nginx service
-            $check_process = Utility::getInstanceRunByPath(($nginx_folder . DIRECTORY_SEPARATOR . 'nginx.exe'), 'nginx.exe')['found_process'];
-
-            if ($check_process == true) {
+            if (Utility::getInstanceRunByPath($binaryProc['nginxPath'] . DIRECTORY_SEPARATOR . $binaryProc['nginxBinName'], $binaryProc['nginxBinName'])['found_process']) {
                 # Reload nginx process to apply changes to config file and restart it
-                Utility::runInstancewithPid('cmd /c start /B "" /d"' . $nginx_folder . '" "nginx.exe" -s reload');
-                return $this->info('Stream input nginx config has been generate, Reload success');
+                try {
+                    Utility::runInstancewithPid('cmd /c start /B "" /d"' . $binaryProc['nginxPath'] . '" "' . $binaryProc['nginxBinName'] . '" -s reload');
+                    return $this->info('Stream input nginx config has been generate, Reload success');
+                } catch (\Throwable $e) {
+                    return $this->error('Stream input nginx config has been generate, But reload nginx Error:' . $e->getMessage());
+                }
             } else {
                 return $this->error('Stream input nginx config has been generate, But nginx not running.');
             }

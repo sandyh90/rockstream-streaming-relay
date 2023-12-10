@@ -13,6 +13,7 @@ use Illuminate\Queue\SerializesModels;
 use FFMpeg\FFMpeg;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Carbon\Carbon;
 
 use App\Component\Utility;
 use App\Component\Facades\Facade\AppInterfacesFacade as AppInterfaces;
@@ -55,19 +56,27 @@ class PremiereVideoBroadcast implements ShouldQueue
                     if ($premiereVideo->active_premiere_video != TRUE) {
                         $this->delete();
                     } else {
-                        $ffmpeg_folder = ((AppInterfaces::getsetting('IS_CUSTOM_FFMPEG_BINARY') == TRUE && !empty(AppInterfaces::getsetting('FFMPEG_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('FFMPEG_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('ffmpeg'));
+                        $binaryProc = [
+                            'nginxBinName' => 'nginx.exe',
+                            'ffmpegBinName' => 'ffmpeg.exe',
+                            'ffprobeBinName' => 'ffprobe.exe',
+                            'nginxPath' => ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx')),
+                            'ffmpegPath' => ((AppInterfaces::getSetting('IS_CUSTOM_FFMPEG_BINARY') == TRUE && !empty(AppInterfaces::getSetting('FFMPEG_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('FFMPEG_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('ffmpeg')),
+                            'ffprobePath' => ((AppInterfaces::getSetting('IS_CUSTOM_FFPROBE_BINARY') == TRUE && !empty(AppInterfaces::getSetting('FFPROBE_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('FFPROBE_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('ffmpeg'))
+                        ];
 
                         # check ffmpeg executable path if not found then exit or else continue
-                        if (!file_exists($ffmpeg_folder . DIRECTORY_SEPARATOR . 'ffmpeg.exe') || !file_exists($ffmpeg_folder . DIRECTORY_SEPARATOR . 'ffprobe.exe')) {
+                        if (!file_exists($binaryProc['ffmpegPath'] . DIRECTORY_SEPARATOR . $binaryProc['ffmpegBinName']) || !file_exists($binaryProc['ffprobePath'] . DIRECTORY_SEPARATOR . $binaryProc['ffprobeBinName'])) {
                             $this->fail('FFMpeg or FFProbe binaries does not exist');
                         } else {
-                            if (Utility::getInstanceRunByPath((((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx')) . DIRECTORY_SEPARATOR . 'nginx.exe'), 'nginx.exe')['found_process']) {
+                            //Check nginx process is running or not
+                            if (Utility::getInstanceRunByPath($binaryProc['nginxPath'] . DIRECTORY_SEPARATOR . $binaryProc['nginxBinName'], $binaryProc['nginxBinName'])['found_process']) {
 
                                 $log = new Logger('FFmpeg_Streaming');
                                 $log->pushHandler(new StreamHandler(storage_path('logs/ffmpeg') . DIRECTORY_SEPARATOR . 'ffmpeg-streaming.log')); // path to log file
 
                                 $ffprobe = \FFMpeg\FFProbe::create([
-                                    'ffprobe.binaries' => $ffmpeg_folder . DIRECTORY_SEPARATOR . 'ffprobe.exe'
+                                    'ffprobe.binaries' => $binaryProc['ffprobePath'] . DIRECTORY_SEPARATOR . $binaryProc['ffprobeBinName']
                                 ], $log);
                                 if ($ffprobe->isValid($premiereVideo->video_path)) {
                                     $premiereVideo->update([
@@ -76,10 +85,10 @@ class PremiereVideoBroadcast implements ShouldQueue
 
 
                                     $ffmpeg = FFMpeg::create([
-                                        'ffmpeg.binaries'  => $ffmpeg_folder . DIRECTORY_SEPARATOR . 'ffmpeg.exe',
-                                        'ffprobe.binaries' => $ffmpeg_folder . DIRECTORY_SEPARATOR . 'ffprobe.exe',
+                                        'ffmpeg.binaries'  => $binaryProc['ffmpegPath'] . DIRECTORY_SEPARATOR . $binaryProc['ffmpegBinName'],
+                                        'ffprobe.binaries' => $binaryProc['ffprobePath'] . DIRECTORY_SEPARATOR . $binaryProc['ffprobeBinName'],
                                         'timeout'          => 3600, // The timeout for the underlying process
-                                        'ffmpeg.threads'   => 12,   // The number of threads that FFMpeg should use
+                                        'ffmpeg.threads'   => 5,   // The number of threads that FFMpeg should use
                                         'temporary_directory' => storage_path('logs/ffmpeg'), // The directory where FFMpeg puts its temporary files
                                     ], $log);
                                     $format = new \FFMpeg\Format\Video\X264('aac', 'libx264');
@@ -92,12 +101,18 @@ class PremiereVideoBroadcast implements ShouldQueue
                                     // Check if use encoder is set or not and set other parameters
                                     $format->setAdditionalParameters(!is_null($this->video['encoder_type']) ? ['-refs', '0', '-r', $getfps, '-c:v', $this->video['encoder_type'], '-f', 'flv', '-flvflags', 'no_duration_filesize'] : ['-refs', '0', '-r', $getfps, '-f', 'flv', '-flvflags', 'no_duration_filesize']);
 
+                                    // Show progressbar for transcoding video
+                                    $format->on('progress', function ($video, $format, $percentage, $duration) {
+                                        $humanDuration = Carbon::now()->addSeconds($duration)->diffForHumans(0, true, false, 2);
+                                        echo sprintf("\rTranscoding Video (%s%%) - Estimated Left: %s", $percentage, $humanDuration);
+                                    });
+
                                     /**
                                      * Encode video from source to destination via rtmp output.
                                      * and check if use countdown or not and check if countdown video is available
                                      */
 
-                                    if (($this->video['custom_countdown']['use_custom'] == FALSE ? !file_exists(storage_path('app/' . 'Default_Rockstream_Countdown_3_Min.mp4')) : !file_exists($this->video['custom_countdown']['custom_countdown_video_path'])) || $this->video['use_countdown'] == FALSE) {
+                                    if (!file_exists($this->video['countdown_video_path']) || $this->video['use_countdown'] == FALSE) {
                                         // Check resolution video type
                                         if (!is_null($this->video['type_resolution_size'])) {
                                             if ($this->video['type_resolution_size'] == 'locked_resolution') {
@@ -133,9 +148,8 @@ class PremiereVideoBroadcast implements ShouldQueue
                                         }
 
                                         // Process with custom filter and countdown video
-                                        $default_video_countdown = storage_path('app/' . 'Default_Rockstream_Countdown_3_Min.mp4');
-                                        $check_custom_countdown = ($this->video['custom_countdown']['use_custom'] == TRUE ? (!is_null($this->video['custom_countdown']['custom_countdown_video_path']) ? $this->video['custom_countdown']['custom_countdown_video_path'] : $default_video_countdown) : $default_video_countdown);
-                                        $advancedMedia = $ffmpeg->openAdvanced([$check_custom_countdown, $premiereVideo->video_path]);
+                                        $file_countdown = $this->video['countdown_video_path'];
+                                        $advancedMedia = $ffmpeg->openAdvanced([$file_countdown, $premiereVideo->video_path]);
                                         $advancedMedia->filters()
                                             // Force the video resolution to be custom resolution selector.
                                             ->custom('[0:v]settb=AVTB,fps=' . $getfps . ',scale=' . $customFormatResolutionAdvanced . ':force_original_aspect_ratio=decrease,pad=' . $customFormatResolutionAdvanced . ':(ow-iw)/2:(oh-ih)/2,setsar=1[v0];[1:v]settb=AVTB,fps=' . $getfps . ',scale=' . $customFormatResolutionAdvanced . ':force_original_aspect_ratio=decrease,pad=' . $customFormatResolutionAdvanced . ':(ow-iw)/2:(oh-ih)/2,setsar=1[v1];[v0] [0:a] [v1] [1:a]', 'concat=n=2:v=1:a=1', '[v] [a]');
@@ -147,6 +161,8 @@ class PremiereVideoBroadcast implements ShouldQueue
                                     $premiereVideo->update([
                                         'is_premiere' => FALSE
                                     ]);
+
+                                    echo "\n\nPremiering video finished\n\n";
                                 } else {
                                     $this->fail('Video file is not valid');
                                 }

@@ -66,6 +66,7 @@ Route::group(['middleware' => 'setup.state'], function () {
                     Route::group(['prefix' => 'failed_queue'], function () {
                         Route::get('/getdata', [App\Http\Controllers\DiagnosticController::class, 'get_failed_queue_data'])->name('diagnostic.getdata.failed_queue');
                         Route::post('/view', [App\Http\Controllers\DiagnosticController::class, 'view_failed_queue'])->name('diagnostic.view.failed_queue');
+                        Route::post('/retry', [App\Http\Controllers\DiagnosticController::class, 'retryFailedQueue'])->name('diagnostic.retry.failed_queue');
                         Route::post('/delete', [App\Http\Controllers\DiagnosticController::class, 'delete_failed_queue'])->name('diagnostic.delete.failed_queue');
                         Route::post('/clear', [App\Http\Controllers\DiagnosticController::class, 'clear_failed_queue'])->name('diagnostic.clear.failed_queue');
                     });

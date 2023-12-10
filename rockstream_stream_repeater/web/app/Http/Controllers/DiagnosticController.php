@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 use Yajra\DataTables\DataTables;
 
@@ -31,6 +32,8 @@ class DiagnosticController extends Controller
                 return '<div class="btn-group">
                     <div class="btn btn-primary view-failed-queue" data-failed-queue-id="' . $data->id . '" data-bs-toggle="tooltip" title="View Failed Jobs"><span
                         class="bi bi-file-earmark-text"></span></div>
+                    <div class="btn btn-info retry-failed-queue" data-failed-queue-id="' . $data->id . '" data-bs-toggle="tooltip" title="Retry Failed Jobs"><span
+                        class="bi bi-arrow-clockwise"></span></div>
                     <div class="btn btn-danger delete-failed-queue" data-failed-queue-id="' . $data->id . '" data-bs-toggle="tooltip" title="Delete Failed Jobs"><span
                         class="bi bi-trash"></span></div>
                 </div>
@@ -44,14 +47,71 @@ class DiagnosticController extends Controller
     public function view_failed_queue(Request $request)
     {
         if ($request->isMethod('post')) {
-            $checkFailedQueue = DB::table('failed_jobs')->where('id', $request->id_failed_queue)->first();
-            $data['failed_queue_data'] = $checkFailedQueue;
+            $checkFailedQueue = DB::table('failed_jobs')->where('id', $request->id_failed_queue);
+            if ($checkFailedQueue->exists()) {
+                $data['failed_queue_data'] = $checkFailedQueue->first();
 
-            $responses = [
-                'csrftoken' => csrf_token(),
-                'success' => TRUE,
-                'html' => view('layouts.modal_layouts.view_failed_queue', $data)->render()
-            ];
+                $responses = [
+                    'csrftoken' => csrf_token(),
+                    'success' => TRUE,
+                    'html' => view('layouts.modal_layouts.view_failed_queue', $data)->render()
+                ];
+            } else {
+                $responses = [
+                    'csrftoken' => csrf_token(),
+                    'success' => FALSE,
+                    'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>This failed queue data not available</div>'
+                ];
+            }
+        }
+        return response()->json($responses);
+    }
+
+    public function retryFailedQueue(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $checkFailedQueue = DB::table('failed_jobs')->where('id', $request->id_failed_queue);
+            if ($checkFailedQueue->exists()) {
+                $outputStatus = Artisan::call('queue:retry', ['id' => [$checkFailedQueue->first()->uuid]]);
+                $outputCommand = Artisan::output();
+                if ($outputStatus == 0) {
+                    return $responses = [
+                        'csrftoken' => csrf_token(),
+                        'success' => TRUE,
+                        'alert' => [
+                            'method' => 'alert',
+                            'type' => 'success',
+                            'title' => 'Retry Failed Job Success',
+                            'text' => "Retry Success: {$outputCommand}",
+                            'timer' => 5000
+                        ]
+                    ];
+                } else {
+                    return $responses = [
+                        'csrftoken' => csrf_token(),
+                        'success' => TRUE,
+                        'alert' => [
+                            'method' => 'alert',
+                            'type' => 'warning',
+                            'title' => 'Retry Failed Job Failed',
+                            'text' => "Retry Failed: {$outputCommand}",
+                            'timer' => 5000
+                        ]
+                    ];
+                }
+            } else {
+                $responses = [
+                    'csrftoken' => csrf_token(),
+                    'success' => FALSE,
+                    'alert' => [
+                        'method' => 'alert',
+                        'type' => 'warning',
+                        'title' => 'Retry Failed Job Failed',
+                        'text' => 'Failed Job Not Found',
+                        'timer' => 2500
+                    ]
+                ];
+            }
         }
         return response()->json($responses);
     }
@@ -59,15 +119,15 @@ class DiagnosticController extends Controller
     public function delete_failed_queue(Request $request)
     {
         if ($request->isMethod('post')) {
-            $checkFailedQueue = DB::table('failed_jobs')->where('id', $request->id_failed_queue)->first();
+            $checkFailedQueue = DB::table('failed_jobs')->where('id', $request->id_failed_queue);
             if ($checkFailedQueue) {
-                DB::table('failed_jobs')->where(['id' => $checkFailedQueue->id])->delete();
+                $checkFailedQueue->delete();
                 return $responses = [
                     'csrftoken' => csrf_token(),
                     'success' => TRUE,
                     'alert' => [
                         'icon' => 'success',
-                        'title' => 'Delete Failed Job Success',
+                        'text' => 'Delete Failed Job Success',
                     ]
                 ];
             } else {
@@ -76,7 +136,7 @@ class DiagnosticController extends Controller
                     'success' => FALSE,
                     'alert' => [
                         'icon' => 'warning',
-                        'title' => 'Delete Failed Job Failed',
+                        'text' => 'Delete Failed Job Failed',
                     ]
                 ];
             }
@@ -95,7 +155,7 @@ class DiagnosticController extends Controller
                     'success' => TRUE,
                     'alert' => [
                         'icon' => 'success',
-                        'title' => 'Clear Failed Job Success',
+                        'text' => 'Clear Failed Job Success',
                     ]
                 ];
             } else {
@@ -104,7 +164,7 @@ class DiagnosticController extends Controller
                     'success' => FALSE,
                     'alert' => [
                         'icon' => 'warning',
-                        'title' => 'Clear Failed Job Failed, No Data Found',
+                        'text' => 'Clear Failed Job Failed, No Data Found',
                     ]
                 ];
             }

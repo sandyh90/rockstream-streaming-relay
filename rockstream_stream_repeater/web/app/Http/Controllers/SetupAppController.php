@@ -33,12 +33,13 @@ class SetupAppController extends Controller
                 'password' => 'required|min:8|same:password_confirm',
                 'password_confirm' => 'required|min:8|same:password',
                 'use_live_preview' => 'boolean',
-                'disable_auto_show_about' => 'boolean',
                 'enable_custom_php_path' => 'boolean',
                 'enable_custom_ffmpeg_path' => 'boolean',
+                'enable_custom_ffprobe_path' => 'boolean',
                 'enable_custom_nginx_path' => 'boolean',
                 'php_custom_dir' => ($request->php_custom_dir ? ['required', 'string', 'max:255', new CheckPathFile] : 'nullable'),
                 'ffmpeg_custom_dir' => ($request->ffmpeg_custom_dir ? ['required', 'string', 'max:255', new CheckPathFile] : 'nullable'),
+                'ffprobe_custom_dir' => ($request->ffprobe_custom_dir ? ['required', 'string', 'max:255', new CheckPathFile] : 'nullable'),
                 'nginx_custom_dir' => ($request->nginx_custom_dir ? ['required', 'string', 'max:255', new CheckPathFile] : 'nullable')
             ]
         );
@@ -55,14 +56,15 @@ class SetupAppController extends Controller
             ]);
 
             CachedValuestore::make(storage_path('app/settings-app.json'))->put([
-                'USE_LIVE_PREVIEW' => $request->use_live_preview ? TRUE : FALSE,
-                'DISABLE_AUTO_SHOW_ABOUT' => $request->disable_auto_show_about ? TRUE : FALSE,
-                'IS_CUSTOM_PHP_BINARY' => $request->enable_custom_php_path ? TRUE : FALSE,
-                'IS_CUSTOM_FFMPEG_BINARY' => $request->enable_custom_ffmpeg_path ? TRUE : FALSE,
-                'IS_CUSTOM_NGINX_BINARY' => $request->enable_custom_nginx_path ? TRUE : FALSE,
+                'USE_LIVE_PREVIEW' => $request->boolean('use_live_preview'),
+                'IS_CUSTOM_PHP_BINARY' => $request->boolean('enable_custom_php_path'),
+                'IS_CUSTOM_FFMPEG_BINARY' => $request->boolean('enable_custom_ffmpeg_path'),
+                'IS_CUSTOM_FFPROBE_BINARY' => $request->boolean('enable_custom_ffprobe_path'),
+                'IS_CUSTOM_NGINX_BINARY' => $request->boolean('enable_custom_nginx_path'),
                 'PHP_BINARY_DIRECTORY' => $request->php_custom_dir,
                 'FFMPEG_BINARY_DIRECTORY' => $request->ffmpeg_custom_dir,
-                'NGINX_BINARY_DIRECTORY' => $request->nginx_custom_dir,
+                'FFPROBE_BINARY_DIRECTORY' => $request->ffprobe_custom_dir,
+                'NGINX_BINARY_DIRECTORY' => $request->nginx_custom_dir
             ]);
 
             // Regenerate nginx config file and restart nginx service to apply new config

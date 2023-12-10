@@ -14,7 +14,7 @@
         <h4 class="fw-light text-truncate">{{ \Str::words($stream_input->name_input, 8) }}</h4>
         {!! $stream_input->is_live == TRUE ? '<div class="text-success flash-text-item"><span
                 class="bi bi-broadcast me-1"></span>Live</div>' : '<div class="text-danger"><span
-                class="bi bi-dash-circle me-1"></span>Not Live</div>' !!}
+                class="bi bi-dash-circle me-1"></span>Offline</div>' !!}
     </div>
     <div class="row">
         <div class="col-xl-4">
@@ -47,6 +47,7 @@
                             class="bi bi-save me-1"></span>Save</button>
                 </form>
                 <div class="my-2 edit-input-stream-info-data"></div>
+                <div class="small p-1">*Nginx config will reload automatically</div>
             </div>
         </div>
         <div class="col-xl-8">
@@ -180,18 +181,8 @@
                 },
                 success: function(data) {
                     if (data.success == false) {
-                        if(data.isForm == true){
-                            msgalert(".edit-input-stream-info-data", data.messages);
-                        }else{
-                            if ($(".edit-input-stream-info-data").hasClass("alert alert-danger")) {
-                                $(".edit-input-stream-info-data").removeClass("alert alert-danger");
-                            }
-                            $(".edit-input-stream-info-data").html(data.messages).show();
-                        }
+                        $(".edit-input-stream-info-data").html(data.messages).show();
                     } else {
-                        if ($(".edit-input-stream-info-data").hasClass("alert alert-danger")) {
-                            $(".edit-input-stream-info-data").removeClass("alert alert-danger");
-                        }
                         $(".edit-input-stream-info-data").html(data.messages).show().delay(3000).fadeOut();
                     }
                     $(".btn-edit-input-stream").html("<span class='bi bi-save me-1'></span>Save").attr("disabled", false);
@@ -225,19 +216,9 @@
                 },
                 success: function(data) {
                     if (data.success == false) {
-                        if(data.isForm == true){
-                            msgalert(".output-dest-info-data", data.messages);
-                        }else{
-                            if ($(".output-dest-info-data").hasClass("alert alert-danger")) {
-                                $(".output-dest-info-data").removeClass("alert alert-danger");
-                            }
-                            $(".output-dest-info-data").html(data.messages).show();
-                        }
+                        $(".output-dest-info-data").html(data.messages).show();
                     } else {
                         $('.output-dest-data').DataTable().ajax.reload();
-                        if ($(".output-dest-info-data").hasClass("alert alert-danger")) {
-                            $(".output-dest-info-data").removeClass("alert alert-danger");
-                        }
                         $(".output-dest-info-data").html(data.messages).show().delay(3000).fadeOut();
                         $('.add-output-dest').modal('hide');
                         $(".form-add-output-dest select[name='select_endpoint_server']").empty();
@@ -318,19 +299,9 @@
                                     $('meta[name="csrf-token"]').val(data.csrftoken);
                                     $('input[name=_token]').val(data.csrftoken);
                                     if (data.success == false) {
-                                        if(data.isForm == true){
-                                            msgalert(".edit-output-dest-info-data", data.messages);
-                                        }else{
-                                            if ($(".edit-output-dest-info-data").hasClass("alert alert-danger")) {
-                                                $(".edit-output-dest-info-data").removeClass("alert alert-danger");
-                                            }
-                                            $(".edit-output-dest-info-data").html(data.messages).show();
-                                        }
+                                        $(".edit-output-dest-info-data").html(data.messages).show();
                                     } else {
                                         $('.output-dest-data').DataTable().ajax.reload();
-                                        if ($(".edit-output-dest-info-data").hasClass("alert alert-danger")) {
-                                            $(".edit-output-dest-info-data").removeClass("alert alert-danger");
-                                        }
                                         $(".edit-output-dest-info-data").html(data.messages).show().delay(3000).fadeOut();
                                         $('.custom-modal-display').modal('hide');
                                         $(".form-edit-output-dest select[name='select_endpoint_server']").empty();
@@ -385,9 +356,9 @@
                         success: function(data) {
                             swal.fire({
                                 icon: data.alert.icon,
-                                title: data.alert.title,
+                                text: data.alert.text,
                                 showConfirmButton: false,
-                                timer: 1500,
+                                timer: 2500,
                                 timerProgressBar: true
                             });
                             $('.output-dest-data').DataTable().ajax.reload();
@@ -418,15 +389,6 @@
         Swal.showLoading();
         $('.output-dest-data').DataTable().ajax.reload();
     });
-
-    function msgalert(sector, msg) {
-        $(sector).show();
-        $(sector).find('ul').children().remove();
-        $(sector).html('<ul></ul>').addClass("alert alert-danger");
-        $.each(msg, function(key, value) {
-            $(sector).find("ul").append('<li>' + value + '</li>');
-        });
-    }
 </script>
 @endsection
 
@@ -496,6 +458,7 @@
                             class="bi bi-save me-1"></span>Save</button>
                 </form>
                 <div class="my-2 output-dest-info-data"></div>
+                <div class="small p-1">*Nginx config will reload automatically</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

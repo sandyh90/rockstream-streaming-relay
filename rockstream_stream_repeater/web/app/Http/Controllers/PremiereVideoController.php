@@ -80,8 +80,7 @@ class PremiereVideoController extends Controller
         $responses = [
             'csrftoken' => csrf_token(),
             'messages' => [],
-            'success' => FALSE,
-            'isForm' => TRUE
+            'success' => FALSE
         ];
 
         $validator = Validator::make(
@@ -94,13 +93,12 @@ class PremiereVideoController extends Controller
         );
 
         if ($validator->fails()) {
-            $responses['messages'] = $validator->errors()->all();
+            $responses['messages'] = Utility::alertValidation($validator->errors()->all(), 'alert alert-danger');
         } else {
             $responses = [
                 'csrftoken' => csrf_token(),
                 'messages' => '<div class="alert alert-success">Add premiere video successfully</div>',
-                'success' => TRUE,
-                'isForm' => FALSE
+                'success' => TRUE
             ];
 
             PremiereVideo::create([
@@ -149,8 +147,7 @@ class PremiereVideoController extends Controller
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'messages' => [],
-                        'success' => FALSE,
-                        'isForm' => TRUE
+                        'success' => FALSE
                     ];
 
                     $validator = Validator::make(
@@ -163,14 +160,13 @@ class PremiereVideoController extends Controller
                     );
 
                     if ($validator->fails()) {
-                        $responses['messages'] = $validator->errors()->all();
+                        $responses['messages'] = Utility::alertValidation($validator->errors()->all(), 'alert alert-danger');
                     } else {
                         if ($check_premiere->is_premiere != TRUE) {
                             $responses = [
                                 'csrftoken' => csrf_token(),
                                 'messages' => '<div class="alert alert-success">Edit premiere video successfully</div>',
-                                'success' => TRUE,
-                                'isForm' => FALSE
+                                'success' => TRUE
                             ];
 
                             PremiereVideo::where('id', $check_premiere['id'])
@@ -185,7 +181,6 @@ class PremiereVideoController extends Controller
                             $responses = [
                                 'csrftoken' => csrf_token(),
                                 'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>You cannot edit premiere video during premiere.</div>',
-                                'isForm' => FALSE,
                                 'success' => FALSE
                             ];
                         }
@@ -194,7 +189,6 @@ class PremiereVideoController extends Controller
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'success' => FALSE,
-                        'isForm' => FALSE,
                         'messages' => '<div class="alert alert-danger">You are not have access to edit this premiere video</div>'
                     ];
                 }
@@ -202,7 +196,6 @@ class PremiereVideoController extends Controller
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'success' => FALSE,
-                    'isForm' => FALSE,
                     'messages' => '<div class="alert alert-danger">Premiere video not found</div>'
                 ];
             }
@@ -277,8 +270,7 @@ class PremiereVideoController extends Controller
                             $responses = [
                                 'csrftoken' => csrf_token(),
                                 'messages' => [],
-                                'success' => FALSE,
-                                'isForm' => TRUE
+                                'success' => FALSE
                             ];
 
                             $validator = Validator::make(
@@ -298,21 +290,19 @@ class PremiereVideoController extends Controller
                                         Rule::in(array_keys(Utility::timezone_gmt_list()))
                                     ] : 'nullable') : 'nullable'),
                                     'countdown_premiere_video' => 'boolean',
-                                    'use_local_video_countdown' => ($request->countdown_premiere_video ? 'boolean' : 'nullable'),
-                                    'local_video_countdown_path' => ($request->use_local_video_countdown ? ['required', 'string', 'max:255', new CheckMimeFile(['video/webm', 'video/x-matroska', 'video/avi', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/mp4']), new CheckPathFile] : 'nullable'),
+                                    'local_video_countdown_path' => ($request->countdown_premiere_video ? ['required', 'string', 'max:255', new CheckMimeFile(['video/webm', 'video/x-matroska', 'video/avi', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/mp4']), new CheckPathFile] : 'nullable'),
                                 ]
                             );
 
                             if ($validator->fails()) {
-                                $responses['messages'] = $validator->errors()->all();
+                                $responses['messages'] = Utility::alertValidation($validator->errors()->all(), 'alert alert-danger');
                             } else {
                                 $stream_db = StreamInput::where(['identifier_stream' => $request->rtmp_premiere_input])->first();
                                 if (!file_exists($check_premiere->video_path)) {
                                     $responses = [
                                         'csrftoken' => csrf_token(),
                                         'messages' => '<div class="alert alert-danger">File not found, Please check your file.</div>',
-                                        'success' => FALSE,
-                                        'isForm' => FALSE
+                                        'success' => FALSE
                                     ];
                                 } else {
                                     if (Utility::checkFileMime($check_premiere->video_path, ['video/webm', 'video/x-matroska', 'video/avi', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/mp4'])) {
@@ -320,8 +310,7 @@ class PremiereVideoController extends Controller
                                             $responses = [
                                                 'csrftoken' => csrf_token(),
                                                 'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>You cannot start premiere video during premiere.</div>',
-                                                'success' => FALSE,
-                                                'isForm' => FALSE
+                                                'success' => FALSE
                                             ];
                                         } else {
                                             // Check custom resolution if use 
@@ -342,16 +331,14 @@ class PremiereVideoController extends Controller
                                                         return $responses = [
                                                             'csrftoken' => csrf_token(),
                                                             'messages' => '<div class="alert alert-danger">The resolution custom video is invalid.</div>',
-                                                            'success' => FALSE,
-                                                            'isForm' => FALSE
+                                                            'success' => FALSE
                                                         ];
                                                     }
                                                 } else {
                                                     return $responses = [
                                                         'csrftoken' => csrf_token(),
                                                         'messages' => '<div class="alert alert-danger">The resolution custom video is empty.</div>',
-                                                        'success' => FALSE,
-                                                        'isForm' => FALSE
+                                                        'success' => FALSE
                                                     ];
                                                 }
                                             }
@@ -366,10 +353,7 @@ class PremiereVideoController extends Controller
                                                     'height' => ($request->video_resolution_size == 'custom_resolution' ? (is_null($request->height_custom_resolution) ? NULL : $request->height_custom_resolution) : NULL)
                                                 ],
                                                 'use_countdown' => $request->countdown_premiere_video,
-                                                'custom_countdown' => [
-                                                    'use_custom' => (is_null($request->use_local_video_countdown) ? FALSE : $request->use_local_video_countdown),
-                                                    'custom_countdown_video_path' => (is_null($request->local_video_countdown_path) ? NULL : $request->local_video_countdown_path)
-                                                ]
+                                                'countdown_video_path' => (is_null($request->local_video_countdown_path) ? NULL : $request->local_video_countdown_path)
                                             ])->onQueue(('PremiereVideoBroadcast_user_id=' . Auth::id()));
 
                                             // Check if start premiere video with schedule [Beta]
@@ -386,16 +370,14 @@ class PremiereVideoController extends Controller
                                             $responses = [
                                                 'csrftoken' => csrf_token(),
                                                 'messages' => '<div class="alert alert-success">Start premiere video successfully</div>',
-                                                'success' => TRUE,
-                                                'isForm' => FALSE
+                                                'success' => TRUE
                                             ];
                                         }
                                     } else {
                                         $responses = [
                                             'csrftoken' => csrf_token(),
                                             'messages' => '<div class="alert alert-danger">This file that you select not a video, Please select correct media.</div>',
-                                            'success' => FALSE,
-                                            'isForm' => FALSE
+                                            'success' => FALSE
                                         ];
                                     }
                                 }
@@ -404,24 +386,21 @@ class PremiereVideoController extends Controller
                             $responses = [
                                 'csrftoken' => csrf_token(),
                                 'messages' => '<div class="alert alert-danger">This video premiere is disable, Please enable first to start premiere.</div>',
-                                'success' => FALSE,
-                                'isForm' => FALSE
+                                'success' => FALSE
                             ];
                         }
                     } else {
                         $responses = [
                             'csrftoken' => csrf_token(),
                             'messages' => '<div class="alert alert-danger">You are not have access to start this premiere video</div>',
-                            'success' => FALSE,
-                            'isForm' => FALSE
+                            'success' => FALSE
                         ];
                     }
                 } else {
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'messages' => '<div class="alert alert-danger">Premiere video not found</div>',
-                        'success' => FALSE,
-                        'isForm' => FALSE
+                        'success' => FALSE
                     ];
                 }
             }
@@ -442,7 +421,7 @@ class PremiereVideoController extends Controller
                             'success' => TRUE,
                             'alert' => [
                                 'icon' => 'success',
-                                'title' => 'Delete Premiere Video Success'
+                                'text' => 'Delete Premiere Video Success'
                             ]
                         ];
                     } else {
@@ -451,7 +430,7 @@ class PremiereVideoController extends Controller
                             'success' => FALSE,
                             'alert' => [
                                 'icon' => 'warning',
-                                'title' => 'This Video Are In Premiere'
+                                'text' => 'This Video Are In Premiere'
                             ]
                         ];
                     }
@@ -461,7 +440,7 @@ class PremiereVideoController extends Controller
                         'success' => FALSE,
                         'alert' => [
                             'icon' => 'warning',
-                            'title' => 'You are not have access to delete this premiere video'
+                            'text' => 'You are not have access to delete this premiere video'
                         ]
                     ];
                 }
@@ -471,7 +450,7 @@ class PremiereVideoController extends Controller
                     'success' => FALSE,
                     'alert' => [
                         'icon' => 'warning',
-                        'title' => 'This Premiere Video Not Found'
+                        'text' => 'This Premiere Video Not Found'
                     ]
                 ];
             }
@@ -492,7 +471,7 @@ class PremiereVideoController extends Controller
                             'success' => TRUE,
                             'alert' => [
                                 'icon' => 'success',
-                                'title' => 'Force Status Premiere Video Success'
+                                'text' => 'Force Status Premiere Video Success'
                             ]
                         ];
                     } else {
@@ -501,7 +480,7 @@ class PremiereVideoController extends Controller
                             'success' => FALSE,
                             'alert' => [
                                 'icon' => 'warning',
-                                'title' => 'This Video Are Not In Premiere State'
+                                'text' => 'This Video Are Not In Premiere State'
                             ]
                         ];
                     }
@@ -511,7 +490,7 @@ class PremiereVideoController extends Controller
                         'success' => FALSE,
                         'alert' => [
                             'icon' => 'warning',
-                            'title' => 'You are not have access to force status this premiere video'
+                            'text' => 'You are not have access to force status this premiere video'
                         ]
                     ];
                 }
@@ -521,7 +500,7 @@ class PremiereVideoController extends Controller
                     'success' => FALSE,
                     'alert' => [
                         'icon' => 'warning',
-                        'title' => 'This Premiere Video Not Found'
+                        'text' => 'This Premiere Video Not Found'
                     ]
                 ];
             }
@@ -531,10 +510,15 @@ class PremiereVideoController extends Controller
 
     public function launch_queue_daemon(Request $request)
     {
-        $php_folder = ((AppInterfaces::getsetting('IS_CUSTOM_PHP_BINARY') == TRUE && !empty(AppInterfaces::getsetting('PHP_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('PHP_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('php'));
+        $binaryProc = [
+            'phpBinName' => 'php.exe',
+            'nginxBinName' => 'nginx.exe',
+            'phpPath' => ((AppInterfaces::getsetting('IS_CUSTOM_PHP_BINARY') == TRUE && !empty(AppInterfaces::getsetting('PHP_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('PHP_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('php')),
+            'nginxPath' => ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx'))
+        ];
 
         if ($request->isMethod('options')) {
-            if (!file_exists($php_folder . DIRECTORY_SEPARATOR . 'php.rockstream.exe')) {
+            if (!file_exists($binaryProc['phpPath'] . DIRECTORY_SEPARATOR . $binaryProc['phpBinName'])) {
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'success' => FALSE,
@@ -545,19 +529,31 @@ class PremiereVideoController extends Controller
                     ]
                 ];
             } else {
-                if (Utility::getInstanceRunByPath((((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx')) . DIRECTORY_SEPARATOR . 'nginx.exe'), 'nginx.exe')['found_process']) {
-                    # Check if queue daemon is running
-                    Utility::runInstancewithPid('start "Premiere Video Stream Daemon ' . (Auth::user()->name ? ('User=' . Auth::user()->name) : ('User_Id=' . Auth::id())) . '" /d"' . $php_folder . '" "php.rockstream.exe" -f "' . (base_path() . DIRECTORY_SEPARATOR . 'artisan') . ('" queue:work --queue PremiereVideoBroadcast_user_id=' . Auth::id()));
+                # Check if nginx is running
+                if (Utility::getInstanceRunByPath($binaryProc['nginxPath'] . DIRECTORY_SEPARATOR . $binaryProc['nginxBinName'], $binaryProc['nginxBinName'])['found_process']) {
 
-                    $responses = [
-                        'csrftoken' => csrf_token(),
-                        'success' => TRUE,
-                        'alert' => [
-                            'icon' => 'success',
-                            'title' => 'Launch Daemon Successfully',
-                            'text' => 'Launch daemon premiere video successfully',
-                        ]
-                    ];
+                    try {
+                        Utility::runInstancewithPid('start "Premiere Video Stream Daemon ' . (Auth::user()->name ? ('User=' . Auth::user()->name) : ('User_Id=' . Auth::id())) . '" /d"' . $binaryProc['phpPath'] . '" "' . $binaryProc['phpBinName'] . '" -f "' . (base_path() . DIRECTORY_SEPARATOR . 'artisan') . ('" queue:work --queue PremiereVideoBroadcast_user_id=' . Auth::id() . ' --stop-when-empty'));
+                        $responses = [
+                            'csrftoken' => csrf_token(),
+                            'success' => TRUE,
+                            'alert' => [
+                                'icon' => 'success',
+                                'title' => 'Launch Daemon Successfully',
+                                'text' => 'Launch daemon premiere video successfully',
+                            ]
+                        ];
+                    } catch (\Throwable $e) {
+                        $responses = [
+                            'csrftoken' => csrf_token(),
+                            'success' => FALSE,
+                            'alert' => [
+                                'icon' => 'warning',
+                                'title' => 'Launch Daemon Unsuccessfully',
+                                'text' => 'Launch daemon premiere video unsuccessfully, Error: ' . $e->getMessage(),
+                            ]
+                        ];
+                    }
                 } else {
                     $responses = [
                         'csrftoken' => csrf_token(),
@@ -671,8 +667,7 @@ class PremiereVideoController extends Controller
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'messages' => [],
-                        'success' => FALSE,
-                        'isForm' => TRUE
+                        'success' => FALSE
                     ];
 
                     $validator = Validator::make(
@@ -688,13 +683,12 @@ class PremiereVideoController extends Controller
                     );
 
                     if ($validator->fails()) {
-                        $responses['messages'] = $validator->errors()->all();
+                        $responses['messages'] = Utility::alertValidation($validator->errors()->all(), 'alert alert-danger');
                     } else {
                         $responses = [
                             'csrftoken' => csrf_token(),
                             'messages' => '<div class="alert alert-success">Edit premiere queue successfully</div>',
-                            'success' => TRUE,
-                            'isForm' => FALSE
+                            'success' => TRUE
                         ];
 
                         $parseSchedule = Carbon::parse($request->schedule_datetime_premiere_video);
@@ -710,16 +704,14 @@ class PremiereVideoController extends Controller
                     $responses = [
                         'csrftoken' => csrf_token(),
                         'messages' => '<div class="alert alert-danger">You are not have access to edit this premiere queue</div>',
-                        'success' => FALSE,
-                        'isForm' => FALSE
+                        'success' => FALSE
                     ];
                 }
             } else {
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'messages' => '<div class="alert alert-danger">Premiere queue not found</div>',
-                    'success' => FALSE,
-                    'isForm' => FALSE
+                    'success' => FALSE
                 ];
             }
         }
@@ -739,7 +731,7 @@ class PremiereVideoController extends Controller
                             'success' => TRUE,
                             'alert' => [
                                 'icon' => 'success',
-                                'title' => 'Delete Premiere Queue Success',
+                                'text' => 'Delete Premiere Queue Success',
                             ]
                         ];
                     } else {
@@ -748,7 +740,7 @@ class PremiereVideoController extends Controller
                             'success' => TRUE,
                             'alert' => [
                                 'icon' => 'warning',
-                                'title' => 'Premiere Queue Is Running',
+                                'text' => 'Premiere Queue Is Running',
                             ]
                         ];
                     }
@@ -758,7 +750,7 @@ class PremiereVideoController extends Controller
                         'success' => TRUE,
                         'alert' => [
                             'icon' => 'warning',
-                            'title' => 'You are not have access to delete this premiere queue',
+                            'text' => 'You are not have access to delete this premiere queue',
                         ]
                     ];
                 }
@@ -768,7 +760,7 @@ class PremiereVideoController extends Controller
                     'success' => FALSE,
                     'alert' => [
                         'icon' => 'warning',
-                        'title' => 'Premiere Queue Not Found',
+                        'text' => 'Premiere Queue Not Found',
                     ]
                 ];
             }

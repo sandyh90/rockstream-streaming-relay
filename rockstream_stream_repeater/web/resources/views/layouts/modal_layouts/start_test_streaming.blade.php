@@ -50,7 +50,7 @@
                         Limit Duration Streaming Test
                     </label>
                 </div>
-                <small class="form-text text-muted">*If you use this the streaming test duration will be limit to 10
+                <small class="form-text text-muted">*If you use this the streaming test duration will be limit to 5
                     Minutes</small>
             </div>
             <button type="submit" class="btn btn-primary btn-start-test-streaming"><span

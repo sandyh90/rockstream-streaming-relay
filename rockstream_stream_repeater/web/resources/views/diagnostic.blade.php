@@ -139,7 +139,7 @@
                         success: function(data) {
                             swal.fire({
                                 icon: data.alert.icon,
-                                title: data.alert.title,
+                                text: data.alert.text,
                                 showConfirmButton: false,
                                 timer: 1500,
                                 timerProgressBar: true
@@ -149,6 +149,53 @@
                         },
                         error: function(err) {
                             swal.fire("Delete Failed Job Failed", "There have problem while deleting failed job!", "error");
+                        }
+                    });
+                }
+            });
+            event.preventDefault();
+        });
+
+        $(".failed-queue-data").on('click', '.retry-failed-queue', function(event) {
+            var failed_queue_data = $(event.currentTarget).attr('data-failed-queue-id');
+            if (failed_queue_data === null) return;
+            Swal.fire({
+                title: 'Retry Failed Job',
+                text: "This failed queue will be retry to queue again!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Retry'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('diagnostic.retry.failed_queue') }}",
+                        type: 'POST',
+                        data: {id_failed_queue: failed_queue_data},
+                        async: true,
+                        beforeSend: function() {
+                            swal.fire({
+                                title: "Retrying Failed Job",
+                                text: "Please wait",
+                                showConfirmButton: false,
+                                allowOutsideClick: false
+                            });
+                            Swal.showLoading();
+                        },
+                        success: function(data) {
+                            swal.fire({
+                                icon: data.alert.type,
+                                title: data.alert.title,
+                                text: data.alert.text,
+                                showConfirmButton: false,
+                                timer: data.alert.timer,
+                                timerProgressBar: true
+                            });
+                            $('#failedQueueData').DataTable().ajax.reload();
+                            $('meta[name="csrf-token"]').val(data.csrftoken);
+                        },
+                        error: function(err) {
+                            swal.fire("Retry Failed Job Failed", "There have problem while retrying failed job!", "error");
                         }
                     });
                 }
@@ -183,7 +230,7 @@
                         success: function(data) {
                             swal.fire({
                                 icon: data.alert.icon,
-                                title: data.alert.title,
+                                text: data.alert.text,
                                 showConfirmButton: false,
                                 timer: 1500,
                                 timerProgressBar: true

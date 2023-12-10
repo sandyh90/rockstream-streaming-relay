@@ -12,13 +12,14 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link href="{{ asset('assets/vendor/bootstrap-5.2.0/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
 
     <link href="{{ asset('assets/vendor/sweetalert2/dist/sweetalert2.min.css') }}" rel="stylesheet">
 
     <!-- Addons Javascript Module [First Start] -->
+    <script src="{{ asset('assets/js/toggle-color-mode.js')}}"></script>
     <script defer src="{{ asset('assets/vendor/alpine.js/cdn.min.js') }}"></script>
 </head>
 
@@ -158,33 +159,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <span class="bi bi-info-circle fs-3"></span>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="form-group p-2">
-                                        <div class="form-check form-switch">
-                                            <input
-                                                class="form-check-input @error('disable_auto_show_about') is-invalid @enderror"
-                                                type="checkbox" role="switch" id="disable-auto-show-about"
-                                                name="disable_auto_show_about" value="1" {{
-                                                old('disable_auto_show_about')==TRUE ? 'checked' : NULL}}>
-                                            <label class="form-check-label" for="disable-auto-show-about">
-                                                Disable Auto Show About</label>
-                                        </div>
-                                        @error('disable_auto_show_about')
-                                        <span class="invalid-feedback">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                        @enderror
-                                        <div class="small">
-                                            <span class="text-danger me-1">Note:</span>This will disable the auto show
-                                            about modal when using fresh web browser.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="card card-body">
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0">
@@ -205,7 +179,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="p-2">
-                                            <label class="form-label">PHP Custom Binary</label>
+                                            <label class="form-label">PHP Custom Path Binary</label>
                                             <div class="input-group">
                                                 <div class="input-group-text">
                                                     <div class="form-check">
@@ -248,7 +222,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="p-2">
-                                            <label class="form-label">FFmpeg Custom Binary</label>
+                                            <label class="form-label">FFmpeg Custom Path Binary</label>
                                             <div class="input-group">
                                                 <div class="input-group-text">
                                                     <div class="form-check">
@@ -278,6 +252,38 @@
                                                 @enderror
                                             </div>
                                         </div>
+                                        <div class="p-2">
+                                            <label class="form-label">FFprobe Custom Path Binary</label>
+                                            <div class="input-group">
+                                                <div class="input-group-text">
+                                                    <div class="form-check">
+                                                        <input
+                                                            class="form-check-input @error('enable_custom_ffprobe_path') is-invalid @enderror"
+                                                            type="checkbox" id="enable-custom-ffprobe-path"
+                                                            name="enable_custom_ffprobe_path" value="1" {{
+                                                            old('enable_custom_ffprobe_path')==TRUE ? 'checked' :
+                                                            NULL}}>
+                                                        <label class="form-check-label"
+                                                            for="enable-custom-ffprobe-path">Enable</label>
+                                                    </div>
+                                                </div>
+                                                <input type="text"
+                                                    class="form-control @error('ffprobe_custom_dir') is-invalid @enderror"
+                                                    name="ffprobe_custom_dir"
+                                                    placeholder="FFprobe Binary Custom Folder Path"
+                                                    value="{{ old('ffprobe_custom_dir') }}">
+                                            </div>
+                                            @error('enable_custom_ffprobe_path')
+                                            <span class="invalid-feedback">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                            @error('ffprobe_custom_dir')
+                                            <span class="invalid-feedback">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center">
@@ -292,7 +298,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="p-2">
-                                            <label class="form-label">Nginx Custom Binary</label>
+                                            <label class="form-label">Nginx Custom Path Binary</label>
                                             <div class="input-group">
                                                 <div class="input-group-text">
                                                     <div class="form-check">
@@ -356,7 +362,7 @@
     </div>
 
     <!-- Bootstrap Bundle with Popper Important -->
-    <script src="{{ asset('assets/vendor/bootstrap-5.2.0/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     <!-- Addons Javascript Module -->
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>

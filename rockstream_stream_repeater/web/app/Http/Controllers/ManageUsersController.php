@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 use Yajra\DataTables\DataTables;
+use App\Component\Utility;
 
 class ManageUsersController extends Controller
 {
@@ -56,8 +57,7 @@ class ManageUsersController extends Controller
         $responses = [
             'csrftoken' => csrf_token(),
             'messages' => [],
-            'success' => FALSE,
-            'isForm' => TRUE
+            'success' => FALSE
         ];
 
         $validator = Validator::make(
@@ -72,13 +72,12 @@ class ManageUsersController extends Controller
         );
 
         if ($validator->fails()) {
-            $responses['messages'] = $validator->errors()->all();
+            $responses['messages'] = Utility::alertValidation($validator->errors()->all(), 'alert alert-danger');
         } else {
             $responses = [
                 'csrftoken' => csrf_token(),
                 'messages' => '<div class="alert alert-success">Add user successfully</div>',
-                'success' => TRUE,
-                'isForm' => FALSE
+                'success' => TRUE
             ];
 
             User::create([
@@ -132,7 +131,7 @@ class ManageUsersController extends Controller
                     'success' => TRUE,
                     'alert' => [
                         'icon' => 'success',
-                        'title' => 'Delete User Success'
+                        'text' => 'Delete User Success'
                     ]
                 ];
             } else {
@@ -141,7 +140,7 @@ class ManageUsersController extends Controller
                     'success' => FALSE,
                     'alert' => [
                         'icon' => 'warning',
-                        'title' => 'Delete User Failed, User Not Found'
+                        'text' => 'Delete User Failed, User Not Found'
                     ]
                 ];
             }
@@ -174,8 +173,7 @@ class ManageUsersController extends Controller
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'messages' => [],
-                    'success' => FALSE,
-                    'isForm' => TRUE
+                    'success' => FALSE
                 ];
                 $data_check = $check_user->first();
                 $validator = Validator::make(
@@ -190,20 +188,18 @@ class ManageUsersController extends Controller
                 );
 
                 if ($validator->fails()) {
-                    $responses['messages'] = $validator->errors()->all();
+                    $responses['messages'] = Utility::alertValidation($validator->errors()->all(), 'alert alert-danger');
                 } else {
                     if ($data_check->id == Auth::id() && $request->operator_user != $data_check->is_operator) {
                         $responses = [
                             'csrftoken' => csrf_token(),
                             'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>You can not change operator.</div>',
-                            'success' => FALSE,
-                            'isForm' => FALSE
+                            'success' => FALSE
                         ];
                     } else {
                         $responses = [
                             'csrftoken' => csrf_token(),
                             'messages' => '<div class="alert alert-success">Edit user successfully</div>',
-                            'isForm' => FALSE,
                             'success' => TRUE
                         ];
 
@@ -228,7 +224,6 @@ class ManageUsersController extends Controller
                 $responses = [
                     'csrftoken' => csrf_token(),
                     'messages' => '<div class="alert alert-danger"><span class="bi bi-x-circle me-1"></span>This user data not available</div>',
-                    'isForm' => FALSE,
                     'success' => FALSE
                 ];
             }

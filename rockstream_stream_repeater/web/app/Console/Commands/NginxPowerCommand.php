@@ -44,15 +44,17 @@ class NginxPowerCommand extends Command
      */
     public function handle()
     {
+        $binaryProc = [
+            'nginxBinName' => 'nginx.exe',
+            'nginxPath' => ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx'))
+        ];
+
         # check nginx executable path if not found then exit or else continue
-        $nginx_folder = ((AppInterfaces::getsetting('IS_CUSTOM_NGINX_BINARY') == TRUE && !empty(AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY'))) ? AppInterfaces::getsetting('NGINX_BINARY_DIRECTORY') : Utility::defaultBinDirFolder('nginx'));
-        if (!file_exists($nginx_folder . '\nginx.exe')) {
-            return $this->error('Nginx not found: ' . $nginx_folder);
+        if (!file_exists($binaryProc['nginxPath'] . DIRECTORY_SEPARATOR . $binaryProc['nginxBinName'])) {
+            return $this->error('Nginx not found: ' . $binaryProc['nginxPath']);
         } else {
             # check nginx process if running then restart nginx service
-            $check_process = Utility::getInstanceRunByPath(($nginx_folder . DIRECTORY_SEPARATOR . 'nginx.exe'), 'nginx.exe')['found_process'];
-
-            if ($check_process == true) {
+            if (Utility::getInstanceRunByPath($binaryProc['nginxPath'] . DIRECTORY_SEPARATOR . $binaryProc['nginxBinName'], $binaryProc['nginxBinName'])['found_process']) {
                 # Set is live in database to false / offline if nginx process is turn off
                 $stream_db = StreamInput::where(['is_live' => TRUE]);
                 if ($stream_db->exists()) {
@@ -60,11 +62,15 @@ class NginxPowerCommand extends Command
                 }
 
                 # stop nginx service
-                Utility::runInstancewithPid('cmd /c start /B "" /d"' . $nginx_folder . '" "nginx.exe" -s stop');
-                return $this->info('Power Off Nginx successfully');
+                try {
+                    Utility::runInstancewithPid('cmd /c start /B "" /d"' . $binaryProc['nginxPath'] . '" "' . $binaryProc['nginxBinName'] . '" -s stop');
+                    return $this->info('Power Off Nginx successfully');
+                } catch (\Throwable $e) {
+                    return $this->error('Power Off Nginx unsuccessfully, Error:' . $e->getMessage());
+                }
             } else {
                 # Check if nginx config file is exist or not if not then create it.
-                if (!file_exists($nginx_folder . '\conf\nginx.conf')) {
+                if (!file_exists($binaryProc['nginxPath'] . '\conf\nginx.conf')) {
                     try {
                         NginxConfigGen::GenerateBaseConfig();
                     } catch (\Exception $e) {
@@ -73,8 +79,12 @@ class NginxPowerCommand extends Command
                 }
 
                 # Turn on nginx process if it is off
-                Utility::runInstancewithPid('cmd /c start /B "" /d"' . $nginx_folder . '" "nginx.exe"');
-                return $this->info('Power On Nginx successfully.');
+                try {
+                    Utility::runInstancewithPid('cmd /c start /B "" /d"' . $binaryProc['nginxPath'] . '" "' . $binaryProc['nginxBinName'] . '"');
+                    return $this->info('Power On Nginx successfully');
+                } catch (\Throwable $e) {
+                    return $this->error('Power On Nginx unsuccessfully, Error:' . $e->getMessage());
+                }
             }
         }
     }
